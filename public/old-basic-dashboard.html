@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automotive AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div x-data="dashboard()" x-init="init()" class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-blue-600 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold">
+                    <i class="fas fa-car mr-2"></i>
+                    Automotive AI Dashboard
+                </h1>
+                <div x-show="user" class="flex items-center space-x-4">
+                    <span x-text="`Welcome, ${user?.firstName} ${user?.lastName}`"></span>
+                    <span class="bg-blue-500 px-2 py-1 rounded text-sm" x-text="user?.role"></span>
+                    <button @click="logout()" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Login Form -->
+        <div x-show="!isAuthenticated" class="flex items-center justify-center min-h-screen bg-gray-100">
+            <div class="bg-white p-8 rounded-lg shadow-md w-96">
+                <h2 class="text-2xl font-bold mb-6 text-center">Login to Dashboard</h2>
+                <form @submit.prevent="login()">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input x-model="loginForm.email" type="email" required
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input x-model="loginForm.password" type="password" required
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <button type="submit" :disabled="loading"
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                        <span x-show="!loading">Login</span>
+                        <span x-show="loading">Logging in...</span>
+                    </button>
+                </form>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p><strong>Test Accounts:</strong></p>
+                    <p>Admin: admin@automotive-ai.com / admin123</p>
+                    <p>Manager: manager@automotive-ai.com / manager123</p>
+                </div>
+                <div x-show="error" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <span x-text="error"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div x-show="isAuthenticated" class="container mx-auto p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-500 text-sm">Total Customers</p>
+                            <p class="text-2xl font-semibold" x-text="stats.customers"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-500">
+                            <i class="fas fa-car text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-500 text-sm">Available Vehicles</p>
+                            <p class="text-2xl font-semibold" x-text="stats.vehicles"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-500 text-sm">Active Leads</p>
+                            <p class="text-2xl font-semibold" x-text="stats.leads"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+                            <i class="fas fa-phone text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-500 text-sm">Total Calls</p>
+                            <p class="text-2xl font-semibold" x-text="stats.calls"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6">
+                        <button @click="activeTab = 'customers'" 
+                                :class="activeTab === 'customers' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                                class="py-4 px-1 border-b-2 font-medium text-sm">
+                            <i class="fas fa-users mr-2"></i>Customers
+                        </button>
+                        <button @click="activeTab = 'vehicles'" 
+                                :class="activeTab === 'vehicles' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                                class="py-4 px-1 border-b-2 font-medium text-sm">
+                            <i class="fas fa-car mr-2"></i>Vehicles
+                        </button>
+                        <button @click="activeTab = 'leads'" 
+                                :class="activeTab === 'leads' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                                class="py-4 px-1 border-b-2 font-medium text-sm">
+                            <i class="fas fa-chart-line mr-2"></i>Leads
+                        </button>
+                        <button @click="activeTab = 'calls'" 
+                                :class="activeTab === 'calls' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                                class="py-4 px-1 border-b-2 font-medium text-sm">
+                            <i class="fas fa-phone mr-2"></i>Calls
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <!-- Customers Tab -->
+                    <div x-show="activeTab === 'customers'">
+                        <h3 class="text-lg font-semibold mb-4">Customer Management</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full table-auto">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned To</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <template x-for="customer in customers" :key="customer.id">
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span x-text="`${customer.firstName} ${customer.lastName}`"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="customer.email"></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="customer.phone"></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span x-text="`${customer.city}, ${customer.state}`"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span x-text="customer.assignedTo ? `${customer.assignedTo.firstName} ${customer.assignedTo.lastName}` : 'Unassigned'"></span>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Vehicles Tab -->
+                    <div x-show="activeTab === 'vehicles'">
+                        <h3 class="text-lg font-semibold mb-4">Vehicle Inventory</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <template x-for="vehicle in vehicles" :key="vehicle.id">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-semibold" x-text="`${vehicle.year} ${vehicle.make} ${vehicle.model}`"></h4>
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded" x-text="vehicle.status"></span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-2" x-text="vehicle.description"></p>
+                                    <div class="text-sm text-gray-500">
+                                        <p><strong>VIN:</strong> <span x-text="vehicle.vin"></span></p>
+                                        <p><strong>Color:</strong> <span x-text="vehicle.color"></span></p>
+                                        <p><strong>Mileage:</strong> <span x-text="vehicle.mileage?.toLocaleString()"></span> miles</p>
+                                        <p><strong>Price:</strong> $<span x-text="parseFloat(vehicle.price).toLocaleString()"></span></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Leads Tab -->
+                    <div x-show="activeTab === 'leads'">
+                        <h3 class="text-lg font-semibold mb-4">Sales Leads</h3>
+                        <div class="space-y-4">
+                            <template x-for="lead in leads" :key="lead.id">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-semibold" x-text="`${lead.customer.firstName} ${lead.customer.lastName}`"></h4>
+                                            <p class="text-sm text-gray-600" x-text="lead.customer.email"></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span :class="lead.priority === 'HIGH' ? 'bg-red-100 text-red-800' : lead.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'"
+                                                  class="text-xs px-2 py-1 rounded" x-text="lead.priority"></span>
+                                            <span class="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded" x-text="lead.status"></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-2" x-text="lead.notes"></p>
+                                    <div class="text-sm text-gray-500">
+                                        <p><strong>Vehicle:</strong> <span x-text="`${lead.vehicle.year} ${lead.vehicle.make} ${lead.vehicle.model}`"></span></p>
+                                        <p><strong>Source:</strong> <span x-text="lead.source"></span></p>
+                                        <p><strong>Assigned to:</strong> <span x-text="`${lead.assignedTo.firstName} ${lead.assignedTo.lastName}`"></span></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Calls Tab -->
+                    <div x-show="activeTab === 'calls'">
+                        <h3 class="text-lg font-semibold mb-4">Call History</h3>
+                        <div class="space-y-4">
+                            <template x-for="call in calls" :key="call.id">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-semibold" x-text="`${call.customer.firstName} ${call.customer.lastName}`"></h4>
+                                            <p class="text-sm text-gray-600" x-text="call.customer.phone"></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span :class="call.direction === 'INBOUND' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'"
+                                                  class="text-xs px-2 py-1 rounded" x-text="call.direction"></span>
+                                            <span class="ml-2 bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded" x-text="call.status"></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-2" x-text="call.summary"></p>
+                                    <div class="text-sm text-gray-500">
+                                        <p><strong>Duration:</strong> <span x-text="call.duration"></span> seconds</p>
+                                        <p><strong>Sentiment:</strong> <span x-text="call.sentiment"></span></p>
+                                        <p><strong>Outcome:</strong> <span x-text="call.outcome"></span></p>
+                                        <p><strong>Agent:</strong> <span x-text="`${call.agent.firstName} ${call.agent.lastName}`"></span></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function dashboard() {
+            return {
+                isAuthenticated: false,
+                user: null,
+                token: null,
+                loading: false,
+                error: null,
+                activeTab: 'customers',
+                
+                loginForm: {
+                    email: 'admin@automotive-ai.com',
+                    password: 'admin123'
+                },
+                
+                stats: {
+                    customers: 0,
+                    vehicles: 0,
+                    leads: 0,
+                    calls: 0
+                },
+                
+                customers: [],
+                vehicles: [],
+                leads: [],
+                calls: [],
+                
+                init() {
+                    // Check for existing token
+                    this.token = localStorage.getItem('token');
+                    if (this.token) {
+                        this.isAuthenticated = true;
+                        this.loadUserProfile();
+                        this.loadDashboardData();
+                    }
+                },
+                
+                async login() {
+                    this.loading = true;
+                    this.error = null;
+                    
+                    try {
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.loginForm)
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            this.token = data.token;
+                            this.user = data.user;
+                            this.isAuthenticated = true;
+                            localStorage.setItem('token', this.token);
+                            this.loadDashboardData();
+                        } else {
+                            this.error = data.error || 'Login failed';
+                        }
+                    } catch (err) {
+                        this.error = 'Network error. Please try again.';
+                    }
+                    
+                    this.loading = false;
+                },
+                
+                async loadUserProfile() {
+                    try {
+                        const response = await fetch('/api/auth/me', {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.user = data.user;
+                        }
+                    } catch (err) {
+                        console.error('Failed to load user profile:', err);
+                    }
+                },
+                
+                async loadDashboardData() {
+                    await Promise.all([
+                        this.loadCustomers(),
+                        this.loadVehicles(),
+                        this.loadLeads(),
+                        this.loadCalls()
+                    ]);
+                },
+                
+                async loadCustomers() {
+                    try {
+                        const response = await fetch('/api/customers', {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.customers = data.customers;
+                            this.stats.customers = data.pagination.total;
+                        }
+                    } catch (err) {
+                        console.error('Failed to load customers:', err);
+                    }
+                },
+                
+                async loadVehicles() {
+                    try {
+                        const response = await fetch('/api/vehicles', {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.vehicles = data.vehicles;
+                            this.stats.vehicles = data.pagination.total;
+                        }
+                    } catch (err) {
+                        console.error('Failed to load vehicles:', err);
+                    }
+                },
+                
+                async loadLeads() {
+                    try {
+                        const response = await fetch('/api/leads', {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.leads = data.leads;
+                            this.stats.leads = data.pagination.total;
+                        }
+                    } catch (err) {
+                        console.error('Failed to load leads:', err);
+                    }
+                },
+                
+                async loadCalls() {
+                    try {
+                        const response = await fetch('/api/calls', {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.calls = data.calls;
+                            this.stats.calls = data.pagination.total;
+                        }
+                    } catch (err) {
+                        console.error('Failed to load calls:', err);
+                    }
+                },
+                
+                logout() {
+                    this.isAuthenticated = false;
+                    this.user = null;
+                    this.token = null;
+                    localStorage.removeItem('token');
+                    this.loginForm.email = 'admin@automotive-ai.com';
+                    this.loginForm.password = 'admin123';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

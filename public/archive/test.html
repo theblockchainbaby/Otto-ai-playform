@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                console.log('Testing API connection...');
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@automotive-ai.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <h2>✅ Success!</h2>
+                        <p>Status: ${response.status}</p>
+                        <p>User: ${data.user.firstName} ${data.user.lastName}</p>
+                        <p>Role: ${data.user.role}</p>
+                        <p>Token: ${data.token.substring(0, 50)}...</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2>❌ API Error</h2>
+                        <p>Status: ${response.status}</p>
+                        <p>Error: ${data.error}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                resultDiv.innerHTML = `
+                    <h2>❌ Network Error</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>This usually means the API server is not running or there's a CORS issue.</p>
+                `;
+            }
+        }
+        
+        // Test on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, testing API...');
+            testAPI();
+        });
+    </script>
+</body>
+</html>

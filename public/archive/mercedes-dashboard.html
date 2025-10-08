@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLux Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --luxury-silver: #C0C0C0;
+            --luxury-dark-silver: #8C8C8C;
+            --luxury-black: #1A1A1A;
+            --luxury-white: #FFFFFF;
+            --luxury-blue: #0F4C75;
+            --luxury-light-blue: #3282B8;
+            --luxury-accent: #BBE1FA;
+            --luxury-success: #00D4AA;
+            --luxury-warning: #FFB800;
+            --luxury-error: #FF6B6B;
+            --luxury-gradient: linear-gradient(135deg, #0F4C75 0%, #3282B8 100%);
+            --luxury-shadow: 0 8px 32px rgba(15, 76, 117, 0.1);
+            --luxury-shadow-hover: 0 12px 48px rgba(15, 76, 117, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--luxury-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--luxury-gradient);
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--luxury-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand-logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--luxury-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-logo p {
+            color: var(--luxury-dark-silver);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--luxury-black);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--mb-white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--luxury-light-blue);
+            box-shadow: 0 0 0 3px rgba(50, 130, 184, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--luxury-gradient);
+            color: var(--luxury-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--luxury-shadow-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .test-accounts {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(15, 76, 117, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--luxury-light-blue);
+        }
+
+        .test-accounts h4 {
+            color: var(--luxury-blue);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .test-accounts p {
+            font-size: 0.8rem;
+            color: var(--mb-dark-silver);
+            margin-bottom: 0.25rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--mb-error);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--mb-success);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: var(--luxury-white);
+            box-shadow: var(--luxury-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--mb-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--mb-black);
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--mb-dark-silver);
+            background: var(--mb-accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: var(--mb-error);
+            color: var(--mb-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #e55555;
+            transform: translateY(-1px);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--mb-white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--mb-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--mb-shadow-hover);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--mb-gradient);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--mb-dark-silver);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--mb-black);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive {
+            color: var(--mb-success);
+        }
+
+        .stat-change.negative {
+            color: var(--mb-error);
+        }
+
+        .content-section {
+            background: var(--mb-white);
+            border-radius: 16px;
+            box-shadow: var(--mb-shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--mb-black);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--mb-dark-silver);
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--mb-dark-silver);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--mb-blue);
+            background: var(--mb-white);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--mb-gradient);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--mb-black);
+            background: rgba(15, 76, 117, 0.05);
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--mb-dark-silver);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e9ecef;
+            border-top: 3px solid var(--mb-light-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--mb-black);
+            font-size: 0.9rem;
+        }
+
+        .data-table td {
+            color: var(--mb-dark-silver);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover {
+            background: rgba(15, 76, 117, 0.02);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-new { background: rgba(255, 184, 0, 0.1); color: var(--mb-warning); }
+        .status-contacted { background: rgba(50, 130, 184, 0.1); color: var(--mb-light-blue); }
+        .status-qualified { background: rgba(0, 212, 170, 0.1); color: var(--mb-success); }
+        .status-available { background: rgba(0, 212, 170, 0.1); color: var(--mb-success); }
+        .status-sold { background: rgba(140, 140, 140, 0.1); color: var(--mb-dark-silver); }
+        .status-completed { background: rgba(0, 212, 170, 0.1); color: var(--mb-success); }
+        .status-high { background: rgba(255, 107, 107, 0.1); color: var(--mb-error); }
+        .status-medium { background: rgba(255, 184, 0, 0.1); color: var(--mb-warning); }
+        .status-low { background: rgba(0, 212, 170, 0.1); color: var(--mb-success); }
+
+        .btn-refresh {
+            padding: 0.75rem 1.5rem;
+            background: var(--mb-gradient);
+            color: var(--mb-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-hover);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-card">
+            <div class="brand-logo">
+                <h1>⚡ AutoLux Intelligence</h1>
+                <p>Premium Automotive Management Platform</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" value="admin@automotive-ai.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-input" value="admin123" required>
+                </div>
+                
+                <button type="submit" id="loginBtn" class="btn-primary">
+                    <span id="loginText">Sign In</span>
+                </button>
+            </form>
+            
+            <div class="test-accounts">
+                <h4>Demo Accounts</h4>
+                <p><strong>Administrator:</strong> admin@automotive-ai.com / admin123</p>
+                <p><strong>Sales Manager:</strong> manager@automotive-ai.com / manager123</p>
+                <p><strong>Sales Representative:</strong> john.doe@automotive-ai.com / sales123</p>
+            </div>
+            
+            <div id="loginAlert" class="alert hidden"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="dashboard hidden">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-logo">
+                    <h1>⚡ AutoLux Intelligence</h1>
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role" id="userRole">Loading...</div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Customers</div>
+                        <div class="stat-icon" style="background: rgba(0, 212, 170, 0.1); color: var(--mb-success);">👥</div>
+                    </div>
+                    <div class="stat-number" id="customersCount">-</div>
+                    <div class="stat-change positive">
+                        <span>↗</span> +12% from last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Vehicle Inventory</div>
+                        <div class="stat-icon" style="background: rgba(50, 130, 184, 0.1); color: var(--mb-light-blue);">🚗</div>
+                    </div>
+                    <div class="stat-number" id="vehiclesCount">-</div>
+                    <div class="stat-change positive">
+                        <span>↗</span> +8% from last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Leads</div>
+                        <div class="stat-icon" style="background: rgba(255, 184, 0, 0.1); color: var(--mb-warning);">📈</div>
+                    </div>
+                    <div class="stat-number" id="leadsCount">-</div>
+                    <div class="stat-change positive">
+                        <span>↗</span> +24% from last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Call Analytics</div>
+                        <div class="stat-icon" style="background: rgba(255, 107, 107, 0.1); color: var(--mb-error);">📞</div>
+                    </div>
+                    <div class="stat-number" id="callsCount">-</div>
+                    <div class="stat-change positive">
+                        <span>↗</span> +18% from last month
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="section-title">Customer Relationship Management</h2>
+                            <p class="section-subtitle">Comprehensive view of your automotive business operations</p>
+                        </div>
+                        <button class="btn-refresh" onclick="loadAllData()">
+                            <span>🔄</span> Refresh Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('customers', this)">👥 Customers</button>
+                    <button class="tab" onclick="switchTab('vehicles', this)">🚗 Vehicles</button>
+                    <button class="tab" onclick="switchTab('leads', this)">📈 Sales Leads</button>
+                    <button class="tab" onclick="switchTab('calls', this)">📞 Call Center</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="customersTab" class="tab-pane">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading customer data...</p>
+                        </div>
+                    </div>
+
+                    <div id="vehiclesTab" class="tab-pane hidden">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading vehicle inventory...</p>
+                        </div>
+                    </div>
+
+                    <div id="leadsTab" class="tab-pane hidden">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading sales leads...</p>
+                        </div>
+                    </div>
+
+                    <div id="callsTab" class="tab-pane hidden">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading call analytics...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('token');
+        let user = null;
+        let currentTab = 'customers';
+
+        // Initialize app
+        if (token) {
+            showDashboard();
+            loadUserProfile();
+            loadAllData();
+        } else {
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+        }
+
+        function showAlert(message, isError = false) {
+            const alert = document.getElementById('loginAlert');
+            alert.textContent = message;
+            alert.className = `alert ${isError ? 'alert-error' : 'alert-success'}`;
+            alert.classList.remove('hidden');
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            
+            loginBtn.disabled = true;
+            loginText.textContent = 'Signing In...';
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/auth/login', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        token = data.token;
+                        user = data.user;
+                        localStorage.setItem('token', token);
+                        showAlert('Welcome to AutoLux Intelligence Platform!');
+                        setTimeout(() => {
+                            showDashboard();
+                            loadAllData();
+                        }, 1000);
+                    } else {
+                        const errorData = JSON.parse(xhr.responseText);
+                        showAlert(errorData.error || 'Authentication failed', true);
+                    }
+                    loginBtn.disabled = false;
+                    loginText.textContent = 'Sign In';
+                };
+                
+                xhr.onerror = function() {
+                    showAlert('Network connection error. Please try again.', true);
+                    loginBtn.disabled = false;
+                    loginText.textContent = 'Sign In';
+                };
+                
+                xhr.send(JSON.stringify({ email, password }));
+                
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, true);
+                loginBtn.disabled = false;
+                loginText.textContent = 'Sign In';
+            }
+        });
+
+        function logout() {
+            token = null;
+            user = null;
+            localStorage.removeItem('token');
+            showLogin();
+            document.getElementById('loginAlert').classList.add('hidden');
+        }
+
+        async function loadUserProfile() {
+            if (!token) return;
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/auth/me', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        user = data.user;
+                        document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                        document.getElementById('userRole').textContent = user.role;
+                    }
+                };
+                
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load user profile:', error);
+            }
+        }
+
+        function switchTab(tabName, button) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            currentTab = tabName;
+        }
+
+        async function loadAllData() {
+            if (!token) return;
+
+            await Promise.all([
+                loadCustomers(),
+                loadVehicles(),
+                loadLeads(),
+                loadCalls()
+            ]);
+        }
+
+        async function loadCustomers() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/customers', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        document.getElementById('customersCount').textContent = data.pagination.total;
+
+                        const customersHtml = `
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Contact Information</th>
+                                        <th>Location</th>
+                                        <th>Assigned Representative</th>
+                                        <th>Activity</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.customers.map(customer => `
+                                        <tr>
+                                            <td>
+                                                <div style="font-weight: 600; color: var(--mb-black);">${customer.firstName} ${customer.lastName}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">Customer ID: ${customer.id.slice(-8)}</div>
+                                            </td>
+                                            <td>
+                                                <div>${customer.email || 'No email'}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.phone || 'No phone'}</div>
+                                            </td>
+                                            <td>
+                                                <div>${customer.city}, ${customer.state}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.zipCode}</div>
+                                            </td>
+                                            <td>
+                                                ${customer.assignedTo ? `
+                                                    <div style="font-weight: 500;">${customer.assignedTo.firstName} ${customer.assignedTo.lastName}</div>
+                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.assignedTo.email}</div>
+                                                ` : '<span style="color: var(--mb-dark-silver);">Unassigned</span>'}
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.8rem;">
+                                                    <div>📞 ${customer._count.calls} calls</div>
+                                                    <div>📈 ${customer._count.leads} leads</div>
+                                                    <div>🚗 ${customer._count.vehicles} vehicles</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="status-badge ${customer._count.leads > 0 ? 'status-qualified' : 'status-new'}">
+                                                    ${customer._count.leads > 0 ? 'Active' : 'New'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+
+                        document.getElementById('customersTab').innerHTML = customersHtml;
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load customers:', error);
+            }
+        }
+
+        async function loadVehicles() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/vehicles', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        document.getElementById('vehiclesCount').textContent = data.pagination.total;
+
+                        const vehiclesHtml = `
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                                ${data.vehicles.map(vehicle => `
+                                    <div style="background: #f8f9fa; border-radius: 12px; padding: 1.5rem; border: 1px solid #e9ecef;">
+                                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 1rem;">
+                                            <div style="flex: 1;">
+                                                <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--mb-black); margin-bottom: 0.5rem;">
+                                                    ${vehicle.year} ${vehicle.make} ${vehicle.model}
+                                                </h3>
+                                                <p style="color: var(--mb-dark-silver); font-size: 0.9rem; margin-bottom: 1rem;">
+                                                    ${vehicle.description || 'Premium vehicle with exceptional features'}
+                                                </p>
+                                            </div>
+                                            <span class="status-badge status-${vehicle.status.toLowerCase()}">
+                                                ${vehicle.status}
+                                            </span>
+                                        </div>
+
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                            <div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); margin-bottom: 0.25rem;">VIN</div>
+                                                <div style="font-weight: 500; font-family: monospace; font-size: 0.9rem;">${vehicle.vin}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); margin-bottom: 0.25rem;">Color</div>
+                                                <div style="font-weight: 500;">${vehicle.color}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); margin-bottom: 0.25rem;">Mileage</div>
+                                                <div style="font-weight: 500;">${vehicle.mileage?.toLocaleString()} miles</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); margin-bottom: 0.25rem;">Price</div>
+                                                <div style="font-weight: 600; color: var(--mb-blue); font-size: 1.1rem;">$${parseFloat(vehicle.price).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+
+                                        ${vehicle.features && vehicle.features.length > 0 ? `
+                                            <div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); margin-bottom: 0.5rem;">Features</div>
+                                                <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                                                    ${vehicle.features.map(feature => `
+                                                        <span style="background: var(--mb-accent); color: var(--mb-blue); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
+                                                            ${feature}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+
+                                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef; font-size: 0.8rem; color: var(--mb-dark-silver);">
+                                            📈 ${vehicle._count.leads} active leads
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+
+                        document.getElementById('vehiclesTab').innerHTML = vehiclesHtml;
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load vehicles:', error);
+            }
+        }
+
+        async function loadLeads() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/leads', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        document.getElementById('leadsCount').textContent = data.pagination.total;
+
+                        const leadsHtml = `
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Lead Information</th>
+                                        <th>Vehicle Interest</th>
+                                        <th>Status & Priority</th>
+                                        <th>Source</th>
+                                        <th>Assigned Representative</th>
+                                        <th>Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.leads.map(lead => `
+                                        <tr>
+                                            <td>
+                                                <div style="font-weight: 600; color: var(--mb-black);">${lead.customer.firstName} ${lead.customer.lastName}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${lead.customer.email}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${lead.customer.phone}</div>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 500;">${lead.vehicle.year} ${lead.vehicle.make} ${lead.vehicle.model}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">VIN: ${lead.vehicle.vin.slice(-8)}</div>
+                                            </td>
+                                            <td>
+                                                <div style="margin-bottom: 0.5rem;">
+                                                    <span class="status-badge status-${lead.status.toLowerCase()}">${lead.status}</span>
+                                                </div>
+                                                <span class="status-badge status-${lead.priority.toLowerCase()}">${lead.priority} Priority</span>
+                                            </td>
+                                            <td>
+                                                <span style="background: rgba(15, 76, 117, 0.1); color: var(--mb-blue); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
+                                                    ${lead.source.replace('_', ' ')}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 500;">${lead.assignedTo.firstName} ${lead.assignedTo.lastName}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${lead.assignedTo.email}</div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.8rem;">
+                                                    <div style="margin-bottom: 0.25rem;">📞 ${lead._count.calls} calls</div>
+                                                    <div style="color: var(--mb-dark-silver);">
+                                                        Created: ${new Date(lead.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+
+                            ${data.leads.length > 0 ? `
+                                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(15, 76, 117, 0.05); border-radius: 8px;">
+                                    <h4 style="margin-bottom: 0.5rem; color: var(--mb-blue);">Lead Notes & Follow-ups</h4>
+                                    ${data.leads.map(lead => lead.notes ? `
+                                        <div style="margin-bottom: 1rem; padding: 0.75rem; background: white; border-radius: 6px; border-left: 3px solid var(--mb-light-blue);">
+                                            <div style="font-weight: 500; margin-bottom: 0.25rem;">${lead.customer.firstName} ${lead.customer.lastName}</div>
+                                            <div style="font-size: 0.9rem; color: var(--mb-dark-silver);">${lead.notes}</div>
+                                        </div>
+                                    ` : '').join('')}
+                                </div>
+                            ` : ''}
+                        `;
+
+                        document.getElementById('leadsTab').innerHTML = leadsHtml;
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load leads:', error);
+            }
+        }
+
+        async function loadCalls() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/calls', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        document.getElementById('callsCount').textContent = data.pagination.total;
+
+                        const callsHtml = `
+                            <div style="margin-bottom: 2rem;">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                    <div style="background: linear-gradient(135deg, #00D4AA 0%, #00B894 100%); color: white; padding: 1rem; border-radius: 12px;">
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">Positive Sentiment</div>
+                                        <div style="font-size: 1.5rem; font-weight: 600;">
+                                            ${data.calls.filter(c => c.sentiment === 'positive').length}
+                                        </div>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%); color: white; padding: 1rem; border-radius: 12px;">
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">Neutral Sentiment</div>
+                                        <div style="font-size: 1.5rem; font-weight: 600;">
+                                            ${data.calls.filter(c => c.sentiment === 'neutral').length}
+                                        </div>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #FF6B6B 0%, #E55555 100%); color: white; padding: 1rem; border-radius: 12px;">
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">Negative Sentiment</div>
+                                        <div style="font-size: 1.5rem; font-weight: 600;">
+                                            ${data.calls.filter(c => c.sentiment === 'negative').length}
+                                        </div>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #3282B8 0%, #0F4C75 100%); color: white; padding: 1rem; border-radius: 12px;">
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">Avg Duration</div>
+                                        <div style="font-size: 1.5rem; font-weight: 600;">
+                                            ${Math.round(data.calls.reduce((sum, c) => sum + c.duration, 0) / data.calls.length)}s
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Call Details</th>
+                                        <th>Customer</th>
+                                        <th>Agent</th>
+                                        <th>AI Analysis</th>
+                                        <th>Outcome</th>
+                                        <th>Performance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.calls.map(call => `
+                                        <tr>
+                                            <td>
+                                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                                    <span style="background: ${call.direction === 'INBOUND' ? 'var(--mb-success)' : 'var(--mb-light-blue)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">
+                                                        ${call.direction === 'INBOUND' ? '📞 IN' : '📱 OUT'}
+                                                    </span>
+                                                    <span class="status-badge status-${call.status.toLowerCase()}">${call.status}</span>
+                                                </div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">
+                                                    Duration: ${call.duration}s
+                                                </div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">
+                                                    ${new Date(call.createdAt).toLocaleString()}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 500;">${call.customer.firstName} ${call.customer.lastName}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${call.customer.phone}</div>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 500;">${call.agent.firstName} ${call.agent.lastName}</div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${call.agent.email}</div>
+                                            </td>
+                                            <td>
+                                                <div style="margin-bottom: 0.5rem;">
+                                                    <span style="background: ${
+                                                        call.sentiment === 'positive' ? 'rgba(0, 212, 170, 0.1); color: var(--mb-success)' :
+                                                        call.sentiment === 'negative' ? 'rgba(255, 107, 107, 0.1); color: var(--mb-error)' :
+                                                        'rgba(255, 184, 0, 0.1); color: var(--mb-warning)'
+                                                    }; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
+                                                        ${call.sentiment.toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver); line-height: 1.4;">
+                                                    ${call.summary || 'No summary available'}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.9rem; color: var(--mb-black); margin-bottom: 0.25rem;">
+                                                    ${call.outcome || 'No outcome recorded'}
+                                                </div>
+                                                ${call.notes ? `
+                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">
+                                                        ${call.notes}
+                                                    </div>
+                                                ` : ''}
+                                            </td>
+                                            <td>
+                                                <div style="text-align: center;">
+                                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${
+                                                        call.sentiment === 'positive' ? 'var(--mb-success)' :
+                                                        call.sentiment === 'negative' ? 'var(--mb-error)' :
+                                                        'var(--mb-warning)'
+                                                    }; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin: 0 auto 0.25rem;">
+                                                        ${call.sentiment === 'positive' ? '😊' : call.sentiment === 'negative' ? '😞' : '😐'}
+                                                    </div>
+                                                    <div style="font-size: 0.7rem; color: var(--mb-dark-silver);">
+                                                        ${call.duration > 300 ? 'Long' : call.duration > 120 ? 'Medium' : 'Short'}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+
+                        document.getElementById('callsTab').innerHTML = callsHtml;
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load calls:', error);
+            }
+        }
+    </script>
+</body>
+</html>

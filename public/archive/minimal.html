@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .login { background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .dashboard { background: #f9f9f9; padding: 20px; border-radius: 5px; }
+        input, button { padding: 10px; margin: 5px; }
+        button { background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .hidden { display: none; }
+        .error { color: red; margin-top: 10px; }
+        .success { color: green; margin-top: 10px; }
+        .data { background: white; padding: 15px; margin: 10px 0; border-radius: 3px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Automotive AI - Minimal Dashboard</h1>
+        
+        <div id="loginSection" class="login">
+            <h2>Login</h2>
+            <input type="email" id="email" placeholder="Email" value="admin@automotive-ai.com">
+            <input type="password" id="password" placeholder="Password" value="admin123">
+            <button onclick="login()">Login</button>
+            <div id="loginMessage"></div>
+        </div>
+        
+        <div id="dashboardSection" class="dashboard hidden">
+            <h2>Dashboard</h2>
+            <p>Welcome, <span id="userName"></span>!</p>
+            <button onclick="logout()">Logout</button>
+            <button onclick="loadData()">Load Data</button>
+            
+            <div id="dataSection">
+                <h3>Data</h3>
+                <div id="customersData" class="data"></div>
+                <div id="vehiclesData" class="data"></div>
+                <div id="leadsData" class="data"></div>
+                <div id="callsData" class="data"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let token = null;
+        let user = null;
+
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = isError ? 'error' : 'success';
+        }
+
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            if (user) {
+                document.getElementById('userName').textContent = `${user.firstName} ${user.lastName} (${user.role})`;
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            showMessage('loginMessage', 'Logging in...', false);
+            
+            try {
+                console.log('Attempting login...');
+                
+                // Use XMLHttpRequest as fallback
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/auth/login', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        console.log('XHR Status:', xhr.status);
+                        console.log('XHR Response:', xhr.responseText);
+                        
+                        if (xhr.status === 200) {
+                            const data = JSON.parse(xhr.responseText);
+                            token = data.token;
+                            user = data.user;
+                            localStorage.setItem('token', token);
+                            showMessage('loginMessage', 'Login successful!', false);
+                            showDashboard();
+                        } else {
+                            const errorData = JSON.parse(xhr.responseText);
+                            showMessage('loginMessage', `Login failed: ${errorData.error}`, true);
+                        }
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.error('XHR Error');
+                    showMessage('loginMessage', 'Network error with XHR', true);
+                };
+                
+                xhr.send(JSON.stringify({ email, password }));
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('loginMessage', `Error: ${error.message}`, true);
+            }
+        }
+
+        function logout() {
+            token = null;
+            user = null;
+            localStorage.removeItem('token');
+            showLogin();
+        }
+
+        async function loadData() {
+            if (!token) {
+                alert('Please login first');
+                return;
+            }
+
+            try {
+                // Load customers
+                const xhr1 = new XMLHttpRequest();
+                xhr1.open('GET', '/api/customers', true);
+                xhr1.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr1.onload = function() {
+                    if (xhr1.status === 200) {
+                        const data = JSON.parse(xhr1.responseText);
+                        document.getElementById('customersData').innerHTML = `
+                            <h4>Customers (${data.pagination.total})</h4>
+                            ${data.customers.map(c => `<p>${c.firstName} ${c.lastName} - ${c.email}</p>`).join('')}
+                        `;
+                    }
+                };
+                xhr1.send();
+
+                // Load vehicles
+                const xhr2 = new XMLHttpRequest();
+                xhr2.open('GET', '/api/vehicles', true);
+                xhr2.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr2.onload = function() {
+                    if (xhr2.status === 200) {
+                        const data = JSON.parse(xhr2.responseText);
+                        document.getElementById('vehiclesData').innerHTML = `
+                            <h4>Vehicles (${data.pagination.total})</h4>
+                            ${data.vehicles.map(v => `<p>${v.year} ${v.make} ${v.model} - $${v.price}</p>`).join('')}
+                        `;
+                    }
+                };
+                xhr2.send();
+
+                // Load leads
+                const xhr3 = new XMLHttpRequest();
+                xhr3.open('GET', '/api/leads', true);
+                xhr3.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr3.onload = function() {
+                    if (xhr3.status === 200) {
+                        const data = JSON.parse(xhr3.responseText);
+                        document.getElementById('leadsData').innerHTML = `
+                            <h4>Leads (${data.pagination.total})</h4>
+                            ${data.leads.map(l => `<p>${l.customer.firstName} ${l.customer.lastName} - ${l.status} (${l.priority})</p>`).join('')}
+                        `;
+                    }
+                };
+                xhr3.send();
+
+                // Load calls
+                const xhr4 = new XMLHttpRequest();
+                xhr4.open('GET', '/api/calls', true);
+                xhr4.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr4.onload = function() {
+                    if (xhr4.status === 200) {
+                        const data = JSON.parse(xhr4.responseText);
+                        document.getElementById('callsData').innerHTML = `
+                            <h4>Calls (${data.pagination.total})</h4>
+                            ${data.calls.map(c => `<p>${c.customer.firstName} ${c.customer.lastName} - ${c.direction} (${c.duration}s)</p>`).join('')}
+                        `;
+                    }
+                };
+                xhr4.send();
+
+            } catch (error) {
+                console.error('Load data error:', error);
+                alert(`Error loading data: ${error.message}`);
+            }
+        }
+
+        // Check for existing token on page load
+        window.addEventListener('load', function() {
+            token = localStorage.getItem('token');
+            if (token) {
+                // Try to get user info
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/auth/me', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        user = data.user;
+                        showDashboard();
+                    } else {
+                        // Token invalid, show login
+                        localStorage.removeItem('token');
+                        token = null;
+                        showLogin();
+                    }
+                };
+                xhr.send();
+            } else {
+                showLogin();
+            }
+        });
+    </script>
+</body>
+</html>
