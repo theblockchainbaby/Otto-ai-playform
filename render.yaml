@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: otto-ai-platform
+    env: node
+    plan: starter
+    buildCommand: npm ci && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+    healthCheckPath: /health

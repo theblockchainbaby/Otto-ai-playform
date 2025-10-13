@@ -13,6 +13,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// Initialize database connection (optional for now)
+let prisma = null;
+try {
+  const { PrismaClient } = require('@prisma/client');
+  if (process.env.DATABASE_URL) {
+    prisma = new PrismaClient();
+    console.log('✅ Database connection initialized');
+  } else {
+    console.log('⚠️  No DATABASE_URL provided, running without database');
+  }
+} catch (error) {
+  console.log('⚠️  Prisma not available, running in basic mode:', error.message);
+}
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
@@ -41,13 +55,30 @@ app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  let dbStatus = 'disconnected';
+  try {
+    if (prisma) {
+      await prisma.$queryRaw`SELECT 1`;
+      dbStatus = 'connected';
+    }
+  } catch (error) {
+    console.log('Database health check failed:', error.message);
+  }
+
   res.json({
     success: true,
     message: '🤖 Otto AI Platform is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    database: dbStatus,
+    features: {
+      database: !!prisma,
+      twilio: !!process.env.TWILIO_ACCOUNT_SID,
+      openai: !!process.env.OPENAI_API_KEY,
+      elevenlabs: !!process.env.ELEVENLABS_API_KEY
+    }
   });
 });
 
@@ -96,10 +127,34 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🤖 Otto AI Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`📊 Database: ${prisma ? 'Connected' : 'Not configured'}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('🛑 Shutting down gracefully...');
+  if (prisma) {
+    await prisma.$disconnect();
+  }
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', async () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  if (prisma) {
+    await prisma.$disconnect();
+  }
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });
 
 module.exports = app;
