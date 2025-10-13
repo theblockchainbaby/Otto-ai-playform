@@ -9,10 +9,10 @@ async function main() {
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 12);
   await prisma.user.upsert({
-    where: { email: 'admin@automotive-ai.com' },
+    where: { email: 'admin@ottoagent.net' },
     update: {},
     create: {
-      email: 'admin@automotive-ai.com',
+      email: 'admin@ottoagent.net',
       password: adminPassword,
       firstName: 'Admin',
       lastName: 'User',
@@ -23,10 +23,10 @@ async function main() {
   // Create manager user
   const managerPassword = await bcrypt.hash('manager123', 12);
   await prisma.user.upsert({
-    where: { email: 'manager@automotive-ai.com' },
+    where: { email: 'manager@ottoagent.net' },
     update: {},
     create: {
-      email: 'manager@automotive-ai.com',
+      email: 'manager@ottoagent.net',
       password: managerPassword,
       firstName: 'Sales',
       lastName: 'Manager',
@@ -37,10 +37,10 @@ async function main() {
   // Create sales rep users
   const salesRepPassword = await bcrypt.hash('sales123', 12);
   const salesRep1 = await prisma.user.upsert({
-    where: { email: 'john.doe@automotive-ai.com' },
+    where: { email: 'john.anderson@ottoagent.net' },
     update: {},
     create: {
-      email: 'john.doe@automotive-ai.com',
+      email: 'john.anderson@ottoagent.net',
       password: salesRepPassword,
       firstName: 'John',
       lastName: 'Doe',
@@ -49,10 +49,10 @@ async function main() {
   });
 
   const salesRep2 = await prisma.user.upsert({
-    where: { email: 'jane.smith@automotive-ai.com' },
+    where: { email: 'jane.smith@ottoagent.net' },
     update: {},
     create: {
-      email: 'jane.smith@automotive-ai.com',
+      email: 'jane.smith@ottoagent.net',
       password: salesRepPassword,
       firstName: 'Jane',
       lastName: 'Smith',
@@ -177,10 +177,10 @@ async function main() {
   });
 
   console.log('✅ Database seeded successfully!');
-  console.log('👤 Admin user: admin@automotive-ai.com / admin123');
-  console.log('👤 Manager user: manager@automotive-ai.com / manager123');
-  console.log('👤 Sales rep 1: john.doe@automotive-ai.com / sales123');
-  console.log('👤 Sales rep 2: jane.smith@automotive-ai.com / sales123');
+  console.log('👤 Admin user: admin@otto.ai / admin123');
+  console.log('👤 Manager user: manager@otto.ai / manager123');
+  console.log('👤 Sales rep 1: john.anderson@otto.ai / sales123');
+  console.log('👤 Sales rep 2: jane.smith@otto.ai / sales123');
 }
 
 main()

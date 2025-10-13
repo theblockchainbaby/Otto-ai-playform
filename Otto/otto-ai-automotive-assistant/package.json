@@ -1,0 +1,43 @@
+{
+  "name": "otto-ai-automotive-assistant",
+  "version": "1.0.0",
+  "description": "AI-powered automotive call center assistant for managing customer interactions and vehicle inventory.",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest",
+    "db:reset": "prisma migrate reset",
+    "db:seed": "ts-node prisma/seed.ts"
+  },
+  "keywords": [
+    "automotive",
+    "AI",
+    "call center",
+    "assistant",
+    "management"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "prisma": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "cors": "^2.8.5",
+    "pg": "^8.7.1",
+    "twilio": "^3.66.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5",
+    "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.8",
+    "jest": "^27.0.6",
+    "supertest": "^6.1.6",
+    "@types/jest": "^27.0.2",
+    "@types/express": "^4.17.13",
+    "@types/supertest": "^2.0.11"
+  }
+}

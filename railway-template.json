@@ -1,0 +1,71 @@
+{
+  "name": "Otto AI Agent Platform",
+  "description": "AI-powered automotive dealership management platform with Otto AI agent",
+  "repository": "https://github.com/theblockchainbaby/otto-ai-platform",
+  "services": [
+    {
+      "name": "otto-ai-app",
+      "source": {
+        "repo": "https://github.com/theblockchainbaby/otto-ai-platform",
+        "ref": "main"
+      },
+      "build": {
+        "command": "npm run build"
+      },
+      "start": {
+        "command": "npm start"
+      },
+      "healthcheck": {
+        "path": "/health",
+        "timeout": 100
+      },
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "3000",
+        "DOMAIN": "https://ottoagent.net",
+        "WEBHOOK_URL": "https://ottoagent.net/api/twilio/otto/incoming",
+        "JWT_SECRET": {
+          "description": "Secret key for JWT tokens (generate a secure random string)",
+          "generate": true
+        },
+        "ELEVENLABS_API_KEY": {
+          "description": "Your ElevenLabs API key for Otto AI agent"
+        },
+        "TWILIO_ACCOUNT_SID": {
+          "description": "Your Twilio Account SID"
+        },
+        "TWILIO_AUTH_TOKEN": {
+          "description": "Your Twilio Auth Token"
+        },
+        "TWILIO_PHONE_NUMBER": {
+          "description": "Your Twilio phone number (e.g., +18884118568)"
+        },
+        "OPENAI_API_KEY": {
+          "description": "OpenAI API key (optional, for enhanced AI features)"
+        }
+      }
+    },
+    {
+      "name": "postgres",
+      "image": "postgres:15",
+      "variables": {
+        "POSTGRES_DB": "otto_ai",
+        "POSTGRES_USER": "otto_user",
+        "POSTGRES_PASSWORD": {
+          "generate": true
+        }
+      },
+      "volumes": [
+        {
+          "name": "postgres_data",
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      ]
+    }
+  ],
+  "volumes": [
+    {
+      "name": "postgres_data"
+    }
+  ]
+}

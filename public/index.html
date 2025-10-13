@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto - AI-Powered Automotive Intelligence Platform</title>
+    <meta name="description" content="The world's most advanced AI-powered automotive dealership management system powered by Otto, a custom ElevenLabs AI agent for intelligent phone call handling.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mb-platinum: #E5E0D8;
+            --mb-silver: #C0C0C0;
+            --mb-dark-silver: #8C8C8C;
+            --mb-charcoal: #2C2C2C;
+            --mb-black: #1A1A1A;
+            --mb-white: #FFFFFF;
+            --mb-blue: #0F2A44;
+            --mb-light-blue: #1E4A66;
+            --mb-accent-blue: #4A90B8;
+            --mb-gold: #D4AF37;
+            --mb-success: #00A86B;
+            --mb-warning: #FFB800;
+            --mb-error: #C41E3A;
+            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
+            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--mb-charcoal);
+            background: var(--mb-white);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--mb-white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--mb-gold);
+        }
+
+        .cta-button {
+            background: var(--mb-gold);
+            color: var(--mb-black);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: #F4D03F;
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--mb-white) 0%, var(--mb-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--mb-gold);
+            color: var(--mb-black);
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--mb-white);
+            padding: 16px 32px;
+            border: 2px solid var(--mb-white);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #F4D03F;
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .btn-secondary:hover {
+            background: var(--mb-white);
+            color: var(--mb-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: #F8F9FA;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--mb-blue);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--mb-dark-silver);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--mb-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--mb-shadow-elevated);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--mb-blue);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--mb-dark-silver);
+            line-height: 1.6;
+        }
+
+        /* Otto Section */
+        .otto-section {
+            padding: 80px 0;
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            text-align: center;
+        }
+
+        .otto-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .otto-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 60px 0;
+            background: var(--mb-charcoal);
+            color: var(--mb-white);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--mb-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--mb-black);
+            color: var(--mb-white);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--mb-gold);
+        }
+
+        .footer-section a {
+            color: var(--mb-silver);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--mb-gold);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--mb-charcoal);
+            padding-top: 2rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--mb-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--mb-blue);
+            padding: 1rem;
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pricing-card {
+            background: var(--mb-white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--mb-shadow-elevated);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(15, 42, 68, 0.2);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--mb-gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--mb-gold);
+            color: var(--mb-charcoal);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .plan-header h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--mb-blue);
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--mb-blue);
+        }
+
+        .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--mb-blue);
+            margin: 0 4px;
+        }
+
+        .period {
+            font-size: 1.2rem;
+            color: var(--mb-charcoal);
+            opacity: 0.7;
+        }
+
+        .plan-description {
+            color: var(--mb-charcoal);
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .plan-features {
+            margin: 2rem 0;
+        }
+
+        .plan-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F1F3F4;
+            color: var(--mb-charcoal);
+            font-weight: 500;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-action {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .plan-action .btn-primary,
+        .plan-action .btn-secondary {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .pricing-footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+        }
+
+        .pricing-footer p {
+            margin: 0.5rem 0;
+            color: var(--mb-charcoal);
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: var(--mb-white);
+            text-decoration: none;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
+
+            .amount {
+                font-size: 2.5rem;
+            }
+
+            .pricing-footer {
+                padding: 1.5rem;
+            }
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero {
+                padding: 100px 0 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item h3 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                🤖 Otto AI
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#otto">Otto AI</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="/otto-dashboard.html" class="cta-button">
+                    🚀 Launch Otto
+                </a>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    ☰
+                </button>
+            </div>
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#features" onclick="closeMobileMenu()">Features</a>
+                <a href="#otto" onclick="closeMobileMenu()">Otto AI</a>
+                <a href="#pricing" onclick="closeMobileMenu()">Pricing</a>
+                <a href="/contact.html" onclick="closeMobileMenu()">Contact</a>
+                <a href="/otto-dashboard.html" onclick="closeMobileMenu()">🚀 Launch Otto</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Otto - The Future of Automotive AI</h1>
+                <p>Revolutionary AI-powered dealership management system powered by Otto, your custom ElevenLabs AI agent for intelligent customer service and complete business automation.</p>
+                <div class="hero-buttons">
+                    <a href="/otto-dashboard.html" class="btn-primary">
+                        🚀 Launch Otto
+                    </a>
+                    <a href="/demo.html" class="btn-secondary">
+                        🤖 Try Otto Demo
+                    </a>
+                    <a href="#otto" class="btn-secondary">
+                        📖 Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>🌟 Enterprise-Grade Features</h2>
+                <p>Everything you need to manage a modern automotive dealership with cutting-edge AI technology</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Otto AI Agent</h3>
+                    <p>Custom ElevenLabs conversational AI for intelligent phone call handling, customer recognition, and real-time voice synthesis.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Customer Management</h3>
+                    <p>Complete CRM with 500+ customer profiles, purchase history, service records, and predictive analytics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚗</div>
+                    <h3>Vehicle Inventory</h3>
+                    <p>Manage 800+ luxury vehicles with detailed specifications, pricing, availability, and automated updates.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📞</div>
+                    <h3>Call Center Operations</h3>
+                    <p>Advanced call tracking, recording, transcription, and AI-powered sentiment analysis for every interaction.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Smart Scheduling</h3>
+                    <p>Intelligent appointment booking with automated reminders, conflict resolution, and resource optimization.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚨</div>
+                    <h3>Emergency Services</h3>
+                    <p>24/7 roadside assistance coordination with GPS tracking, service provider network, and real-time updates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Otto AI Section -->
+    <section id="otto" class="otto-section">
+        <div class="container">
+            <div class="otto-content">
+                <div class="otto-badge">🎯 Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw</div>
+                <h2>Meet Otto - Your AI Phone Agent</h2>
+                <p>Otto is a custom-trained ElevenLabs conversational AI agent specifically designed for automotive customer service. With advanced natural language processing and your custom voice, Otto handles calls with the professionalism of your best sales representative.</p>
+                <div class="hero-buttons" style="margin-top: 2rem;">
+                    <a href="/demo.html" class="btn-primary">
+                        🤖 Try Otto Demo
+                    </a>
+                    <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn-secondary">
+                        🗣️ Chat with Otto
+                    </a>
+                    <a href="/otto-dashboard.html#ai-assistant" class="btn-secondary">
+                        ⚙️ Configure Otto
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>Active Customers</p>
+                </div>
+                <div class="stat-item">
+                    <h3>800+</h3>
+                    <p>Luxury Vehicles</p>
+                </div>
+                <div class="stat-item">
+                    <h3>600+</h3>
+                    <p>Call Records</p>
+                </div>
+                <div class="stat-item">
+                    <h3>97%</h3>
+                    <p>Customer Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Choose Your Otto AI Plan</h2>
+                <p>Flexible pricing options to fit dealerships of all sizes</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Starter Plan -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3>Starter</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">299</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Perfect for small dealerships getting started with AI</p>
+                    </div>
+                    <div class="plan-features">
+                        <ul>
+                            <li>✅ Otto AI Phone Agent</li>
+                            <li>✅ Up to 500 calls/month</li>
+                            <li>✅ Customer Management</li>
+                            <li>✅ Basic Analytics</li>
+                            <li>✅ Email Support</li>
+                            <li>✅ 1 User Account</li>
+                        </ul>
+                    </div>
+                    <div class="plan-action">
+                        <a href="/purchase.html?plan=starter" class="btn-secondary">Get Started</a>
+                    </div>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="pricing-card featured">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3>Professional</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">799</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Complete solution for growing dealerships</p>
+                    </div>
+                    <div class="plan-features">
+                        <ul>
+                            <li>✅ Everything in Starter</li>
+                            <li>✅ Unlimited calls</li>
+                            <li>✅ Vehicle Inventory Management</li>
+                            <li>✅ Advanced Analytics & Reports</li>
+                            <li>✅ Lead Scoring & Management</li>
+                            <li>✅ Appointment Scheduling</li>
+                            <li>✅ Priority Support</li>
+                            <li>✅ Up to 5 User Accounts</li>
+                        </ul>
+                    </div>
+                    <div class="plan-action">
+                        <a href="/purchase.html?plan=professional" class="btn-primary">Start Free Trial</a>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3>Enterprise</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">1,999</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Full-scale solution for large dealership groups</p>
+                    </div>
+                    <div class="plan-features">
+                        <ul>
+                            <li>✅ Everything in Professional</li>
+                            <li>✅ Multi-location Support</li>
+                            <li>✅ Custom Otto Training</li>
+                            <li>✅ API Access & Integrations</li>
+                            <li>✅ Emergency Call Handling</li>
+                            <li>✅ White-label Options</li>
+                            <li>✅ Dedicated Account Manager</li>
+                            <li>✅ Unlimited Users</li>
+                        </ul>
+                    </div>
+                    <div class="plan-action">
+                        <a href="/purchase.html?plan=enterprise" class="btn-secondary">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-footer">
+                <p>🎯 <strong>All plans include:</strong> Otto AI Agent, Mercedes-Benz inspired dashboard, mobile access, and 99.9% uptime guarantee</p>
+                <p>💳 <strong>Payment options:</strong> Monthly or annual billing • 14-day free trial • No setup fees</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>🤖 Otto AI</h4>
+                    <p>The world's most advanced AI-powered automotive dealership management system.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <a href="/otto-dashboard.html">Otto Dashboard</a>
+                    <a href="/otto-dashboard.html#customers">Customer Management</a>
+                    <a href="/otto-dashboard.html#vehicles">Vehicle Inventory</a>
+                    <a href="/otto-dashboard.html#ai-assistant">Otto AI Agent</a>
+                    <a href="#pricing">Pricing Plans</a>
+                </div>
+                <div class="footer-section">
+                    <h4>AI Features</h4>
+                    <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank">Talk to Otto</a>
+                    <a href="/otto-dashboard.html#calls">Call Analytics</a>
+                    <a href="/otto-dashboard.html#messages">Message Analysis</a>
+                    <a href="/otto-dashboard.html#leads">Lead Scoring</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Technology</h4>
+                    <a href="https://github.com/theblockchainbaby/otto-ai-platform" target="_blank">GitHub Repository</a>
+                    <a href="/api-docs.html">API Documentation</a>
+                    <a href="/demo.html">Try Demo</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Otto AI Platform. Built with ❤️ for the automotive industry.</p>
+                <p>Powered by ElevenLabs AI • OpenAI GPT-4 • Twilio • Mercedes-Benz Design</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.remove('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+
+            if (!mobileMenu.contains(event.target) && !toggle.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(15, 42, 68, 0.95)';
+            } else {
+                header.style.background = 'var(--mb-primary-gradient)';
+            }
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-item h3');
+                    statNumbers.forEach(stat => {
+                        const finalNumber = stat.textContent;
+                        const isPercentage = finalNumber.includes('%');
+                        const number = parseInt(finalNumber.replace(/\D/g, ''));
+
+                        let current = 0;
+                        const increment = number / 50;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= number) {
+                                current = number;
+                                clearInterval(timer);
+                            }
+                            stat.textContent = Math.floor(current) + (isPercentage ? '%' : '+');
+                        }, 30);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+    </script>
+</body>
+</html>

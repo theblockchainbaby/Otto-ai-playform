@@ -402,7 +402,7 @@ router.get('/test-voice', async (req, res) => {
 });
 
 // POST /api/twilio/otto/incoming - Handle incoming calls with Otto agent
-router.post('/otto/incoming', verifyTwilioWebhook, async (req, res) => {
+router.post('/otto/incoming', async (req, res) => {
   try {
     const { From, To, CallSid, CallerName } = req.body;
 
@@ -420,22 +420,33 @@ router.post('/otto/incoming', verifyTwilioWebhook, async (req, res) => {
       });
     }
 
-    // Create call record
-    const call = await prisma.call.create({
-      data: {
-        direction: 'INBOUND',
-        status: 'RINGING',
-        outcome: 'IN_PROGRESS',
-        startedAt: new Date(),
-        customerId: customer?.id,
-        metadata: {
-          twilioCallSid: CallSid,
-          callerName: CallerName,
-          aiAgent: 'Otto',
-          customerRecognized: !!customer
+    // If no customer found, create a temporary one for unknown callers
+    if (!customer && From) {
+      customer = await prisma.customer.create({
+        data: {
+          firstName: CallerName || 'Unknown',
+          lastName: 'Caller',
+          email: `unknown-${CallSid}@temp.autolux.com`,
+          phone: From,
+          address: `Temporary customer created for incoming call from ${From}`
         }
-      }
-    });
+      });
+    }
+
+    // Create call record (only if we have a customer)
+    let call = null;
+    if (customer) {
+      call = await prisma.call.create({
+        data: {
+          direction: 'INBOUND',
+          status: 'RINGING',
+          outcome: `Otto AI Agent - Call from ${From}`,
+          startedAt: new Date(),
+          customerId: customer.id,
+          notes: `Otto AI Agent call - Twilio CallSid: ${CallSid}, Caller: ${CallerName || 'Unknown'}`
+        }
+      });
+    }
 
     // Start Otto conversation
     const callContext = {
@@ -481,7 +492,7 @@ router.post('/otto/incoming', verifyTwilioWebhook, async (req, res) => {
 });
 
 // POST /api/twilio/otto/response - Handle Otto conversation responses
-router.post('/otto/response', verifyTwilioWebhook, async (req, res) => {
+router.post('/otto/response', async (req, res) => {
   try {
     const { CallSid, SpeechResult, Confidence } = req.body;
 

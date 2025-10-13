@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Otto AI - Choose Your Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mb-blue: #0F2A44;
+            --mb-light-blue: #1E4A66;
+            --mb-accent-blue: #4A90B8;
+            --mb-gold: #D4AF37;
+            --mb-white: #FFFFFF;
+            --mb-charcoal: #2C2C2C;
+            --mb-silver: #C0C0C0;
+            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
+            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--mb-charcoal);
+            background: #F8F9FA;
+        }
+
+        .header {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content {
+            padding: 3rem 0;
+        }
+
+        .purchase-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .plan-summary {
+            background: var(--mb-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--mb-shadow-elevated);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .plan-summary h3 {
+            color: var(--mb-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--mb-gold);
+            padding-bottom: 0.5rem;
+        }
+
+        .selected-plan {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .plan-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--mb-gold);
+        }
+
+        .plan-features {
+            margin: 1.5rem 0;
+        }
+
+        .plan-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            color: var(--mb-charcoal);
+        }
+
+        .purchase-form {
+            background: var(--mb-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .form-section {
+            margin: 2rem 0;
+        }
+
+        .form-section h4 {
+            color: var(--mb-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin: 1rem 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--mb-charcoal);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--mb-accent-blue);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .billing-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--mb-silver);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--mb-gold);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--mb-white);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--mb-gold);
+            color: var(--mb-charcoal);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--mb-blue);
+            border: 2px solid var(--mb-blue);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .btn-primary:hover {
+            background: #F4D03F;
+        }
+
+        .btn-secondary:hover {
+            background: var(--mb-blue);
+            color: var(--mb-white);
+        }
+
+        .security-info {
+            background: #E8F5E8;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .security-info p {
+            color: #2E7D32;
+            font-weight: 500;
+        }
+
+        .back-button {
+            background: var(--mb-blue);
+            color: var(--mb-white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: var(--mb-light-blue);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .purchase-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .plan-summary {
+                position: static;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🤖 Purchase Otto AI</h1>
+            <p>Complete your purchase and start revolutionizing your dealership today</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <a href="/" class="back-button">
+                ← Back to Home
+            </a>
+
+            <div class="purchase-grid">
+                <div class="purchase-form">
+                    <div class="form-section">
+                        <h4>📋 Business Information</h4>
+                        <div class="form-group">
+                            <label for="dealership">Dealership Name *</label>
+                            <input type="text" id="dealership" name="dealership" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>💳 Payment Information</h4>
+                        <div class="billing-toggle">
+                            <span>Monthly</span>
+                            <div class="toggle-switch" onclick="toggleBilling()">
+                                <div class="toggle-slider"></div>
+                            </div>
+                            <span><strong>Annual (Save 20%)</strong></span>
+                        </div>
+                        
+                        <div class="security-info">
+                            <p>🔒 Secure payment processing powered by Stripe</p>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="proceedToPayment()">
+                                🔒 Proceed to Secure Payment
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-secondary" onclick="startFreeTrial()">
+                                🎯 Start 14-Day Free Trial
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="plan-summary">
+                    <h3>Order Summary</h3>
+                    <div class="selected-plan">
+                        <div class="plan-name" id="planName">Professional Plan</div>
+                        <div class="plan-price" id="planPrice">$799/month</div>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <h4>What's Included:</h4>
+                        <ul id="planFeatures">
+                            <li>✅ Otto AI Phone Agent</li>
+                            <li>✅ Unlimited calls</li>
+                            <li>✅ Customer Management</li>
+                            <li>✅ Vehicle Inventory</li>
+                            <li>✅ Advanced Analytics</li>
+                            <li>✅ Priority Support</li>
+                            <li>✅ Up to 5 Users</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E9ECEF;">
+                        <p><strong>Total: <span id="totalPrice">$799/month</span></strong></p>
+                        <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;">
+                            14-day free trial • Cancel anytime
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get plan from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedPlan = urlParams.get('plan') || 'professional';
+        let isAnnual = false;
+
+        const plans = {
+            starter: {
+                name: 'Starter Plan',
+                monthlyPrice: 299,
+                features: [
+                    '✅ Otto AI Phone Agent',
+                    '✅ Up to 500 calls/month',
+                    '✅ Customer Management',
+                    '✅ Basic Analytics',
+                    '✅ Email Support',
+                    '✅ 1 User Account'
+                ]
+            },
+            professional: {
+                name: 'Professional Plan',
+                monthlyPrice: 799,
+                features: [
+                    '✅ Everything in Starter',
+                    '✅ Unlimited calls',
+                    '✅ Vehicle Inventory Management',
+                    '✅ Advanced Analytics & Reports',
+                    '✅ Lead Scoring & Management',
+                    '✅ Appointment Scheduling',
+                    '✅ Priority Support',
+                    '✅ Up to 5 User Accounts'
+                ]
+            },
+            enterprise: {
+                name: 'Enterprise Plan',
+                monthlyPrice: 1999,
+                features: [
+                    '✅ Everything in Professional',
+                    '✅ Multi-location Support',
+                    '✅ Custom Otto Training',
+                    '✅ API Access & Integrations',
+                    '✅ Emergency Call Handling',
+                    '✅ White-label Options',
+                    '✅ Dedicated Account Manager',
+                    '✅ Unlimited Users'
+                ]
+            }
+        };
+
+        function updatePlanDisplay() {
+            const plan = plans[selectedPlan];
+            const price = isAnnual ? Math.round(plan.monthlyPrice * 0.8) : plan.monthlyPrice;
+            const period = isAnnual ? '/month (billed annually)' : '/month';
+
+            document.getElementById('planName').textContent = plan.name;
+            document.getElementById('planPrice').textContent = `$${price}${period}`;
+            document.getElementById('totalPrice').textContent = `$${price}${period}`;
+            
+            const featuresHtml = plan.features.map(feature => `<li>${feature}</li>`).join('');
+            document.getElementById('planFeatures').innerHTML = featuresHtml;
+        }
+
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const toggle = document.querySelector('.toggle-switch');
+            toggle.classList.toggle('active');
+            updatePlanDisplay();
+        }
+
+        function proceedToPayment() {
+            // Validate form
+            const dealership = document.getElementById('dealership').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!dealership || !firstName || !lastName || !email || !phone) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Simulate payment processing
+            const button = event.target;
+            button.textContent = '🔄 Processing Payment...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                // Redirect to success page
+                window.location.href = `/success.html?plan=${selectedPlan}&billing=${isAnnual ? 'annual' : 'monthly'}`;
+            }, 2000);
+        }
+
+        function startFreeTrial() {
+            // Validate form
+            const dealership = document.getElementById('dealership').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!dealership || !firstName || !lastName || !email || !phone) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Simulate trial setup
+            const button = event.target;
+            button.textContent = '🔄 Setting up trial...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                // Redirect to success page with trial parameter
+                window.location.href = `/success.html?plan=${selectedPlan}&trial=true`;
+            }, 2000);
+        }
+
+        // Initialize the page
+        updatePlanDisplay();
+    </script>
+</body>
+</html>

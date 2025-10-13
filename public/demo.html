@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto AI Demo - Experience Otto AI Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mb-blue: #0F2A44;
+            --mb-light-blue: #1E4A66;
+            --mb-accent-blue: #4A90B8;
+            --mb-gold: #D4AF37;
+            --mb-white: #FFFFFF;
+            --mb-charcoal: #2C2C2C;
+            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
+            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: var(--mb-shadow-elevated);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-header {
+            margin-bottom: 2rem;
+        }
+
+        .demo-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--mb-white) 0%, var(--mb-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .otto-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .demo-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .demo-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--mb-gold);
+        }
+
+        .demo-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .demo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--mb-gold);
+            color: var(--mb-charcoal);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--mb-white);
+            border: 2px solid var(--mb-white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .btn-primary:hover {
+            background: #F4D03F;
+        }
+
+        .btn-secondary:hover {
+            background: var(--mb-white);
+            color: var(--mb-blue);
+        }
+
+        .phone-demo {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .phone-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--mb-gold);
+            margin: 1rem 0;
+        }
+
+        .demo-steps {
+            text-align: left;
+            margin: 1rem 0;
+        }
+
+        .demo-steps ol {
+            padding-left: 1.5rem;
+        }
+
+        .demo-steps li {
+            margin: 0.5rem 0;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                padding: 2rem;
+            }
+
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-options {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .phone-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🤖 Experience Otto AI</h1>
+            <p>Try our revolutionary AI phone agent for automotive customer service</p>
+            <div class="otto-badge">🎯 Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw</div>
+        </div>
+
+        <div class="demo-options">
+            <div class="demo-card" onclick="window.open('https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw', '_blank')">
+                <div class="demo-icon">🗣️</div>
+                <h3>Chat with Otto</h3>
+                <p>Experience Otto's conversational AI directly through ElevenLabs' interface</p>
+            </div>
+
+            <div class="demo-card" onclick="showPhoneDemo()">
+                <div class="demo-icon">📞</div>
+                <h3>Call Otto</h3>
+                <p>Test Otto's phone integration with real voice calls and automotive scenarios</p>
+            </div>
+
+            <div class="demo-card" onclick="window.location.href='/otto-dashboard.html'">
+                <div class="demo-icon">🚀</div>
+                <h3>Full Platform</h3>
+                <p>Explore the complete Otto AI Platform with all features</p>
+            </div>
+        </div>
+
+        <div class="phone-demo" id="phoneDemo" style="display: none;">
+            <h3>📞 Call Otto Now</h3>
+            <div class="phone-number">+1 (888) 411-8568</div>
+            <div class="demo-steps">
+                <p><strong>Try these scenarios:</strong></p>
+                <ol>
+                    <li>"I want to buy a Mercedes-Benz"</li>
+                    <li>"I need to schedule a service appointment"</li>
+                    <li>"My car broke down, I need roadside assistance"</li>
+                    <li>"What financing options do you have?"</li>
+                    <li>"I'm a returning customer, my name is [Your Name]"</li>
+                </ol>
+            </div>
+            <p style="opacity: 0.8; font-size: 0.9rem; margin-top: 1rem;">
+                Otto will recognize your voice, understand your needs, and respond with professional automotive expertise.
+            </p>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn btn-primary">
+                🗣️ Chat with Otto
+            </a>
+            <a href="/otto-dashboard.html" class="btn btn-secondary">
+                🚀 Launch Otto
+            </a>
+            <a href="/" class="btn btn-secondary">
+                ← Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function showPhoneDemo() {
+            const phoneDemo = document.getElementById('phoneDemo');
+            phoneDemo.style.display = phoneDemo.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Add some interactive animations
+        document.querySelectorAll('.demo-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

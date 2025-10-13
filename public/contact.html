@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Support | Otto AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mb-blue: #0F2A44;
+            --mb-light-blue: #1E4A66;
+            --mb-accent-blue: #4A90B8;
+            --mb-gold: #D4AF37;
+            --mb-white: #FFFFFF;
+            --mb-charcoal: #2C2C2C;
+            --mb-silver: #C0C0C0;
+            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
+            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--mb-charcoal);
+            background: #F8F9FA;
+        }
+
+        .header {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content {
+            padding: 3rem 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .contact-card {
+            background: var(--mb-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--mb-shadow-elevated);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            color: var(--mb-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card p {
+            color: var(--mb-charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--mb-accent-blue);
+        }
+
+        .otto-section {
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            padding: 3rem 0;
+            text-align: center;
+            margin: 3rem 0;
+            border-radius: 12px;
+        }
+
+        .otto-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .otto-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .otto-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .phone-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--mb-gold);
+            margin: 1rem 0;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--mb-gold);
+            color: var(--mb-charcoal);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--mb-white);
+            border: 2px solid var(--mb-white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .btn-primary:hover {
+            background: #F4D03F;
+        }
+
+        .btn-secondary:hover {
+            background: var(--mb-white);
+            color: var(--mb-blue);
+        }
+
+        .back-button {
+            background: var(--mb-blue);
+            color: var(--mb-white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: var(--mb-light-blue);
+            transform: translateY(-2px);
+        }
+
+        .support-section {
+            background: var(--mb-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--mb-shadow-elevated);
+            margin: 2rem 0;
+        }
+
+        .support-section h2 {
+            color: var(--mb-blue);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--mb-gold);
+            padding-bottom: 0.5rem;
+        }
+
+        .faq-item {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #F8F9FA;
+            border-radius: 8px;
+            border-left: 4px solid var(--mb-accent-blue);
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--mb-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer {
+            color: var(--mb-charcoal);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phone-number {
+                font-size: 2rem;
+            }
+
+            .support-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🤖 Contact & Support</h1>
+            <p>Get help with Otto AI Platform and Otto AI Agent</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <a href="/" class="back-button">
+                ← Back to Home
+            </a>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">🤖</div>
+                    <h3>Otto AI Agent</h3>
+                    <p>Talk to our AI agent for instant automotive assistance</p>
+                    <div class="contact-info">Available 24/7</div>
+                    <div style="margin-top: 1rem;">
+                        <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn btn-primary">
+                            🗣️ Chat with Otto
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Phone Support</h3>
+                    <p>Call our AI-powered phone system for immediate assistance</p>
+                    <div class="contact-info">+1 (888) 411-8568</div>
+                    <div style="margin-top: 1rem;">
+                        <a href="tel:+18884118568" class="btn btn-primary">
+                            📞 Call Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email Support</h3>
+                    <p>Send us an email for detailed technical support</p>
+                    <div class="contact-info">support@ottoagent.net</div>
+                    <div style="margin-top: 1rem;">
+                        <a href="mailto:support@ottoagent.net" class="btn btn-primary">
+                            📧 Send Email
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📚</div>
+                    <h3>Documentation</h3>
+                    <p>Browse our comprehensive API documentation and guides</p>
+                    <div class="contact-info">Complete API Reference</div>
+                    <div style="margin-top: 1rem;">
+                        <a href="/api-docs.html" class="btn btn-primary">
+                            📚 View Docs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="otto-section">
+                <div class="container">
+                    <div class="otto-content">
+                        <h2>🤖 Try Otto AI Agent</h2>
+                        <p>Experience the future of automotive customer service with our custom ElevenLabs AI agent</p>
+                        <div class="phone-number">+1 (888) 411-8568</div>
+                        <div>
+                            <a href="/demo.html" class="btn btn-primary">
+                                🎯 Try Demo
+                            </a>
+                            <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn btn-secondary">
+                                🗣️ Chat with Otto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-section">
+                <h2>❓ Frequently Asked Questions</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I access the Otto dashboard?</div>
+                    <div class="faq-answer">Visit <a href="/otto-dashboard.html">/otto-dashboard.html</a> and login with your credentials. Demo login: john.anderson@otto.ai / admin123</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How does Otto AI agent work?</div>
+                    <div class="faq-answer">Otto is a custom ElevenLabs conversational AI agent trained specifically for automotive customer service. It can handle calls, recognize customers, and provide intelligent responses.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I integrate Otto with my existing phone system?</div>
+                    <div class="faq-answer">Yes! Otto integrates with Twilio for phone calls. Check our API documentation for webhook endpoints and configuration details.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What automotive scenarios can Otto handle?</div>
+                    <div class="faq-answer">Otto can handle vehicle sales inquiries, service appointments, emergency roadside assistance, financing questions, and customer recognition for returning clients.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Is there a mobile app?</div>
+                    <div class="faq-answer">The Otto AI platform is fully responsive and works perfectly on mobile devices through your web browser. A dedicated mobile app is planned for future release.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click tracking for contact methods
+        document.querySelectorAll('.contact-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const method = this.querySelector('h3').textContent;
+                console.log('Contact method clicked:', method);
+            });
+        });
+    </script>
+</body>
+</html>

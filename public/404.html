@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Otto AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mb-blue: #0F2A44;
+            --mb-light-blue: #1E4A66;
+            --mb-accent-blue: #4A90B8;
+            --mb-gold: #D4AF37;
+            --mb-white: #FFFFFF;
+            --mb-charcoal: #2C2C2C;
+            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
+            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--mb-primary-gradient);
+            color: var(--mb-white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--mb-white) 0%, var(--mb-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--mb-white);
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--mb-gold);
+            color: var(--mb-charcoal);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--mb-white);
+            border: 2px solid var(--mb-white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--mb-shadow-elevated);
+        }
+
+        .btn-primary:hover {
+            background: #F4D03F;
+        }
+
+        .btn-secondary:hover {
+            background: var(--mb-white);
+            color: var(--mb-blue);
+        }
+
+        .suggestions {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .suggestions h3 {
+            color: var(--mb-gold);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .suggestions ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .suggestions li {
+            margin: 0.5rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .suggestions li:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions a {
+            color: var(--mb-white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .suggestions a:hover {
+            color: var(--mb-gold);
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 6rem;
+            }
+
+            .error-title {
+                font-size: 2rem;
+            }
+
+            .error-message {
+                font-size: 1.1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .suggestions {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">🚗💨</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-message">
+            Looks like this page took a wrong turn! Even Otto couldn't find it.
+            <br>Let's get you back on the right road.
+        </p>
+
+        <div class="suggestions">
+            <h3>🎯 Popular Destinations</h3>
+            <ul>
+                <li><a href="/">🏠 Home - Otto AI Platform</a></li>
+                <li><a href="/otto-dashboard.html">🚀 Dashboard - Full Platform Access</a></li>
+                <li><a href="/demo.html">🤖 Otto Demo - Try Our AI Agent</a></li>
+                <li><a href="/api-docs.html">📚 API Documentation</a></li>
+                <li><a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank">🗣️ Chat with Otto</a></li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                🏠 Go Home
+            </a>
+            <a href="/otto-dashboard.html" class="btn btn-secondary">
+                🚀 Launch Otto
+            </a>
+            <a href="/demo.html" class="btn btn-secondary">
+                🤖 Try Otto
+            </a>
+        </div>
+
+        <div style="margin-top: 3rem; opacity: 0.7; font-size: 0.9rem;">
+            <p>Need help? Otto is available 24/7 at <strong>+1 (888) 411-8568</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Add some fun animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorCode = document.querySelector('.error-code');
+            const icon = document.querySelector('.error-icon');
+            
+            // Animate the 404 number
+            errorCode.style.animation = 'pulse 2s infinite';
+            
+            // Animate the car icon
+            icon.style.animation = 'bounce 2s infinite';
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                }
+                
+                @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                    40% { transform: translateY(-10px); }
+                    60% { transform: translateY(-5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Track 404 errors (you could send this to analytics)
+        console.log('404 Error:', {
+            url: window.location.href,
+            referrer: document.referrer,
+            timestamp: new Date().toISOString()
+        });
+    </script>
+</body>
+</html>

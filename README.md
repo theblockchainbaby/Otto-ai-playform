@@ -1,10 +1,12 @@
-# 🚗 AutoLux Intelligence Platform
+# 🤖 Otto - AI-Powered Automotive Intelligence Platform
+
+**🌐 Live at: https://ottoagent.net**
 
 > **The World's Most Advanced AI-Powered Automotive Dealership Management System**
 
-A comprehensive, enterprise-grade automotive dealership management platform featuring **Otto**, a custom ElevenLabs AI agent for intelligent phone call handling, real-time customer management, and complete business automation.
+A comprehensive, enterprise-grade automotive dealership management platform powered by **Otto**, a custom ElevenLabs AI agent for intelligent phone call handling, real-time customer management, and complete business automation.
 
-![AutoLux Platform](https://img.shields.io/badge/Platform-AutoLux%20Intelligence-blue?style=for-the-badge)
+![Otto Platform](https://img.shields.io/badge/Platform-Otto%20AI%20Intelligence-blue?style=for-the-badge)
 ![AI Agent](https://img.shields.io/badge/AI%20Agent-Otto%20by%20ElevenLabs-purple?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-green?style=for-the-badge)
 
@@ -39,6 +41,15 @@ A comprehensive, enterprise-grade automotive dealership management platform feat
 - **Professional UI/UX** with Mercedes-Benz inspired design
 - **Mobile-Responsive** interface for all devices
 
+## 🌐 Live Deployment
+
+**Otto AI is live at: https://ottoagent.net**
+
+- **Call Otto**: +1 (888) 411-8568
+- **Chat with Otto**: [ElevenLabs Agent](https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw)
+- **Try Demo**: [Otto Demo Page](https://ottoagent.net/demo.html)
+- **View Pricing**: [Pricing Plans](https://ottoagent.net#pricing)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -50,8 +61,8 @@ A comprehensive, enterprise-grade automotive dealership management platform feat
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/theblockchainbaby/autolux-intelligence-platform.git
-cd autolux-intelligence-platform
+git clone https://github.com/theblockchainbaby/otto-ai-platform.git
+cd otto-ai-platform
 ```
 
 2. **Install dependencies**
@@ -83,7 +94,7 @@ npm run dev
 
 7. **Access the platform**
 - Dashboard: http://localhost:3000
-- Login: `john.anderson@autolux.com` / `admin123`
+- Login: `john.anderson@ottoagent.net` / `admin123`
 
 ## 🤖 Otto AI Agent Setup
 
@@ -178,19 +189,26 @@ npm run db:seed      # Seed with sample data
 ### Environment Variables
 See `.env.example` for all required configuration options.
 
-## 🚀 Deployment
+## 🚀 Deploy Your Own Otto AI
 
-### Production Setup
-1. Set `NODE_ENV=production`
-2. Configure production database
-3. Add real API keys for ElevenLabs, OpenAI, Twilio
-4. Set up SSL certificates
-5. Configure reverse proxy (nginx)
+### One-Click Railway Deployment
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/otto-ai-platform)
 
-### Docker Deployment
+### Manual Deployment Guides
+- **`DEPLOYMENT.md`** - Complete step-by-step deployment guide
+- **`GODADDY-DNS-SETUP.md`** - GoDaddy DNS configuration for ottoagent.net
+- **`railway.json`** - Railway platform configuration
+
+### Quick Deploy Script
 ```bash
-docker-compose -f docker-compose.prod.yml up -d
+chmod +x deploy.sh
+./deploy.sh
 ```
+
+### Domain Configuration
+- **Live Domain**: `ottoagent.net` (configured for GoDaddy DNS)
+- **SSL**: Automatically configured by Railway
+- **CDN**: Global content delivery included
 
 ## 🤝 Contributing
 
@@ -204,15 +222,26 @@ docker-compose -f docker-compose.prod.yml up -d
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## � Contact & Support
+
+- **Live Website**: https://ottoagent.net
+- **Email**: support@ottoagent.net
+- **Phone**: +1 (888) 411-8568 (Otto will connect you to our team)
+- **GitHub**: [Issues & Feature Requests](https://github.com/theblockchainbaby/otto-ai-platform/issues)
+- **Demo**: [Try Otto Now](https://ottoagent.net/demo.html)
+
+## �🙏 Acknowledgments
 
 - **ElevenLabs** for the amazing Otto AI agent
 - **OpenAI** for GPT-4 integration
 - **Twilio** for phone system capabilities
 - **Mercedes-Benz** for design inspiration
+- **GoDaddy** for domain hosting
 
 ---
 
-**Built with ❤️ for the automotive industry**
+**Otto AI - Revolutionizing Automotive Intelligence** 🤖🚗
 
-*Revolutionizing how dealerships manage customers, inventory, and communications with cutting-edge AI technology.*
+*Built with ❤️ for the automotive industry*
+
+**Live at: https://ottoagent.net**

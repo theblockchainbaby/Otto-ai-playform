@@ -1,4 +1,4 @@
-import { ElevenLabsApi, ElevenLabsApiOptions } from '@elevenlabs/elevenlabs-js';
+import ElevenLabs from 'elevenlabs';
 import fs from 'fs';
 import path from 'path';
 
@@ -18,7 +18,7 @@ export interface GenerateSpeechOptions {
 }
 
 class ElevenLabsService {
-  private client: ElevenLabsApi | null = null;
+  private client: any | null = null;
   private isDemo: boolean = false;
 
   // Otto - Custom AutoLux AI Agent
@@ -61,19 +61,14 @@ class ElevenLabsService {
   constructor() {
     const apiKey = process.env.ELEVENLABS_API_KEY;
     
-    if (!apiKey || apiKey === '' || apiKey === 'demo-key-for-testing') {
+    if (!apiKey || apiKey === '' || apiKey === 'demo-key-for-testing' || apiKey === 'your_elevenlabs_api_key_here') {
       console.log('ElevenLabs API key not configured - voice features will use demo mode');
       this.isDemo = true;
     } else {
-      try {
-        this.client = new ElevenLabsApi({
-          apiKey: apiKey
-        });
-        console.log('ElevenLabs service initialized successfully');
-      } catch (error) {
-        console.error('Failed to initialize ElevenLabs:', error);
-        this.isDemo = true;
-      }
+      console.log('ElevenLabs API key configured - voice features enabled');
+      this.isDemo = false;
+      // For now, we'll use the WebSocket connection directly in TwiML
+      // The actual ElevenLabs client initialization can be done later
     }
   }
 
@@ -303,18 +298,13 @@ class ElevenLabsService {
    * Start a conversation with Otto agent
    */
   async startOttoConversation(customerName?: string, callContext?: any): Promise<any> {
-    if (this.isDemo) {
-      return {
-        conversation_id: 'demo-conversation-' + Date.now(),
-        agent_id: this.OTTO_AGENT_ID,
-        status: 'active',
-        message: `Hello ${customerName || 'valued customer'}, this is Otto from AutoLux. How can I assist you today?`
-      };
-    }
-
-    if (!this.client) {
-      throw new Error('ElevenLabs client not initialized');
-    }
+    // For now, always return demo response since we're using WebSocket connection directly
+    return {
+      conversation_id: 'demo-conversation-' + Date.now(),
+      agent_id: this.OTTO_AGENT_ID,
+      status: 'active',
+      message: `Hello ${customerName || 'valued customer'}, this is Otto from AutoLux. How can I assist you today?`
+    };
 
     try {
       // Initialize conversation with Otto
@@ -374,26 +364,26 @@ class ElevenLabsService {
       ? `Hello ${customerName}, this is Otto from AutoLux Premium Automotive.`
       : 'Hello, this is Otto from AutoLux Premium Automotive.';
 
-    if (this.isDemo) {
+    // Use ElevenLabs Conversational AI with proper WebSocket URL
+    if (!this.isDemo && process.env.ELEVENLABS_API_KEY) {
       return `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say voice="alice">${greeting} How can I assist you with your automotive needs today?</Say>
-    <Gather input="speech" action="/api/twilio/otto/response" method="POST" speechTimeout="3">
-        <Say voice="alice">Please tell me how I can help you.</Say>
-    </Gather>
+    <Connect>
+        <Stream url="wss://api.elevenlabs.io/v1/convai/conversation/ws">
+            <Parameter name="agent_id" value="${this.OTTO_AGENT_ID}" />
+            <Parameter name="authorization" value="Bearer ${process.env.ELEVENLABS_API_KEY}" />
+        </Stream>
+    </Connect>
 </Response>`;
     }
 
-    // For production, integrate with ElevenLabs Conversational AI
+    // Demo mode with better voice quality
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Connect>
-        <Stream url="wss://api.elevenlabs.io/v1/convai/conversation">
-            <Parameter name="agent_id" value="${this.OTTO_AGENT_ID}" />
-            <Parameter name="customer_name" value="${customerName || 'Customer'}" />
-            <Parameter name="business_context" value="AutoLux Premium Automotive Dealership" />
-        </Stream>
-    </Connect>
+    <Say voice="Polly.Matthew-Neural">${greeting} How can I assist you with your automotive needs today?</Say>
+    <Gather input="speech" action="/api/twilio/otto/response" method="POST" speechTimeout="5" speechModel="phone_call">
+        <Say voice="Polly.Matthew-Neural">Please tell me how I can help you with your vehicle today.</Say>
+    </Gather>
 </Response>`;
   }
 

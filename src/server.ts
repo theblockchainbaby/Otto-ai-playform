@@ -101,10 +101,16 @@ app.use('/api/twilio', twilioWebhookRoutes); // No auth middleware for Twilio we
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    message: `The requested route ${req.originalUrl} does not exist.`,
-  });
+  // For API routes, return JSON error
+  if (req.originalUrl.startsWith('/api/')) {
+    res.status(404).json({
+      error: 'Route not found',
+      message: `The requested route ${req.originalUrl} does not exist.`,
+    });
+  } else {
+    // For web routes, serve custom 404 page
+    res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
+  }
 });
 
 // Error handling middleware (must be last)
@@ -125,7 +131,7 @@ process.on('SIGTERM', async () => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Automotive AI Server running on port ${PORT}`);
+  console.log(`🤖 Otto AI Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
