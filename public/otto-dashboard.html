@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Mercedes-Benz Inspired Color Palette */
+            /* Color Palette */
             --mb-platinum: #E5E0D8;
             --mb-silver: #C0C0C0;
             --mb-dark-silver: #8C8C8C;
@@ -22,19 +22,19 @@
             --mb-warning: #FFB800;
             --mb-error: #C41E3A;
 
-            /* Mercedes-Benz Inspired Gradients */
+            /* Gradients */
             --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
             --mb-platinum-gradient: linear-gradient(135deg, #F4F4F4 0%, #E5E0D8 50%, #D4D4D4 100%);
             --mb-overlay-gradient: linear-gradient(to bottom, rgba(244, 244, 244, 0.05) 0%, rgba(244, 244, 244, 0.10) 5%, rgba(244, 244, 244, 0.15) 15%, rgba(244, 244, 244, 0.20) 30%, rgba(244, 244, 244, 0.25) 50%, rgba(244, 244, 244, 0.30) 70%, rgba(244, 244, 244, 0.35) 85%, rgba(244, 244, 244, 0.40) 95%, rgba(244, 244, 244, 0.45) 100%);
             --mb-dark-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.10) 5%, rgba(0, 0, 0, 0.15) 15%, rgba(0, 0, 0, 0.20) 30%, rgba(0, 0, 0, 0.25) 50%, rgba(0, 0, 0, 0.30) 70%, rgba(0, 0, 0, 0.35) 85%, rgba(0, 0, 0, 0.40) 95%, rgba(0, 0, 0, 0.45) 100%);
 
-            /* Mercedes-Benz Inspired Shadows */
+            /* Shadows */
             --mb-shadow-subtle: 0 2px 8px rgba(15, 42, 68, 0.08);
             --mb-shadow-medium: 0 4px 16px rgba(15, 42, 68, 0.12);
             --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
             --mb-shadow-floating: 0 16px 64px rgba(15, 42, 68, 0.20);
 
-            /* Mercedes-Benz Typography Scale */
+            /* Typography Scale */
             --mb-font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
             --mb-font-weight-light: 300;
             --mb-font-weight-regular: 400;
@@ -120,13 +120,16 @@
             position: relative;
         }
 
+        .brand-logo img {
+            height: 120px;
+            width: auto;
+            margin-bottom: 1rem;
+        }
+
         .brand-logo h1 {
             font-size: 2.25rem;
             font-weight: var(--mb-font-weight-bold);
-            background: var(--mb-primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FFC107;
             margin-bottom: 0.75rem;
             letter-spacing: -0.02em;
         }
@@ -324,13 +327,21 @@
             position: relative;
         }
 
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 50px;
+            width: auto;
+        }
+
         .header-logo h1 {
             font-size: 1.75rem;
             font-weight: var(--mb-font-weight-bold);
-            background: var(--mb-primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FFC107;
             letter-spacing: -0.02em;
         }
 
@@ -1740,7 +1751,8 @@
     <div id="loginSection" class="login-container">
         <div class="login-card">
             <div class="brand-logo">
-                <h1>🤖 Otto AI</h1>
+                <img src="/images/otto-logo.svg" alt="Otto AI Logo">
+                <h1>Otto AI</h1>
                 <p>Premium Automotive AI Platform</p>
             </div>
             
@@ -1776,7 +1788,8 @@
         <header class="header">
             <div class="header-content">
                 <div class="header-logo">
-                    <h1>🤖 Otto AI</h1>
+                    <img src="/images/otto-logo.svg" alt="Otto AI Logo">
+                    <h1>Otto AI</h1>
                 </div>
                 <div class="header-user">
                     <div class="user-info">
@@ -5402,7 +5415,7 @@
             const transcriptText = document.getElementById('transcriptionText');
             const demoWords = [
                 "Hello,", "this", "is", "Sarah", "from", "Otto", "AI.",
-                "Thank", "you", "for", "calling", "about", "the", "2024", "Mercedes-Benz", "E-Class.",
+                "Thank", "you", "for", "calling", "about", "the", "2024", "E-Class.",
                 "I'd", "be", "happy", "to", "help", "you", "with", "information", "about", "pricing",
                 "and", "availability.", "Are", "you", "looking", "to", "schedule", "a", "test", "drive?"
             ];

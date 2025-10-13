@@ -50,14 +50,17 @@
             margin-bottom: 2rem;
         }
 
+        .demo-header img {
+            height: 120px;
+            width: auto;
+            margin-bottom: 1.5rem;
+        }
+
         .demo-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--mb-white) 0%, var(--mb-gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FFC107;
         }
 
         .demo-header p {
@@ -217,7 +220,8 @@
 <body>
     <div class="demo-container">
         <div class="demo-header">
-            <h1>🤖 Experience Otto AI</h1>
+            <img src="/images/otto-logo.svg" alt="Otto AI Logo">
+            <h1>Experience Otto AI</h1>
             <p>Try our revolutionary AI phone agent for automotive customer service</p>
             <div class="otto-badge">🎯 Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw</div>
         </div>
@@ -248,7 +252,7 @@
             <div class="demo-steps">
                 <p><strong>Try these scenarios:</strong></p>
                 <ol>
-                    <li>"I want to buy a Mercedes-Benz"</li>
+                    <li>"I want to buy a new car"</li>
                     <li>"I need to schedule a service appointment"</li>
                     <li>"My car broke down, I need roadside assistance"</li>
                     <li>"What financing options do you have?"</li>
@@ -262,10 +266,10 @@
 
         <div class="cta-buttons">
             <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn btn-primary">
-                🗣️ Chat with Otto
+                Chat with Otto
             </a>
             <a href="/otto-dashboard.html" class="btn btn-secondary">
-                🚀 Launch Otto
+                Launch Otto
             </a>
             <a href="/" class="btn btn-secondary">
                 ← Back to Home

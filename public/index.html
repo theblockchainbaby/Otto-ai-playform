@@ -5,24 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otto - AI-Powered Automotive Intelligence Platform</title>
     <meta name="description" content="The world's most advanced AI-powered automotive dealership management system powered by Otto, a custom ElevenLabs AI agent for intelligent phone call handling.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
-            --mb-platinum: #E5E0D8;
-            --mb-silver: #C0C0C0;
-            --mb-dark-silver: #8C8C8C;
-            --mb-charcoal: #2C2C2C;
-            --mb-black: #1A1A1A;
-            --mb-white: #FFFFFF;
-            --mb-blue: #0F2A44;
-            --mb-light-blue: #1E4A66;
-            --mb-accent-blue: #4A90B8;
-            --mb-gold: #D4AF37;
-            --mb-success: #00A86B;
-            --mb-warning: #FFB800;
-            --mb-error: #C41E3A;
-            --mb-primary-gradient: linear-gradient(135deg, #0F2A44 0%, #1E4A66 50%, #4A90B8 100%);
-            --mb-shadow-elevated: 0 8px 32px rgba(15, 42, 68, 0.16);
+            /* Modern Color Palette */
+            --primary-yellow: #FFD237;
+            --dark-bg: #0B0F19;
+            --dark-slate: #2B303F;
+            --accent-blue: #3B82F6;
+            --text-light: #EAEAEA;
+            --text-muted: #9CA3AF;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --error: #EF4444;
+
+            /* Gradients */
+            --hero-gradient: linear-gradient(135deg, #0B0F19 0%, #1E293B 50%, #3B82F6 100%);
+            --glow-gradient: radial-gradient(circle at 50% 50%, rgba(255, 210, 55, 0.15), transparent 70%);
+
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(255, 210, 55, 0.3);
+
+            /* Typography */
+            --font-heading: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         * {
@@ -32,10 +44,17 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             line-height: 1.6;
-            color: var(--mb-charcoal);
-            background: var(--mb-white);
+            color: var(--text-light);
+            background: var(--dark-bg);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            line-height: 1.2;
         }
 
         .container {
@@ -46,14 +65,21 @@
 
         /* Header */
         header {
-            background: var(--mb-primary-gradient);
-            color: var(--mb-white);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-light);
             padding: 1rem 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(11, 15, 25, 0.95);
+            box-shadow: var(--shadow-md);
         }
 
         nav {
@@ -64,10 +90,27 @@
 
         .logo {
             font-size: 1.8rem;
-            font-weight: 700;
+            font-weight: 800;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: var(--primary-yellow);
+            font-family: var(--font-heading);
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            filter: drop-shadow(0 0 20px rgba(255, 210, 55, 0.5));
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: rotate(-5deg) scale(1.05);
         }
 
         .nav-links {
@@ -77,245 +120,448 @@
         }
 
         .nav-links a {
-            color: var(--mb-white);
+            color: var(--text-light);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-yellow);
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--mb-gold);
+            color: var(--primary-yellow);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
 
         .cta-button {
-            background: var(--mb-gold);
-            color: var(--mb-black);
-            padding: 12px 24px;
+            background: var(--primary-yellow);
+            color: var(--dark-bg);
+            padding: 12px 28px;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
             text-decoration: none;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--font-heading);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .cta-button:hover {
-            background: #F4D03F;
-            transform: translateY(-2px);
-            box-shadow: var(--mb-shadow-elevated);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-glow);
         }
 
         /* Hero Section */
         .hero {
-            background: var(--mb-primary-gradient);
-            color: var(--mb-white);
-            padding: 120px 0 80px;
+            background: var(--hero-gradient);
+            color: var(--text-light);
+            padding: 140px 0 80px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: auto;
+            display: block;
         }
 
         .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 1000px;
+            background: var(--glow-gradient);
+            animation: glow-pulse 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .hero::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.4;
+            pointer-events: none;
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
+            width: 100%;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--mb-white) 0%, var(--mb-gold) 100%);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--primary-yellow) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.02em;
+            animation: fade-in-up 0.8s ease-out;
+            white-space: nowrap;
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            color: var(--text-muted);
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.8;
+            animation: fade-in-up 0.8s ease-out 0.2s both;
         }
 
         .hero-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
+            animation: fade-in-up 0.8s ease-out 0.4s both;
+        }
+
+        .hero-tagline {
+            font-size: 1.1rem;
+            color: var(--primary-yellow);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: fade-in-up 0.8s ease-out 0.1s both;
         }
 
         .btn-primary {
-            background: var(--mb-gold);
-            color: var(--mb-black);
+            background: var(--primary-yellow);
+            color: var(--dark-bg);
             padding: 16px 32px;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 1.1rem;
             text-decoration: none;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 400px;
+            height: 400px;
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--mb-white);
+            color: var(--text-light);
             padding: 16px 32px;
-            border: 2px solid var(--mb-white);
-            border-radius: 8px;
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
             font-weight: 600;
             font-size: 1.1rem;
             text-decoration: none;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            background: var(--card-bg);
         }
 
         .btn-primary:hover {
-            background: #F4D03F;
-            transform: translateY(-2px);
-            box-shadow: var(--mb-shadow-elevated);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-glow);
         }
 
         .btn-secondary:hover {
-            background: var(--mb-white);
-            color: var(--mb-blue);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-yellow);
+            color: var(--primary-yellow);
+            transform: translateY(-3px) scale(1.02);
         }
 
         /* Features Section */
         .features {
-            padding: 80px 0;
-            background: #F8F9FA;
+            padding: 60px 0;
+            background: var(--dark-bg);
+            position: relative;
         }
 
-        .section-title {
+        .section-header {
             text-align: center;
             margin-bottom: 3rem;
         }
 
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
         .section-title h2 {
             font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--mb-blue);
-            margin-bottom: 1rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            font-family: var(--font-heading);
         }
 
         .section-title p {
             font-size: 1.2rem;
-            color: var(--mb-dark-silver);
-            max-width: 600px;
+            color: var(--text-muted);
+            max-width: 700px;
             margin: 0 auto;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         .feature-card {
-            background: var(--mb-white);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--mb-shadow-elevated);
+            border-radius: 18px;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-yellow), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(100%);
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.03);
+            border-color: rgba(255, 210, 55, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 210, 55, 0.15);
         }
 
         .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-yellow);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 20px rgba(255, 210, 55, 0.5));
         }
 
         .feature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--mb-blue);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-light);
             margin-bottom: 1rem;
+            font-family: var(--font-heading);
         }
 
         .feature-card p {
-            color: var(--mb-dark-silver);
-            line-height: 1.6;
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .feature-action {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--primary-yellow);
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-action {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Otto Section */
         .otto-section {
-            padding: 80px 0;
-            background: var(--mb-primary-gradient);
-            color: var(--mb-white);
+            padding: 60px 0;
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            color: var(--text-light);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .otto-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.1), transparent 50%);
+            pointer-events: none;
         }
 
         .otto-content {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .otto-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-family: var(--font-heading);
+        }
+
+        .otto-content p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
         }
 
         .otto-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 2rem;
             display: inline-block;
+            color: var(--primary-yellow);
         }
 
         /* Stats Section */
         .stats {
-            padding: 60px 0;
-            background: var(--mb-charcoal);
-            color: var(--mb-white);
+            padding: 50px 0;
+            background: var(--dark-slate);
+            color: var(--text-light);
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            gap: 3rem;
             text-align: center;
         }
 
+        .stat-item {
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
         .stat-item h3 {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--mb-gold);
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-yellow);
             margin-bottom: 0.5rem;
+            font-family: var(--font-heading);
+            text-shadow: 0 0 30px rgba(255, 210, 55, 0.3);
         }
 
         .stat-item p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            color: var(--text-muted);
         }
 
         /* Footer */
         footer {
-            background: var(--mb-black);
-            color: var(--mb-white);
-            padding: 40px 0;
+            background: #000000;
+            color: var(--text-light);
+            padding: 60px 0 30px;
             text-align: center;
+            border-top: 1px solid var(--card-border);
         }
 
         .footer-content {
@@ -377,52 +623,57 @@
 
         /* Pricing Section */
         .pricing-section {
-            padding: 5rem 0;
-            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+            padding: 60px 0;
+            background: var(--dark-bg);
         }
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 2rem;
-            margin: 3rem 0;
+            margin: 2.5rem 0;
         }
 
         .pricing-card {
-            background: var(--mb-white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--mb-shadow-elevated);
-            transition: all 0.3s ease;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            border: 2px solid transparent;
         }
 
         .pricing-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(15, 42, 68, 0.2);
+            transform: translateY(-10px);
+            border-color: rgba(255, 210, 55, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 210, 55, 0.15);
         }
 
         .pricing-card.featured {
-            border: 2px solid var(--mb-gold);
+            border: 2px solid var(--primary-yellow);
             transform: scale(1.05);
+            background: rgba(255, 210, 55, 0.03);
         }
 
         .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-8px);
+            transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 25px 70px rgba(255, 210, 55, 0.25);
         }
 
         .popular-badge {
             position: absolute;
-            top: -12px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--mb-gold);
-            color: var(--mb-charcoal);
-            padding: 8px 24px;
-            border-radius: 20px;
-            font-weight: 600;
+            background: var(--primary-yellow);
+            color: var(--dark-bg);
+            padding: 10px 28px;
+            border-radius: 24px;
+            font-weight: 700;
             font-size: 0.9rem;
+            font-family: var(--font-heading);
+            box-shadow: 0 4px 12px rgba(255, 210, 55, 0.4);
         }
 
         .plan-header {
@@ -431,46 +682,47 @@
         }
 
         .plan-header h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--mb-blue);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-light);
             margin-bottom: 1rem;
+            font-family: var(--font-heading);
         }
 
         .price {
             display: flex;
             align-items: baseline;
             justify-content: center;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
         }
 
         .currency {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--mb-blue);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-yellow);
         }
 
         .amount {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--mb-blue);
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-yellow);
             margin: 0 4px;
+            font-family: var(--font-heading);
         }
 
         .period {
-            font-size: 1.2rem;
-            color: var(--mb-charcoal);
-            opacity: 0.7;
+            font-size: 1.3rem;
+            color: var(--text-muted);
         }
 
         .plan-description {
-            color: var(--mb-charcoal);
-            opacity: 0.8;
-            line-height: 1.5;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 1.05rem;
         }
 
         .plan-features {
-            margin: 2rem 0;
+            margin: 2.5rem 0;
         }
 
         .plan-features ul {
@@ -479,10 +731,20 @@
         }
 
         .plan-features li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #F1F3F4;
-            color: var(--mb-charcoal);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-light);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.2rem;
         }
 
         .plan-features li:last-child {
@@ -500,19 +762,32 @@
             padding: 16px 24px;
             font-size: 1.1rem;
             font-weight: 600;
+            justify-content: center;
+        }
+
+        /* Override btn-secondary for pricing cards to be visible */
+        .plan-action .btn-secondary {
+            background: var(--mb-gold);
+            color: var(--mb-black);
+            border: 2px solid var(--mb-gold);
+        }
+
+        .plan-action .btn-secondary:hover {
+            background: #F4D03F;
+            border-color: #F4D03F;
+            color: var(--mb-black);
         }
 
         .pricing-footer {
             text-align: center;
             margin-top: 3rem;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
+            padding: 1rem 0;
         }
 
         .pricing-footer p {
             margin: 0.5rem 0;
-            color: var(--mb-charcoal);
+            color: var(--text-muted);
+            font-size: 1.05rem;
         }
 
         .mobile-menu a {
@@ -528,6 +803,18 @@
         }
 
         /* Responsive Design */
+        @media (min-width: 1400px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .pricing-grid {
                 grid-template-columns: 1fr;
@@ -562,7 +849,8 @@
             }
 
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                white-space: normal;
             }
 
             .hero p {
@@ -612,7 +900,8 @@
     <header>
         <nav class="container">
             <div class="logo">
-                🤖 Otto AI
+                <img src="/images/otto-logo.svg" alt="Otto AI Logo">
+                Otto AI
             </div>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
@@ -622,7 +911,7 @@
             </ul>
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <a href="/otto-dashboard.html" class="cta-button">
-                    🚀 Launch Otto
+                    Launch Otto
                 </a>
                 <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                     ☰
@@ -633,7 +922,7 @@
                 <a href="#otto" onclick="closeMobileMenu()">Otto AI</a>
                 <a href="#pricing" onclick="closeMobileMenu()">Pricing</a>
                 <a href="/contact.html" onclick="closeMobileMenu()">Contact</a>
-                <a href="/otto-dashboard.html" onclick="closeMobileMenu()">🚀 Launch Otto</a>
+                <a href="/otto-dashboard.html" onclick="closeMobileMenu()">Launch Otto</a>
             </div>
         </nav>
     </header>
@@ -642,17 +931,18 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>Otto - The Future of Automotive AI</h1>
-                <p>Revolutionary AI-powered dealership management system powered by Otto, your custom ElevenLabs AI agent for intelligent customer service and complete business automation.</p>
+                <div class="hero-tagline">Automotive Intelligence, Simplified.</div>
+                <h1>Transform Your Dealership with Otto AI</h1>
+                <p>The world's most advanced AI-powered platform for automotive dealerships. Answer calls instantly, manage inventory effortlessly, and close deals faster with Otto—your 24/7 AI assistant.</p>
                 <div class="hero-buttons">
                     <a href="/otto-dashboard.html" class="btn-primary">
-                        🚀 Launch Otto
+                        <i class="fas fa-rocket"></i> Launch Otto
                     </a>
                     <a href="/demo.html" class="btn-secondary">
-                        🤖 Try Otto Demo
+                        <i class="fas fa-play-circle"></i> Try Demo
                     </a>
-                    <a href="#otto" class="btn-secondary">
-                        📖 Learn More
+                    <a href="#features" class="btn-secondary">
+                        <i class="fas fa-info-circle"></i> Learn More
                     </a>
                 </div>
             </div>
@@ -663,39 +953,45 @@
     <section id="features" class="features">
         <div class="container">
             <div class="section-title">
-                <h2>🌟 Enterprise-Grade Features</h2>
+                <h2>Built for Dealerships that Demand Precision</h2>
                 <p>Everything you need to manage a modern automotive dealership with cutting-edge AI technology</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
+            <div class="features-grid" data-aos="fade-up" data-aos-duration="800">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon"><i class="fas fa-robot"></i></div>
                     <h3>Otto AI Agent</h3>
                     <p>Custom ElevenLabs conversational AI for intelligent phone call handling, customer recognition, and real-time voice synthesis.</p>
+                    <div class="feature-action">Answer calls before your team even can →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">👥</div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
                     <h3>Customer Management</h3>
                     <p>Complete CRM with 500+ customer profiles, purchase history, service records, and predictive analytics.</p>
+                    <div class="feature-action">Know your customers better →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚗</div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon"><i class="fas fa-car"></i></div>
                     <h3>Vehicle Inventory</h3>
                     <p>Manage 800+ luxury vehicles with detailed specifications, pricing, availability, and automated updates.</p>
+                    <div class="feature-action">Track every vehicle effortlessly →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📞</div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon"><i class="fas fa-phone-volume"></i></div>
                     <h3>Call Center Operations</h3>
                     <p>Advanced call tracking, recording, transcription, and AI-powered sentiment analysis for every interaction.</p>
+                    <div class="feature-action">Never miss a customer insight →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📅</div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
                     <h3>Smart Scheduling</h3>
                     <p>Intelligent appointment booking with automated reminders, conflict resolution, and resource optimization.</p>
+                    <div class="feature-action">Never double-book again →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚨</div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon"><i class="fas fa-ambulance"></i></div>
                     <h3>Emergency Services</h3>
                     <p>24/7 roadside assistance coordination with GPS tracking, service provider network, and real-time updates.</p>
+                    <div class="feature-action">Be there when it matters most →</div>
                 </div>
             </div>
         </div>
@@ -710,13 +1006,13 @@
                 <p>Otto is a custom-trained ElevenLabs conversational AI agent specifically designed for automotive customer service. With advanced natural language processing and your custom voice, Otto handles calls with the professionalism of your best sales representative.</p>
                 <div class="hero-buttons" style="margin-top: 2rem;">
                     <a href="/demo.html" class="btn-primary">
-                        🤖 Try Otto Demo
+                        Try Otto Demo
                     </a>
                     <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn-secondary">
-                        🗣️ Chat with Otto
+                        Chat with Otto
                     </a>
                     <a href="/otto-dashboard.html#ai-assistant" class="btn-secondary">
-                        ⚙️ Configure Otto
+                        Configure Otto
                     </a>
                 </div>
             </div>
@@ -769,12 +1065,12 @@
                     </div>
                     <div class="plan-features">
                         <ul>
-                            <li>✅ Otto AI Phone Agent</li>
-                            <li>✅ Up to 500 calls/month</li>
-                            <li>✅ Customer Management</li>
-                            <li>✅ Basic Analytics</li>
-                            <li>✅ Email Support</li>
-                            <li>✅ 1 User Account</li>
+                            <li>Otto AI Phone Agent</li>
+                            <li>Up to 500 calls/month</li>
+                            <li>Customer Management</li>
+                            <li>Basic Analytics</li>
+                            <li>Email Support</li>
+                            <li>1 User Account</li>
                         </ul>
                     </div>
                     <div class="plan-action">
@@ -796,14 +1092,14 @@
                     </div>
                     <div class="plan-features">
                         <ul>
-                            <li>✅ Everything in Starter</li>
-                            <li>✅ Unlimited calls</li>
-                            <li>✅ Vehicle Inventory Management</li>
-                            <li>✅ Advanced Analytics & Reports</li>
-                            <li>✅ Lead Scoring & Management</li>
-                            <li>✅ Appointment Scheduling</li>
-                            <li>✅ Priority Support</li>
-                            <li>✅ Up to 5 User Accounts</li>
+                            <li>Everything in Starter</li>
+                            <li>Unlimited calls</li>
+                            <li>Vehicle Inventory Management</li>
+                            <li>Advanced Analytics & Reports</li>
+                            <li>Lead Scoring & Management</li>
+                            <li>Appointment Scheduling</li>
+                            <li>Priority Support</li>
+                            <li>Up to 5 User Accounts</li>
                         </ul>
                     </div>
                     <div class="plan-action">
@@ -824,14 +1120,14 @@
                     </div>
                     <div class="plan-features">
                         <ul>
-                            <li>✅ Everything in Professional</li>
-                            <li>✅ Multi-location Support</li>
-                            <li>✅ Custom Otto Training</li>
-                            <li>✅ API Access & Integrations</li>
-                            <li>✅ Emergency Call Handling</li>
-                            <li>✅ White-label Options</li>
-                            <li>✅ Dedicated Account Manager</li>
-                            <li>✅ Unlimited Users</li>
+                            <li>Everything in Professional</li>
+                            <li>Multi-location Support</li>
+                            <li>Custom Otto Training</li>
+                            <li>API Access & Integrations</li>
+                            <li>Emergency Call Handling</li>
+                            <li>White-label Options</li>
+                            <li>Dedicated Account Manager</li>
+                            <li>Unlimited Users</li>
                         </ul>
                     </div>
                     <div class="plan-action">
@@ -841,8 +1137,7 @@
             </div>
 
             <div class="pricing-footer">
-                <p>🎯 <strong>All plans include:</strong> Otto AI Agent, Mercedes-Benz inspired dashboard, mobile access, and 99.9% uptime guarantee</p>
-                <p>💳 <strong>Payment options:</strong> Monthly or annual billing • 14-day free trial • No setup fees</p>
+                <p><strong>Payment options:</strong> Monthly or annual billing • No setup fees</p>
             </div>
         </div>
     </section>
@@ -852,7 +1147,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>🤖 Otto AI</h4>
+                    <h4><img src="/images/otto-logo.svg" alt="Otto AI" style="height: 30px; vertical-align: middle; margin-right: 8px;">Otto AI</h4>
                     <p>The world's most advanced AI-powered automotive dealership management system.</p>
                 </div>
                 <div class="footer-section">
@@ -879,7 +1174,7 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 Otto AI Platform. Built with ❤️ for the automotive industry.</p>
-                <p>Powered by ElevenLabs AI • OpenAI GPT-4 • Twilio • Mercedes-Benz Design</p>
+                <p>Powered by ElevenLabs AI • OpenAI GPT-4 • Twilio</p>
             </div>
         </div>
     </footer>
@@ -965,6 +1260,74 @@
         if (statsSection) {
             observer.observe(statsSection);
         }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
     </script>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: true,
+            offset: 100
+        });
+    </script>
+
+    <!-- Floating CTA Button -->
+    <a href="/otto-dashboard.html" class="floating-cta" title="Launch Otto">
+        <i class="fas fa-rocket"></i>
+    </a>
+
+    <style>
+        .floating-cta {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--dark-bg);
+            box-shadow: 0 8px 24px rgba(255, 210, 55, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+            text-decoration: none;
+            animation: float-bounce 3s ease-in-out infinite;
+        }
+
+        .floating-cta:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(255, 210, 55, 0.6);
+        }
+
+        @keyframes float-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-cta {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
 </body>
 </html>
