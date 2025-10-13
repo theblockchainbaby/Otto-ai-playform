@@ -45,11 +45,11 @@ In Railway dashboard, go to Variables tab and add:
 
 ```env
 NODE_ENV=production
-JWT_SECRET=your-super-secure-random-string-here
-ELEVENLABS_API_KEY=sk_069522a3e143c120684fe6924fa8791093d6fea95c699038
-TWILIO_ACCOUNT_SID=ACafc412b62982312dc2efebaff233cf9f
-TWILIO_AUTH_TOKEN=32c6e878cdc5707707980e6d6272f713
-TWILIO_PHONE_NUMBER=+18884118568
+JWT_SECRET=your-jwt-secret-here
+ELEVENLABS_API_KEY=your-elevenlabs-key
+TWILIO_ACCOUNT_SID=your-twilio-sid
+TWILIO_AUTH_TOKEN=your-twilio-token
+TWILIO_PHONE_NUMBER=your-phone-number
 DOMAIN=https://ottoagent.net
 WEBHOOK_URL=https://ottoagent.net/api/twilio/otto/incoming
 ```
