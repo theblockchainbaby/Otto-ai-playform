@@ -6,7 +6,6 @@
     <title>Purchase Otto AI - Choose Your Plan</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
             /* Modern Color Palette */
@@ -431,7 +430,7 @@
 <body>
     <div class="header">
         <div class="container">
-            <div class="header-content" data-aos="fade-up">
+            <div class="header-content">
                 <h1>Purchase Otto AI</h1>
                 <p>Complete your purchase and start revolutionizing your dealership today</p>
             </div>
@@ -445,7 +444,7 @@
             </a>
 
             <div class="purchase-grid">
-                <div class="purchase-form" data-aos="fade-up">
+                <div class="purchase-form">
                     <div class="form-section">
                         <h4><i class="fas fa-building"></i> Business Information</h4>
                         <div class="form-group">
@@ -500,7 +499,7 @@
                     </div>
                 </div>
 
-                <div class="plan-summary" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-summary">
                     <h3>Order Summary</h3>
                     <div class="selected-plan">
                         <div class="plan-name" id="planName">Professional Plan</div>
@@ -654,15 +653,6 @@
         updatePlanDisplay();
     </script>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease-out',
-            once: true,
-            offset: 100
-        });
-    </script>
+
 </body>
 </html>
