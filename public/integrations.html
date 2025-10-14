@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM/DMS Integrations - Otto AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-yellow: #FFD237;
+            --dark-bg: #0B0F19;
+            --dark-slate: #2B303F;
+            --accent-blue: #3B82F6;
+            --text-light: #EAEAEA;
+            --text-muted: #9CA3AF;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --hero-gradient: linear-gradient(135deg, #0B0F19 0%, #1E293B 50%, #3B82F6 100%);
+            --font-heading: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            color: var(--text-light);
+            background: var(--dark-bg);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header {
+            background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-yellow);
+            font-family: var(--font-heading);
+            text-decoration: none;
+        }
+
+        .logo img { height: 50px; width: auto; }
+
+        .hero {
+            background: var(--hero-gradient);
+            padding: 140px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            font-family: var(--font-heading);
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--primary-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-family: var(--font-heading);
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .integration-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            padding: 2.5rem;
+            border-radius: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 210, 55, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 210, 55, 0.15);
+        }
+
+        .integration-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #F59E0B 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .integration-card h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-family: var(--font-heading);
+        }
+
+        .integration-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            color: var(--text-light);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .feature-list li:last-child { border-bottom: none; }
+
+        .feature-list i {
+            color: var(--primary-yellow);
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-yellow);
+            color: var(--dark-bg);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(255, 210, 55, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .integration-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">
+                <img src="/images/otto-logo.svg" alt="Otto AI Logo">
+                Otto AI
+            </a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Seamless CRM/DMS Integration</h1>
+            <p>Connect Otto AI to your existing systems with zero downtime. No need to rebuild or migrate data.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Supported Integrations</h2>
+                <p>Otto AI integrates with all major automotive CRM and DMS platforms</p>
+            </div>
+
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-database"></i></div>
+                    <h3>CDK Global</h3>
+                    <p>Full integration with CDK Drive, Elead CRM, and CDK DMS platforms.</p>
+                    <span class="badge">Native API</span>
+                    <span class="badge">Real-time Sync</span>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-car-side"></i></div>
+                    <h3>Reynolds & Reynolds</h3>
+                    <p>Connect to ERA, docuPAD, and Reynolds DMS systems seamlessly.</p>
+                    <span class="badge">Native API</span>
+                    <span class="badge">Bi-directional</span>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>DealerSocket</h3>
+                    <p>Integrate with DealerSocket CRM, ILM, and inventory management.</p>
+                    <span class="badge">Webhook Support</span>
+                    <span class="badge">Auto-sync</span>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-handshake"></i></div>
+                    <h3>VinSolutions</h3>
+                    <p>Connect to VinSolutions Connect CRM and lead management tools.</p>
+                    <span class="badge">REST API</span>
+                    <span class="badge">Real-time</span>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-plug"></i></div>
+                    <h3>Custom REST API</h3>
+                    <p>Connect any CRM/DMS with our flexible REST API integration.</p>
+                    <span class="badge">OAuth 2.0</span>
+                    <span class="badge">Webhooks</span>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon"><i class="fas fa-cloud"></i></div>
+                    <h3>Salesforce Automotive</h3>
+                    <p>Native Salesforce integration for automotive dealerships.</p>
+                    <span class="badge">AppExchange</span>
+                    <span class="badge">Certified</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: rgba(255, 255, 255, 0.02);">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p>Three simple steps to connect your existing systems</p>
+            </div>
+
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <h3><span style="color: var(--primary-yellow);">1.</span> API Authentication</h3>
+                    <p>Securely connect using OAuth 2.0 or API keys. Your credentials are encrypted and never stored in plain text.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> OAuth 2.0 Support</li>
+                        <li><i class="fas fa-check"></i> API Key Authentication</li>
+                        <li><i class="fas fa-check"></i> Role-based Access Control</li>
+                    </ul>
+                </div>
+
+                <div class="integration-card">
+                    <h3><span style="color: var(--primary-yellow);">2.</span> Data Mapping</h3>
+                    <p>Map your CRM fields to Otto AI automatically. We handle the data transformation.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Auto-field Detection</li>
+                        <li><i class="fas fa-check"></i> Custom Field Mapping</li>
+                        <li><i class="fas fa-check"></i> Data Validation</li>
+                    </ul>
+                </div>
+
+                <div class="integration-card">
+                    <h3><span style="color: var(--primary-yellow);">3.</span> Real-time Sync</h3>
+                    <p>Changes sync instantly between Otto AI and your CRM. No manual updates needed.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Bi-directional Sync</li>
+                        <li><i class="fas fa-check"></i> Conflict Resolution</li>
+                        <li><i class="fas fa-check"></i> Webhook Notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>API Documentation</h2>
+                <p>Quick start guide for developers</p>
+            </div>
+
+            <div class="code-block">
+                <pre>
+// Example: Connect to Otto AI API
+const axios = require('axios');
+
+const ottoAPI = axios.create({
+  baseURL: 'https://api.ottoagent.net/v1',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  }
+});
+
+// Sync customer data from your CRM
+async function syncCustomer(customerData) {
+  const response = await ottoAPI.post('/customers/sync', {
+    externalId: customerData.id,
+    firstName: customerData.first_name,
+    lastName: customerData.last_name,
+    email: customerData.email,
+    phone: customerData.phone,
+    metadata: {
+      source: 'CDK_GLOBAL',
+      lastUpdated: new Date().toISOString()
+    }
+  });
+  return response.data;
+}
+
+// Listen for Otto AI events via webhook
+app.post('/webhooks/otto', (req, res) => {
+  const event = req.body;
+  
+  switch(event.type) {
+    case 'call.completed':
+      // Update your CRM with call details
+      updateCRMCallLog(event.data);
+      break;
+    case 'lead.created':
+      // Create new lead in your CRM
+      createCRMLead(event.data);
+      break;
+  }
+  
+  res.status(200).send('OK');
+});
+                </pre>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="/contact.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i> Request Integration Setup
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

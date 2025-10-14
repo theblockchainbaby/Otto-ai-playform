@@ -92,10 +92,15 @@ app.get('/api/status', (req, res) => {
       'Customer management',
       'Appointment scheduling',
       'Lead tracking',
-      'Emergency assistance'
+      'Emergency assistance',
+      'CRM/DMS Integrations'
     ]
   });
 });
+
+// Integration API routes
+const integrationsRouter = require('./routes/integrations');
+app.use('/api/v1/integrations', integrationsRouter);
 
 // Twilio webhook endpoint (basic)
 app.post('/api/twilio/otto/incoming', (req, res) => {
