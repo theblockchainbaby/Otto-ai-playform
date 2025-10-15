@@ -1,0 +1,228 @@
+{
+  "name": "Otto - Appointment Booking with SMS & Voice Follow-ups",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/appointment-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook - Appointment Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-appointment-request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ottoagent.net/api/appointments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.intent.appointmentType }} - {{ $json.customer.name }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $json.intent.appointmentType }}"
+            },
+            {
+              "name": "startTime",
+              "value": "={{ $json.intent.preferredDate }}T{{ $json.intent.preferredTime }}:00Z"
+            },
+            {
+              "name": "endTime",
+              "value": "={{ $json.intent.preferredDate }}T{{ $json.intent.preferredTime }}:00Z"
+            },
+            {
+              "name": "customerId",
+              "value": "={{ $json.customer.id }}"
+            },
+            {
+              "name": "notes",
+              "value": "={{ $json.intent.notes || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-request-1",
+      "name": "Create Appointment in Otto AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1",
+          "name": "Otto AI API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromPhoneNumber": "+18884118568",
+        "toPhoneNumber": "={{ $('Webhook - Appointment Request').item.json.customer.phone }}",
+        "message": "=Hi {{ $('Webhook - Appointment Request').item.json.customer.name }}! Your {{ $('Webhook - Appointment Request').item.json.intent.appointmentType }} appointment is confirmed for {{ $('Webhook - Appointment Request').item.json.intent.preferredDate }} at {{ $('Webhook - Appointment Request').item.json.intent.preferredTime }}. See you soon! - Otto AI"
+      },
+      "id": "twilio-sms-1",
+      "name": "Send Confirmation SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 2,
+      "position": [690, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "2",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "hours",
+        "amount": 24
+      },
+      "id": "wait-1",
+      "name": "Wait 24 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [910, 200],
+      "webhookId": "otto-reminder-wait"
+    },
+    {
+      "parameters": {
+        "fromPhoneNumber": "+18884118568",
+        "toPhoneNumber": "={{ $('Webhook - Appointment Request').item.json.customer.phone }}",
+        "message": "=Reminder: {{ $('Webhook - Appointment Request').item.json.customer.name }}, your appointment is tomorrow at {{ $('Webhook - Appointment Request').item.json.intent.preferredTime }}. Reply CONFIRM to confirm or CANCEL to reschedule. - Otto AI"
+      },
+      "id": "twilio-sms-2",
+      "name": "Send 24hr Reminder SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 2,
+      "position": [1130, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "2",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "makeCall",
+        "fromPhoneNumber": "+18884118568",
+        "toPhoneNumber": "={{ $('Webhook - Appointment Request').item.json.customer.phone }}",
+        "twimlUrl": "https://ottoagent.net/api/twilio/reminder-call?name={{ $('Webhook - Appointment Request').item.json.customer.name }}&type={{ $('Webhook - Appointment Request').item.json.intent.appointmentType }}&time={{ $('Webhook - Appointment Request').item.json.intent.preferredTime }}"
+      },
+      "id": "twilio-call-1",
+      "name": "Make Follow-up Call (Otto Voice)",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 2,
+      "position": [1350, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "2",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"appointmentId\": $json.id, \"message\": \"Appointment created successfully\", \"startTime\": $json.startTime, \"confirmationSent\": true } }}"
+      },
+      "id": "respond-webhook-1",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [690, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Appointment Request": {
+      "main": [
+        [
+          {
+            "node": "Create Appointment in Otto AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Appointment in Otto AI": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation SMS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation SMS": {
+      "main": [
+        [
+          {
+            "node": "Wait 24 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24 Hours": {
+      "main": [
+        [
+          {
+            "node": "Send 24hr Reminder SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send 24hr Reminder SMS": {
+      "main": [
+        [
+          {
+            "node": "Make Follow-up Call (Otto Voice)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2",
+  "id": "otto-appointment-followups",
+  "meta": {
+    "instanceId": "dualpay-n8n-cloud"
+  },
+  "tags": []
+}
+

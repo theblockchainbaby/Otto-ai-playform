@@ -17,6 +17,100 @@ const verifyTwilioWebhook = (req: express.Request, res: express.Response, next: 
   next();
 };
 
+// POST /api/twilio/reminder-call - Handle automated reminder calls from n8n
+router.post('/reminder-call', verifyTwilioWebhook, async (req, res) => {
+  try {
+    const { name, type, time } = req.query;
+
+    console.log('Reminder call:', { name, type, time });
+
+    // Generate Otto's reminder message with ElevenLabs voice
+    const reminderMessage = `Hello ${name || 'valued customer'}, this is Otto from AutoLux. I'm calling to remind you about your ${type || 'service'} appointment tomorrow at ${time}. Please press 1 to confirm your appointment, or press 2 if you need to reschedule. Thank you!`;
+
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+
+    // Use ElevenLabs Conversational AI for natural interaction
+    if (process.env.ELEVENLABS_API_KEY) {
+      // Connect to Otto AI agent for interactive conversation
+      const connect = twiml.connect();
+      const stream = connect.stream({
+        url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+      });
+      stream.parameter({
+        name: 'agent_id',
+        value: 'agent_3701k70bz4gcfd6vq1bkh57d15bw'
+      });
+      stream.parameter({
+        name: 'authorization',
+        value: `Bearer ${process.env.ELEVENLABS_API_KEY}`
+      });
+      stream.parameter({
+        name: 'first_message',
+        value: reminderMessage
+      });
+    } else {
+      // Fallback to basic TwiML with gather
+      const gather = twiml.gather({
+        numDigits: 1,
+        action: '/api/twilio/reminder-response',
+        method: 'POST',
+        timeout: 10
+      });
+      gather.say({ voice: 'Polly.Matthew-Neural' }, reminderMessage);
+
+      // If no input, repeat the message
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'We did not receive your response. Please call us back to confirm your appointment. Goodbye!');
+    }
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('Error handling reminder call:', error);
+
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say('Thank you for your time. We look forward to seeing you at your appointment.');
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// POST /api/twilio/reminder-response - Handle reminder call responses
+router.post('/reminder-response', verifyTwilioWebhook, async (req, res) => {
+  try {
+    const { Digits, CallSid } = req.body;
+
+    console.log('Reminder response:', { Digits, CallSid });
+
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+
+    if (Digits === '1') {
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'Perfect! Your appointment is confirmed. We look forward to seeing you. Have a great day!');
+      // TODO: Update appointment status in database
+    } else if (Digits === '2') {
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'No problem. Please call us at 1-888-411-8568 to reschedule your appointment. Thank you!');
+      // TODO: Flag appointment for rescheduling
+    } else {
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'We did not understand your response. Please call us at 1-888-411-8568. Thank you!');
+    }
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('Error handling reminder response:', error);
+
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say('Thank you for your time. Goodbye!');
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
 // POST /api/twilio/voice/incoming - Handle incoming calls
 router.post('/voice/incoming', verifyTwilioWebhook, async (req, res) => {
   try {
