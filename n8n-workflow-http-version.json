@@ -1,0 +1,426 @@
+{
+  "name": "Otto - Appointment Booking (HTTP Version)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/appointment-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook - Appointment Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "otto-appointment-request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "customer_id",
+              "name": "customerId",
+              "value": "={{ $json.customer?.id || $json.customerId || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "customer_name",
+              "name": "customerName",
+              "value": "={{ $json.customer?.name || $json.customerName || 'Valued Customer' }}",
+              "type": "string"
+            },
+            {
+              "id": "customer_email",
+              "name": "customerEmail",
+              "value": "={{ $json.customer?.email || $json.customerEmail || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "customer_phone",
+              "name": "customerPhone",
+              "value": "={{ $json.customer?.phone || $json.customerPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "appointment_type",
+              "name": "appointmentType",
+              "value": "={{ $json.intent?.appointmentType || $json.appointmentType || 'service' }}",
+              "type": "string"
+            },
+            {
+              "id": "preferred_date",
+              "name": "preferredDate",
+              "value": "={{ $json.intent?.preferredDate || $json.preferredDate || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "preferred_time",
+              "name": "preferredTime",
+              "value": "={{ $json.intent?.preferredTime || $json.preferredTime || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "notes",
+              "name": "notes",
+              "value": "={{ $json.intent?.notes || $json.notes || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-1",
+      "name": "Validate & Clean Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "phone_valid",
+              "leftValue": "={{ $json.customerPhone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "date_valid",
+              "leftValue": "={{ $json.preferredDate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-1",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ottoagent.net/api/appointments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.appointmentType }} - {{ $json.customerName }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $json.appointmentType }}"
+            },
+            {
+              "name": "startTime",
+              "value": "={{ $json.preferredDate }}T{{ $json.preferredTime }}:00Z"
+            },
+            {
+              "name": "customerId",
+              "value": "={{ $json.customerId }}"
+            },
+            {
+              "name": "notes",
+              "value": "={{ $json.notes }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-request-1",
+      "name": "Create Appointment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1",
+          "name": "Otto AI API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "formUrlEncoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "+18884118568"
+            },
+            {
+              "name": "To",
+              "value": "={{ $('Validate & Clean Data').item.json.customerPhone }}"
+            },
+            {
+              "name": "Body",
+              "value": "=Hi {{ $('Validate & Clean Data').item.json.customerName }}! Your {{ $('Validate & Clean Data').item.json.appointmentType }} appointment is confirmed for {{ $('Validate & Clean Data').item.json.preferredDate }} at {{ $('Validate & Clean Data').item.json.preferredTime }}. See you soon! - Otto AI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-sms-1",
+      "name": "Send Confirmation SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 100],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "hours",
+        "amount": 24
+      },
+      "id": "wait-1",
+      "name": "Wait 24 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1340, 100],
+      "webhookId": "otto-reminder-wait"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "formUrlEncoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "+18884118568"
+            },
+            {
+              "name": "To",
+              "value": "={{ $('Validate & Clean Data').item.json.customerPhone }}"
+            },
+            {
+              "name": "Body",
+              "value": "=Reminder: {{ $('Validate & Clean Data').item.json.customerName }}, your appointment is tomorrow at {{ $('Validate & Clean Data').item.json.preferredTime }}. Reply CONFIRM to confirm or CANCEL to reschedule. - Otto AI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-sms-2",
+      "name": "Send 24hr Reminder SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1560, 100],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Calls.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "formUrlEncoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "+18884118568"
+            },
+            {
+              "name": "To",
+              "value": "={{ $('Validate & Clean Data').item.json.customerPhone }}"
+            },
+            {
+              "name": "Url",
+              "value": "=https://ottoagent.net/api/twilio/reminder-call?name={{ $('Validate & Clean Data').item.json.customerName }}&type={{ $('Validate & Clean Data').item.json.appointmentType }}&time={{ $('Validate & Clean Data').item.json.preferredTime }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-call-1",
+      "name": "Make Follow-up Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1780, 100],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"appointmentId\": $('Create Appointment').item.json.id, \"message\": \"Appointment created successfully\" } }}"
+      },
+      "id": "respond-webhook-1",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"error\": \"Missing required fields\", \"message\": \"Phone number and date are required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-webhook-2",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Appointment Request": {
+      "main": [
+        [
+          {
+            "node": "Validate & Clean Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Clean Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Create Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Appointment": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation SMS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation SMS": {
+      "main": [
+        [
+          {
+            "node": "Wait 24 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24 Hours": {
+      "main": [
+        [
+          {
+            "node": "Send 24hr Reminder SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send 24hr Reminder SMS": {
+      "main": [
+        [
+          {
+            "node": "Make Follow-up Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4",
+  "id": "otto-appointment-http",
+  "meta": {
+    "instanceId": "dualpay-n8n-cloud"
+  },
+  "tags": []
+}
+
