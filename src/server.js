@@ -102,6 +102,10 @@ app.get('/api/status', (req, res) => {
 const integrationsRouter = require('./routes/integrations');
 app.use('/api/v1/integrations', integrationsRouter);
 
+// n8n Webhook routes
+const n8nWebhooksRouter = require('./routes/n8nWebhooks');
+app.use('/api/n8n', n8nWebhooksRouter);
+
 // Twilio webhook endpoint (basic)
 app.post('/api/twilio/otto/incoming', (req, res) => {
   console.log('Incoming Twilio webhook:', req.body);
