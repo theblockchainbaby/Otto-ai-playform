@@ -12,7 +12,7 @@
       "name": "Webhook - Appointment Request",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [250, 300],
+      "position": [240, 300],
       "webhookId": "otto-appointment-request"
     },
     {
@@ -65,7 +65,7 @@
       "name": "Create Appointment in Otto AI",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [470, 300],
+      "position": [460, 300],
       "credentials": {
         "httpHeaderAuth": {
           "id": "1",
@@ -83,7 +83,7 @@
       "name": "Send Confirmation SMS",
       "type": "n8n-nodes-base.twilio",
       "typeVersion": 2,
-      "position": [690, 200],
+      "position": [680, 300],
       "credentials": {
         "twilioApi": {
           "id": "2",
@@ -100,7 +100,7 @@
       "name": "Wait 24 Hours",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
-      "position": [910, 200],
+      "position": [900, 300],
       "webhookId": "otto-reminder-wait"
     },
     {
@@ -113,7 +113,7 @@
       "name": "Send 24hr Reminder SMS",
       "type": "n8n-nodes-base.twilio",
       "typeVersion": 2,
-      "position": [1130, 200],
+      "position": [1120, 300],
       "credentials": {
         "twilioApi": {
           "id": "2",
@@ -132,7 +132,7 @@
       "name": "Make Follow-up Call (Otto Voice)",
       "type": "n8n-nodes-base.twilio",
       "typeVersion": 2,
-      "position": [1350, 200],
+      "position": [1340, 300],
       "credentials": {
         "twilioApi": {
           "id": "2",
@@ -149,7 +149,7 @@
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [690, 400]
+      "position": [680, 480]
     }
   ],
   "connections": {
