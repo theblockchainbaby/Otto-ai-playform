@@ -69,7 +69,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Import and use auth routes if database is available
 if (prisma) {
   try {
-    const authRoutes = require('../dist/routes/auth').default;
+    const authRoutes = require('./routes/auth');
     app.use('/api/auth', authRoutes);
     console.log('✅ Auth routes loaded');
   } catch (error) {
