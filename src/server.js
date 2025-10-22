@@ -28,7 +28,19 @@ try {
 }
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      // Don't upgrade insecure requests in development
+      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+    },
+  },
+}));
 app.use(cors({
   origin: process.env.DOMAIN || 'http://localhost:3000',
   credentials: true
@@ -53,6 +65,17 @@ app.use(morgan('combined'));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Import and use auth routes if database is available
+if (prisma) {
+  try {
+    const authRoutes = require('../dist/routes/auth').default;
+    app.use('/api/auth', authRoutes);
+    console.log('✅ Auth routes loaded');
+  } catch (error) {
+    console.log('⚠️  Could not load auth routes:', error.message);
+  }
+}
 
 // Health check endpoint
 app.get('/health', async (req, res) => {
