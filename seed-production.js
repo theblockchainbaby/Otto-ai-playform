@@ -38,7 +38,6 @@ async function main() {
         city: 'Sacramento',
         state: 'CA',
         zipCode: '95814',
-        status: 'ACTIVE',
       },
     });
 
