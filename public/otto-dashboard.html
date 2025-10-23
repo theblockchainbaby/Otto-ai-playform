@@ -2728,18 +2728,19 @@
     </div>
 
     <script>
-        let token = localStorage.getItem('token');
-        let user = null;
+        // TEMPORARY BYPASS: Skip authentication for testing
+        let token = 'demo-token-bypass';
+        let user = { 
+            name: 'Demo User', 
+            email: 'demo@automotive-ai.com',
+            role: 'ADMIN'
+        };
         let currentTab = 'customers';
 
-        // Initialize app
-        if (token) {
-            showDashboard();
-            loadUserProfile();
-            loadAllData();
-        } else {
-            showLogin();
-        }
+        // Initialize app - BYPASS LOGIN
+        showDashboard();
+        loadUserProfile();
+        loadAllData();
 
         function showLogin() {
             document.getElementById('loginSection').classList.remove('hidden');
