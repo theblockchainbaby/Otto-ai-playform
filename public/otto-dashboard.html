@@ -2819,26 +2819,9 @@
         }
 
         async function loadUserProfile() {
-            if (!token) return;
-            
-            try {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', '/api/auth/me', true);
-                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-                
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        const data = JSON.parse(xhr.responseText);
-                        user = data.user;
-                        document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
-                        document.getElementById('userRole').textContent = user.role;
-                    }
-                };
-                
-                xhr.send();
-            } catch (error) {
-                console.error('Failed to load user profile:', error);
-            }
+            // BYPASS: Use demo user data directly
+            document.getElementById('userName').textContent = user.name || 'Demo User';
+            document.getElementById('userRole').textContent = user.role || 'ADMIN';
         }
 
         function switchTab(tabName, button) {
@@ -2944,55 +2927,12 @@
 
         // Load all dashboard statistics with realistic numbers
         async function loadDashboardStats() {
+            // BYPASS: Use demo data - skip API calls
             try {
-                // Load messages count
-                const messagesResponse = await fetch('/api/messages?limit=1', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (messagesResponse.ok) {
-                    const messagesData = await messagesResponse.json();
-                    document.getElementById('messagesCount').textContent = messagesData.pagination.total.toLocaleString();
-                } else {
-                    // Fallback to realistic number if endpoint doesn't exist
-                    document.getElementById('messagesCount').textContent = '1,247';
-                }
-
-                // Load tasks count
-                const tasksResponse = await fetch('/api/tasks?limit=1', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (tasksResponse.ok) {
-                    const tasksData = await tasksResponse.json();
-                    document.getElementById('activeTasksCount').textContent = tasksData.pagination.total.toLocaleString();
-                } else {
-                    // Fallback to realistic number if endpoint doesn't exist
-                    document.getElementById('activeTasksCount').textContent = '89';
-                }
-
-                // Load campaigns count
-                const campaignsResponse = await fetch('/api/campaigns?limit=1', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (campaignsResponse.ok) {
-                    const campaignsData = await campaignsResponse.json();
-                    document.getElementById('campaignsCount').textContent = campaignsData.pagination.total.toLocaleString();
-                } else {
-                    // Fallback to realistic number if endpoint doesn't exist
-                    document.getElementById('campaignsCount').textContent = '23';
-                }
-
-                // Load emergency calls count
-                const emergencyResponse = await fetch('/api/emergency-calls?limit=1', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (emergencyResponse.ok) {
-                    const emergencyData = await emergencyResponse.json();
-                    document.getElementById('emergencyCallsCount').textContent = emergencyData.pagination.total.toLocaleString();
-                } else {
-                    // Fallback to realistic number if endpoint doesn't exist
-                    document.getElementById('emergencyCallsCount').textContent = '147';
-                }
-
+                document.getElementById('messagesCount').textContent = '1,247';
+                document.getElementById('activeTasksCount').textContent = '89';
+                document.getElementById('campaignsCount').textContent = '23';
+                document.getElementById('emergencyCallsCount').textContent = '147';
                 // Load service requests count
                 const serviceResponse = await fetch('/api/service-requests?limit=1', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -3032,24 +2972,19 @@
         }
 
         async function loadAllData() {
-            if (!token) return;
-
+            // BYPASS: Skip API calls, load demo data only
+            
             // Initialize search and filters
             initializeSearchAndFilters();
 
-            // Load filter options
-            await loadFilterOptions();
-
-            // Load dashboard statistics
+            // Load dashboard stats with demo data
             await loadDashboardStats();
 
-            await Promise.all([
-                loadCustomers(),
-                loadVehicles(),
-                loadLeads(),
-                loadCalls(),
-                loadAppointments()
-            ]);
+            // Load demo data for each section
+            loadDemoCustomers();
+            loadDemoLeads();
+            loadDemoAppointments();
+            loadDemoCalls();
         }
 
         // Modal Management Functions
@@ -5977,6 +5912,60 @@
                     alert('Failed to copy to clipboard');
                 });
             }
+        }
+
+        // DEMO DATA FUNCTIONS - Bypass API calls
+        function loadDemoCustomers() {
+            const demoCustomers = [
+                { id: 1, firstName: 'John', lastName: 'Smith', email: 'john.smith@email.com', phone: '+1 (555) 123-4567', status: 'active', lastContact: new Date().toISOString() },
+                { id: 2, firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.j@email.com', phone: '+1 (555) 234-5678', status: 'active', lastContact: new Date().toISOString() },
+                { id: 3, firstName: 'Michael', lastName: 'Williams', email: 'mike.w@email.com', phone: '+1 (555) 345-6789', status: 'active', lastContact: new Date().toISOString() }
+            ];
+            displayCustomers(demoCustomers);
+        }
+
+        function loadDemoLeads() {
+            const demoLeads = [
+                { id: 1, firstName: 'Emma', lastName: 'Davis', email: 'emma.d@email.com', phone: '+1 (555) 456-7890', status: 'new', source: 'Website', interest: 'SUV', createdAt: new Date().toISOString() },
+                { id: 2, firstName: 'James', lastName: 'Brown', email: 'james.b@email.com', phone: '+1 (555) 567-8901', status: 'contacted', source: 'Phone', interest: 'Sedan', createdAt: new Date().toISOString() }
+            ];
+            displayLeads(demoLeads);
+        }
+
+        function loadDemoAppointments() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const demoAppointments = [
+                { id: 1, customer: { firstName: 'John', lastName: 'Smith' }, type: 'Service', startTime: tomorrow.toISOString(), endTime: new Date(tomorrow.getTime() + 3600000).toISOString(), status: 'scheduled' },
+                { id: 2, customer: { firstName: 'Sarah', lastName: 'Johnson' }, type: 'Sales', startTime: tomorrow.toISOString(), endTime: new Date(tomorrow.getTime() + 3600000).toISOString(), status: 'scheduled' }
+            ];
+            displayAppointments(demoAppointments);
+        }
+
+        function loadDemoCalls() {
+            const demoCalls = [
+                { id: 1, customer: { firstName: 'Michael', lastName: 'Williams' }, direction: 'inbound', duration: 180, status: 'completed', createdAt: new Date().toISOString() },
+                { id: 2, customer: { firstName: 'Emma', lastName: 'Davis' }, direction: 'outbound', duration: 120, status: 'completed', createdAt: new Date().toISOString() }
+            ];
+            displayCalls(demoCalls);
+        }
+
+        // Helper display functions
+        function displayCustomers(customers) {
+            // Customers display logic here - stub for now
+            console.log('Demo customers loaded:', customers.length);
+        }
+
+        function displayLeads(leads) {
+            console.log('Demo leads loaded:', leads.length);
+        }
+
+        function displayAppointments(appointments) {
+            console.log('Demo appointments loaded:', appointments.length);
+        }
+
+        function displayCalls(calls) {
+            console.log('Demo calls loaded:', calls.length);
         }
 
         // Handle Otto scenario selection
