@@ -3008,19 +3008,14 @@
         }
 
         async function loadAllData() {
-            // BYPASS: Skip API calls, load demo data only
-            
             // Initialize search and filters
             initializeSearchAndFilters();
 
-            // Load dashboard stats with demo data
+            // Load dashboard stats
             await loadDashboardStats();
 
-            // Load demo data for each section
-            loadDemoCustomers();
-            loadDemoLeads();
-            loadDemoAppointments();
-            loadDemoCalls();
+            // Load data for the current tab
+            loadCustomers();
         }
 
         // Modal Management Functions
