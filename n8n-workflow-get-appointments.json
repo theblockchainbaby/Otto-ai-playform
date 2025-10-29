@@ -1,0 +1,162 @@
+{
+  "name": "Otto - Get Customer Appointments",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/get-appointments",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-get-appointments",
+      "name": "Webhook - Get Appointments",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-get-appointments"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://ottoagent.net/api/customers?phone={{ $json.body.customerPhone }}",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "http-lookup-customer",
+      "name": "Lookup Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.customers.length }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "if-customer-found",
+      "name": "Customer Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://ottoagent.net/api/appointments?customerId={{ $json.customers[0].id }}",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "http-get-appointments",
+      "name": "Get Appointments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 250]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format appointments for Otto to read\nconst appointments = $input.item.json.appointments || [];\n\nif (appointments.length === 0) {\n  return {\n    success: true,\n    message: \"You don't have any upcoming appointments.\",\n    appointments: []\n  };\n}\n\n// Format each appointment\nconst formatted = appointments.map(apt => {\n  const date = new Date(apt.startTime);\n  const dateStr = date.toLocaleDateString('en-US', { \n    weekday: 'long', \n    year: 'numeric', \n    month: 'long', \n    day: 'numeric' \n  });\n  const timeStr = date.toLocaleTimeString('en-US', { \n    hour: 'numeric', \n    minute: '2-digit',\n    hour12: true\n  });\n  \n  return {\n    id: apt.id,\n    type: apt.type,\n    date: dateStr,\n    time: timeStr,\n    status: apt.status,\n    location: apt.location || 'AutoLux Service Center'\n  };\n});\n\n// Create a natural language summary\nlet message = `You have ${appointments.length} appointment${appointments.length > 1 ? 's' : ''}. `;\nformatted.forEach((apt, index) => {\n  message += `${index + 1}. ${apt.type} on ${apt.date} at ${apt.time}. `;\n});\n\nreturn {\n  success: true,\n  message: message,\n  appointments: formatted\n};"
+      },
+      "id": "code-format-appointments",
+      "name": "Format Appointments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 250]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-success",
+      "name": "Respond - Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 250]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"message\": \"I couldn't find any customer with that phone number. Could you verify your phone number?\",\n  \"appointments\": []\n}"
+      },
+      "id": "respond-not-found",
+      "name": "Respond - Not Found",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Get Appointments": {
+      "main": [
+        [
+          {
+            "node": "Lookup Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Customer": {
+      "main": [
+        [
+          {
+            "node": "Customer Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Found?": {
+      "main": [
+        [
+          {
+            "node": "Get Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond - Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Appointments": {
+      "main": [
+        [
+          {
+            "node": "Format Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Appointments": {
+      "main": [
+        [
+          {
+            "node": "Respond - Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+
