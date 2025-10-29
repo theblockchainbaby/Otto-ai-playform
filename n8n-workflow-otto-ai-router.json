@@ -1,0 +1,484 @@
+{
+  "name": "Otto AI Router - Main Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/ai-router",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-otto-main",
+      "name": "Otto Main Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 400],
+      "webhookId": "otto-ai-router-main"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple Intent Detection - No AI needed\nconst request = ($json.body?.request || $json.body?.message || $json.request || $json.message || '').toLowerCase();\nconst customerPhone = $json.body?.customerPhone || $json.customerPhone;\nconst customerName = $json.body?.customerName || $json.customerName;\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show') || request.includes('list') || request.includes('get'))) {\n  intent = 'get_appointments';\n} else if (request.includes('create') || request.includes('book') || request.includes('schedule') || request.includes('make appointment') || request.includes('make an appointment') || request.includes('reserve')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots') || request.includes('when can i')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service') || request.includes('car')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName\n  },\n  originalRequest: $json\n};"
+      },
+      "id": "simple-intent-router",
+      "name": "Simple Intent Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "get_appointments",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-get-appointments",
+      "name": "Get Appointments?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "book_appointment",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-book-appointment",
+      "name": "Book Appointment?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 350]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "check_availability",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-check-availability",
+      "name": "Check Availability?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "service_status",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-service-status",
+      "name": "Service Status?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 650]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get Appointments Logic\nconst customerPhone = $json.extractedData?.customerPhone || $json.originalRequest?.customerPhone || 'unknown';\n\nconsole.log('Getting appointments for:', customerPhone);\n\n// TODO: Connect to your actual database\n// For now, return mock data\nreturn {\n  success: true,\n  intent: 'get_appointments',\n  message: `You have 2 upcoming appointments: 1. Oil change on Friday, November 1st at 2:00 PM. 2. Tire rotation on Monday, November 4th at 10:00 AM.`,\n  appointments: [\n    {\n      id: 'apt_001',\n      type: 'Oil Change',\n      date: '2024-11-01',\n      time: '14:00',\n      status: 'confirmed'\n    },\n    {\n      id: 'apt_002',\n      type: 'Tire Rotation',\n      date: '2024-11-04',\n      time: '10:00',\n      status: 'confirmed'\n    }\n  ],\n  customerPhone: customerPhone\n};"
+      },
+      "id": "action-get-appointments",
+      "name": "Get Appointments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Book Appointment - Simple Response (No integrations needed)\nconst data = $json.extractedData || {};\nconst customerPhone = data.customerPhone || $json.originalRequest?.customerPhone || 'unknown';\nconst customerName = data.customerName || $json.originalRequest?.customerName || 'Valued Customer';\nconst serviceType = data.serviceType || $json.originalRequest?.serviceType || 'General Service';\n\n// Generate appointment for tomorrow at 10 AM\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\ntomorrow.setHours(10, 0, 0, 0);\n\nconst appointmentId = 'apt_' + Date.now();\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${serviceType} appointment for ${tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} at 10:00 AM. Your confirmation number is ${appointmentId}.`,\n  appointment: {\n    id: appointmentId,\n    customerPhone: customerPhone,\n    customerName: customerName,\n    serviceType: serviceType,\n    date: tomorrow.toISOString(),\n    status: 'confirmed'\n  }\n};"
+      },
+      "id": "action-book-appointment",
+      "name": "Prepare Appointment Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 350]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ $json.appointmentDate }}",
+        "end": "={{ $json.appointmentEnd }}",
+        "summary": "={{ $json.serviceType }} - {{ $json.customerName }}",
+        "description": "=Customer: {{ $json.customerName }}\nPhone: {{ $json.customerPhone }}\nService: {{ $json.serviceType }}\nAppointment ID: {{ $json.appointmentId }}",
+        "location": "AutoLux Premium Automotive",
+        "sendUpdates": "all"
+      },
+      "id": "google-calendar-create",
+      "name": "Create Google Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [1250, 350],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "your-google-calendar-credential-id",
+          "name": "Google Calendar Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "otto@autolux.com",
+        "toEmail": "={{ $json.customerEmail || 'customer@example.com' }}",
+        "subject": "=Appointment Confirmation - {{ $json.serviceType }}",
+        "emailType": "html",
+        "message": "=<html>\n<body style=\"font-family: Arial, sans-serif;\">\n  <h2>Appointment Confirmed!</h2>\n  <p>Hi {{ $json.customerName }},</p>\n  <p>Your appointment has been confirmed:</p>\n  <div style=\"background: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;\">\n    <p><strong>Service:</strong> {{ $json.serviceType }}</p>\n    <p><strong>Date:</strong> {{ $json.appointmentDate }}</p>\n    <p><strong>Location:</strong> AutoLux Premium Automotive</p>\n    <p><strong>Confirmation #:</strong> {{ $json.appointmentId }}</p>\n  </div>\n  <p>We look forward to seeing you!</p>\n  <p>Best regards,<br>Otto & The AutoLux Team</p>\n</body>\n</html>"
+      },
+      "id": "send-confirmation-email",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1450, 300],
+      "credentials": {
+        "smtp": {
+          "id": "your-smtp-credential-id",
+          "name": "SMTP Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.customerPhone }}",
+        "message": "=Hi {{ $json.customerName }}! Your {{ $json.serviceType }} appointment is confirmed for {{ $json.appointmentDate }}. Confirmation #: {{ $json.appointmentId }}. See you soon! - AutoLux"
+      },
+      "id": "send-confirmation-sms",
+      "name": "Send Confirmation SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1450, 400],
+      "credentials": {
+        "twilioApi": {
+          "id": "your-twilio-credential-id",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine all results and prepare final response\nconst appointmentData = $('Prepare Appointment Data').first().json;\nconst calendarEvent = $('Create Google Calendar Event').first().json;\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${appointmentData.serviceType} appointment for ${appointmentData.appointmentDate}. You'll receive a confirmation email and text message shortly. Your confirmation number is ${appointmentData.appointmentId}.`,\n  appointment: {\n    id: appointmentData.appointmentId,\n    customerPhone: appointmentData.customerPhone,\n    customerName: appointmentData.customerName,\n    serviceType: appointmentData.serviceType,\n    date: appointmentData.appointmentDate,\n    status: 'confirmed',\n    calendarEventId: calendarEvent.id\n  },\n  confirmationsSent: {\n    email: true,\n    sms: true,\n    calendar: true\n  }\n};"
+      },
+      "id": "combine-booking-results",
+      "name": "Combine Booking Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 350]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check Availability Logic\nconst data = $json.extractedData || {};\nconst preferredDate = data.preferredDate || 'tomorrow';\n\nconsole.log('Checking availability for:', preferredDate);\n\n// TODO: Connect to Google Calendar to get real availability\n\nreturn {\n  success: true,\n  intent: 'check_availability',\n  message: `For ${preferredDate}, we have the following times available: 9:00 AM, 11:30 AM, 2:00 PM, and 4:30 PM. Which time works best for you?`,\n  availableSlots: [\n    { time: '09:00', available: true },\n    { time: '11:30', available: true },\n    { time: '14:00', available: true },\n    { time: '16:30', available: true }\n  ],\n  date: preferredDate\n};"
+      },
+      "id": "action-check-availability",
+      "name": "Check Availability",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Service Status Logic\nconst customerPhone = $json.extractedData?.customerPhone || $json.originalRequest?.customerPhone;\n\nconsole.log('Checking service status for:', customerPhone);\n\n// TODO: Connect to your service tracking system\n\nreturn {\n  success: true,\n  intent: 'service_status',\n  message: `Your vehicle is currently in our service bay. We're about 75% complete with the oil change and tire rotation. Your car should be ready for pickup by 3:00 PM today.`,\n  status: {\n    progress: 75,\n    currentTask: 'Tire rotation',\n    estimatedCompletion: '15:00',\n    technician: 'Mike Johnson'\n  }\n};"
+      },
+      "id": "action-service-status",
+      "name": "Service Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 650]
+    },
+    {
+      "parameters": {
+        "jsCode": "// General Inquiry - fallback\nreturn {\n  success: true,\n  intent: 'general_inquiry',\n  message: `I'm here to help! I can assist you with booking appointments, checking your existing appointments, viewing available times, or checking on your vehicle's service status. What would you like to do?`,\n  suggestions: [\n    'Book an appointment',\n    'Check my appointments',\n    'See available times',\n    'Check service status'\n  ]\n};"
+      },
+      "id": "action-general-inquiry",
+      "name": "General Inquiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 800]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Otto",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 400]
+    }
+  ],
+  "connections": {
+    "Otto Main Webhook": {
+      "main": [
+        [
+          {
+            "node": "Simple Intent Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Intent Router": {
+      "main": [
+        [
+          {
+            "node": "Get Appointments?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Book Appointment?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Availability?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Service Status?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Appointments?": {
+      "main": [
+        [
+          {
+            "node": "Get Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Appointment?": {
+      "main": [
+        [
+          {
+            "node": "Prepare Appointment Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability?": {
+      "main": [
+        [
+          {
+            "node": "Check Availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Service Status?": {
+      "main": [
+        [
+          {
+            "node": "Service Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Appointments": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Appointment Data": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Confirmation SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Combine Booking Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation SMS": {
+      "main": [
+        [
+          {
+            "node": "Combine Booking Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Booking Results": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Service Status": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Inquiry": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+
