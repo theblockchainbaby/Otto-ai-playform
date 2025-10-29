@@ -1,0 +1,172 @@
+{
+  "name": "Otto - Get Service Status",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/service-status",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-service-status",
+      "name": "Webhook - Service Status",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-service-status"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract parameters from Otto\nconst customerPhone = $input.item.json.body.customerPhone;\nconst ticketId = $input.item.json.body.ticketId;\n\nreturn {\n  customerPhone: customerPhone,\n  ticketId: ticketId\n};"
+      },
+      "id": "code-extract-params",
+      "name": "Extract Parameters",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.ticketId }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "if-has-ticket-id",
+      "name": "Has Ticket ID?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://ottoagent.net/api/service-requests?ticketId={{ $json.ticketId }}",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "http-get-by-ticket",
+      "name": "Get Service by Ticket ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://ottoagent.net/api/service-requests?customerPhone={{ $json.customerPhone }}",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "http-get-by-phone",
+      "name": "Get Service by Phone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format service status for Otto to read\nconst serviceRequests = $input.item.json.serviceRequests || [];\n\nif (serviceRequests.length === 0) {\n  return {\n    success: false,\n    message: \"I couldn't find any service requests with that information. Could you verify your ticket number or phone number?\"\n  };\n}\n\n// Get the most recent service request\nconst service = serviceRequests[0];\n\n// Format status message\nlet statusMessage = '';\nswitch(service.status) {\n  case 'pending':\n    statusMessage = 'Your service request is pending and will be reviewed shortly.';\n    break;\n  case 'in_progress':\n    statusMessage = 'Your vehicle is currently being serviced.';\n    break;\n  case 'completed':\n    statusMessage = 'Your service has been completed and your vehicle is ready for pickup.';\n    break;\n  case 'waiting_parts':\n    statusMessage = 'We are waiting for parts to arrive to complete your service.';\n    break;\n  case 'waiting_approval':\n    statusMessage = 'We found additional work needed and are waiting for your approval.';\n    break;\n  default:\n    statusMessage = `Your service status is: ${service.status}`;\n}\n\n// Add estimated completion if available\nif (service.estimatedCompletion) {\n  const completionDate = new Date(service.estimatedCompletion);\n  const dateStr = completionDate.toLocaleDateString('en-US', { \n    weekday: 'long', \n    month: 'long', \n    day: 'numeric' \n  });\n  statusMessage += ` Estimated completion: ${dateStr}.`;\n}\n\n// Add cost if available\nif (service.estimatedCost) {\n  statusMessage += ` Estimated cost: $${service.estimatedCost}.`;\n}\n\nreturn {\n  success: true,\n  message: statusMessage,\n  service: {\n    ticketId: service.ticketId,\n    type: service.type,\n    status: service.status,\n    estimatedCompletion: service.estimatedCompletion,\n    estimatedCost: service.estimatedCost,\n    notes: service.notes\n  }\n};"
+      },
+      "id": "code-format-status",
+      "name": "Format Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-success",
+      "name": "Respond to Otto",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Service Status": {
+      "main": [
+        [
+          {
+            "node": "Extract Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Parameters": {
+      "main": [
+        [
+          {
+            "node": "Has Ticket ID?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Ticket ID?": {
+      "main": [
+        [
+          {
+            "node": "Get Service by Ticket ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Service by Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Service by Ticket ID": {
+      "main": [
+        [
+          {
+            "node": "Format Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Service by Phone": {
+      "main": [
+        [
+          {
+            "node": "Format Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Status": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+
