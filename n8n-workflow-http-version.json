@@ -22,49 +22,49 @@
             {
               "id": "customer_id",
               "name": "customerId",
-              "value": "={{ $json.customer?.id || $json.customerId || 'unknown' }}",
+              "value": "={{ $json.body?.customer?.id || $json.customer?.id || $json.customerId || 'unknown' }}",
               "type": "string"
             },
             {
               "id": "customer_name",
               "name": "customerName",
-              "value": "={{ $json.customer?.name || $json.customerName || 'Valued Customer' }}",
+              "value": "={{ $json.body?.customer?.name || $json.customer?.name || $json.customerName || 'Valued Customer' }}",
               "type": "string"
             },
             {
               "id": "customer_email",
               "name": "customerEmail",
-              "value": "={{ $json.customer?.email || $json.customerEmail || '' }}",
+              "value": "={{ $json.body?.customer?.email || $json.customer?.email || $json.customerEmail || '' }}",
               "type": "string"
             },
             {
               "id": "customer_phone",
               "name": "customerPhone",
-              "value": "={{ $json.customer?.phone || $json.customerPhone || '' }}",
+              "value": "={{ $json.body?.customer?.phone || $json.body?.phone || $json.customer?.phone || $json.customerPhone || '' }}",
               "type": "string"
             },
             {
               "id": "appointment_type",
               "name": "appointmentType",
-              "value": "={{ $json.intent?.appointmentType || $json.appointmentType || 'service' }}",
+              "value": "={{ $json.body?.intent?.appointmentType || $json.intent?.appointmentType || $json.appointmentType || 'service' }}",
               "type": "string"
             },
             {
               "id": "preferred_date",
               "name": "preferredDate",
-              "value": "={{ $json.intent?.preferredDate || $json.preferredDate || '' }}",
+              "value": "={{ $json.body?.intent?.preferredDate || $json.body?.date || $json.intent?.preferredDate || $json.preferredDate || '' }}",
               "type": "string"
             },
             {
               "id": "preferred_time",
               "name": "preferredTime",
-              "value": "={{ $json.intent?.preferredTime || $json.preferredTime || '' }}",
+              "value": "={{ $json.body?.intent?.preferredTime || $json.intent?.preferredTime || $json.preferredTime || '' }}",
               "type": "string"
             },
             {
               "id": "notes",
               "name": "notes",
-              "value": "={{ $json.intent?.notes || $json.notes || '' }}",
+              "value": "={{ $json.body?.intent?.notes || $json.intent?.notes || $json.notes || '' }}",
               "type": "string"
             }
           ]

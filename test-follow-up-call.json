@@ -1,0 +1,152 @@
+{
+  "name": "Test Follow-up Call",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-call",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-test",
+      "name": "Webhook - Test Call",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "test-call"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "customer_name",
+              "name": "customerName",
+              "value": "={{ $json.name || 'York' }}",
+              "type": "string"
+            },
+            {
+              "id": "customer_phone",
+              "name": "customerPhone",
+              "value": "={{ $json.phone || '+19163337305' }}",
+              "type": "string"
+            },
+            {
+              "id": "appointment_type",
+              "name": "appointmentType",
+              "value": "={{ $json.type || 'oil change' }}",
+              "type": "string"
+            },
+            {
+              "id": "preferred_time",
+              "name": "preferredTime",
+              "value": "={{ $json.time || '10:00' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-test",
+      "name": "Set Test Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Calls.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "formUrlEncoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "+18884118568"
+            },
+            {
+              "name": "To",
+              "value": "={{ $json.customerPhone }}"
+            },
+            {
+              "name": "Url",
+              "value": "=https://ottoagent.net/api/twilio/reminder-call?name={{ $json.customerName }}&type={{ $json.appointmentType }}&time={{ $json.preferredTime }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-call-test",
+      "name": "Make Test Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [680, 300],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Call initiated\", \"callSid\": $json.sid } }}"
+      },
+      "id": "respond-test",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Test Call": {
+      "main": [
+        [
+          {
+            "node": "Set Test Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Test Data": {
+      "main": [
+        [
+          {
+            "node": "Make Test Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Test Call": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "id": "test-follow-up-call",
+  "meta": {
+    "instanceId": "dualpay-n8n-cloud"
+  },
+  "tags": []
+}
+

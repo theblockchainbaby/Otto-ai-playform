@@ -21,8 +21,8 @@ class ElevenLabsService {
   private client: any | null = null;
   private isDemo: boolean = false;
 
-  // Otto - Custom AutoLux AI Agent
-  private readonly OTTO_AGENT_ID = 'agent_3701k70bz4gcfd6vq1bkh57d15bw';
+  // Otto - Custom AutoLux AI Agent (NEW)
+  private readonly OTTO_AGENT_ID = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
 
   // Professional automotive voice configurations
   private readonly VOICE_PROFILES = {
