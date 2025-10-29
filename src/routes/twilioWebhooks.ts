@@ -495,6 +495,47 @@ router.get('/test-voice', async (req, res) => {
   }
 });
 
+// POST /api/twilio/voice - Simple endpoint that connects directly to ElevenLabs Otto
+router.post('/voice', async (req, res) => {
+  try {
+    const { From, To, CallSid } = req.body;
+    console.log('Incoming call to Otto:', { From, To, CallSid });
+
+    // Generate TwiML that connects directly to ElevenLabs Otto agent
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+
+    // Connect to ElevenLabs Conversational AI
+    const connect = twiml.connect();
+    const stream = connect.stream({
+      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+    });
+
+    // Configure Otto agent
+    stream.parameter({
+      name: 'agent_id',
+      value: 'agent_2201k8q07eheexe8j4vkt0b9vecb'
+    });
+    stream.parameter({
+      name: 'authorization',
+      value: `Bearer ${process.env.ELEVENLABS_API_KEY}`
+    });
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('Error connecting to Otto:', error);
+
+    // Fallback
+    const twilio = require('twilio');
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say('Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.');
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
 // POST /api/twilio/otto/incoming - Handle incoming calls with Otto agent
 router.post('/otto/incoming', async (req, res) => {
   try {
