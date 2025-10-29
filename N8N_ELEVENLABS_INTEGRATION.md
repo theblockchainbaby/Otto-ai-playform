@@ -68,27 +68,22 @@ Add a **Webhook** node to receive events from Otto:
 https://dualpay.app.n8n.cloud/webhook/otto/call-completed
 ```
 
-### **C. Add ElevenLabs Phone Call Node**
+### **C. Add Twilio Call Node (Recommended for Outbound Calls)**
 
-Add an **HTTP Request** node to make outbound calls:
+For outbound calls, use **Twilio** to initiate the call, which then connects to ElevenLabs:
 
 **Node Configuration:**
 ```json
 {
   "method": "POST",
-  "url": "https://api.elevenlabs.io/v1/convai/conversation/phone",
-  "authentication": "predefinedCredentialType",
-  "nodeCredentialType": "elevenLabsApi",
+  "url": "https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Calls.json",
+  "authentication": "basicAuth",
   "sendHeaders": true,
   "headerParameters": {
     "parameters": [
       {
-        "name": "xi-api-key",
-        "value": "sk_069522a3e143c120684fe6924fa8791093d6fea95c699038"
-      },
-      {
         "name": "Content-Type",
-        "value": "application/json"
+        "value": "application/x-www-form-urlencoded"
       }
     ]
   },
@@ -96,21 +91,36 @@ Add an **HTTP Request** node to make outbound calls:
   "bodyParameters": {
     "parameters": [
       {
-        "name": "agent_id",
-        "value": "agent_2201k8q07eheexe8j4vkt0b9vecb"
+        "name": "Url",
+        "value": "https://ottoagent.net/api/twilio/voice"
       },
       {
-        "name": "phone_number",
+        "name": "To",
         "value": "={{ $json.customer.phone }}"
       },
       {
-        "name": "first_message",
-        "value": "={{ $json.greeting }}"
+        "name": "From",
+        "value": "+18884118568"
+      },
+      {
+        "name": "StatusCallback",
+        "value": "https://ottoagent.net/api/twilio/status"
       }
     ]
   }
 }
 ```
+
+**Basic Auth Credentials:**
+- Username: `ACafc412b62982312dc2efebaff233cf9f`
+- Password: `32c6e878cdc5707707980e6d6272f713`
+
+**How it works:**
+1. n8n calls Twilio API to initiate call
+2. Twilio calls the customer's phone
+3. When answered, Twilio fetches TwiML from `https://ottoagent.net/api/twilio/voice`
+4. TwiML connects the call to ElevenLabs Otto agent
+5. Customer talks with Otto AI
 
 ---
 
@@ -126,14 +136,18 @@ Add an **HTTP Request** node to make outbound calls:
    GET https://ottoagent.net/api/appointments?date=tomorrow
    ```
 3. **Loop Over Items** - For each appointment
-4. **HTTP Request** - Make ElevenLabs call
-   ```json
-   {
-     "agent_id": "agent_2201k8q07eheexe8j4vkt0b9vecb",
-     "phone_number": "{{ $json.customer.phone }}",
-     "first_message": "Hi {{ $json.customer.firstName }}! This is Otto from AutoLux. I'm calling to remind you about your {{ $json.type }} appointment tomorrow at {{ $json.startTime }}. Are you still available?"
-   }
+4. **HTTP Request** - Make Twilio call (connects to Otto)
    ```
+   POST https://api.twilio.com/2010-04-01/Accounts/ACafc412b62982312dc2efebaff233cf9f/Calls.json
+
+   Body (x-www-form-urlencoded):
+   - Url: https://ottoagent.net/api/twilio/voice
+   - To: {{ $json.customer.phone }}
+   - From: +18884118568
+   - StatusCallback: https://ottoagent.net/api/twilio/status
+   ```
+
+   The TwiML at `/api/twilio/voice` will automatically connect to Otto agent `agent_2201k8q07eheexe8j4vkt0b9vecb`
 
 ### **Pattern 2: Post-Call Follow-up**
 
