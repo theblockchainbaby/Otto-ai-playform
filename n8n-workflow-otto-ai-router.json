@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Simple Intent Detection - No AI needed\nconst request = ($json.body?.request || $json.body?.message || $json.request || $json.message || '').toLowerCase();\nconst customerPhone = $json.body?.customerPhone || $json.customerPhone;\nconst customerName = $json.body?.customerName || $json.customerName;\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show') || request.includes('list') || request.includes('get'))) {\n  intent = 'get_appointments';\n} else if (request.includes('create') || request.includes('book') || request.includes('schedule') || request.includes('make appointment') || request.includes('make an appointment') || request.includes('reserve')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots') || request.includes('when can i')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service') || request.includes('car')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName\n  },\n  originalRequest: $json\n};"
+        "jsCode": "// Simple Intent Detection - No AI needed\n// Get request text from various possible locations\nconst request = ($json.body?.request || $json.request || $json.body?.message || $json.message || '').toLowerCase();\n\n// Extract customer data from all possible locations\nconst customerPhone = $json.body?.phone_number || $json.phone_number || $json.body?.customerPhone || $json.customerPhone || $json.query?.customerPhone;\nconst customerName = $json.body?.customer_name || $json.customer_name || $json.body?.customerName || $json.customerName || $json.query?.customerName;\nconst appointmentDetails = $json.body?.appointment_details || $json.appointment_details || $json.query?.appointment_details;\n\n// If this is a send_confirmation request from ElevenLabs\nif (customerPhone && appointmentDetails) {\n  return {\n    intent: 'send_confirmation',\n    confidence: 1.0,\n    extractedData: {\n      customerPhone: customerPhone,\n      customerName: customerName || 'Valued Customer',\n      appointmentDetails: appointmentDetails\n    },\n    originalRequest: $json\n  };\n}\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show') || request.includes('list') || request.includes('get'))) {\n  intent = 'get_appointments';\n} else if (request.includes('create') || request.includes('book') || request.includes('schedule') || request.includes('make appointment') || request.includes('make an appointment') || request.includes('reserve')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots') || request.includes('when can i')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service') || request.includes('car')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName,\n    request: request\n  },\n  originalRequest: $json\n};"
       },
       "id": "simple-intent-router",
       "name": "Simple Intent Router",
@@ -124,6 +124,30 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "send_confirmation",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-send-confirmation",
+      "name": "Send Confirmation?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 800]
+    },
+    {
+      "parameters": {
         "jsCode": "// Get Appointments Logic\nconst customerPhone = $json.extractedData?.customerPhone || $json.originalRequest?.customerPhone || 'unknown';\n\nconsole.log('Getting appointments for:', customerPhone);\n\n// TODO: Connect to your actual database\n// For now, return mock data\nreturn {\n  success: true,\n  intent: 'get_appointments',\n  message: `You have 2 upcoming appointments: 1. Oil change on Friday, November 1st at 2:00 PM. 2. Tire rotation on Monday, November 4th at 10:00 AM.`,\n  appointments: [\n    {\n      id: 'apt_001',\n      type: 'Oil Change',\n      date: '2024-11-01',\n      time: '14:00',\n      status: 'confirmed'\n    },\n    {\n      id: 'apt_002',\n      type: 'Tire Rotation',\n      date: '2024-11-04',\n      time: '10:00',\n      status: 'confirmed'\n    }\n  ],\n  customerPhone: customerPhone\n};"
       },
       "id": "action-get-appointments",
@@ -134,7 +158,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Book Appointment - Simple Response (No integrations needed)\nconst data = $json.extractedData || {};\nconst customerPhone = data.customerPhone || $json.originalRequest?.customerPhone || 'unknown';\nconst customerName = data.customerName || $json.originalRequest?.customerName || 'Valued Customer';\nconst serviceType = data.serviceType || $json.originalRequest?.serviceType || 'General Service';\n\n// Generate appointment for tomorrow at 10 AM\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\ntomorrow.setHours(10, 0, 0, 0);\n\nconst appointmentId = 'apt_' + Date.now();\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${serviceType} appointment for ${tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} at 10:00 AM. Your confirmation number is ${appointmentId}.`,\n  appointment: {\n    id: appointmentId,\n    customerPhone: customerPhone,\n    customerName: customerName,\n    serviceType: serviceType,\n    date: tomorrow.toISOString(),\n    status: 'confirmed'\n  }\n};"
+        "jsCode": "// Book Appointment - Extract phone number from request text\nconst data = $json.extractedData || {};\nconst request = data.request || '';\n\n// Try to extract phone number from the request text\n// Matches patterns like: 916-333-7305, (916) 333-7305, 9163337305, +1 916 333 7305\nconst phoneRegex = /(?:\\+?1[-.]?)?\\(?([0-9]{3})\\)?[-.]?([0-9]{3})[-.]?([0-9]{4})/;\nconst phoneMatch = request.match(phoneRegex);\n\nlet customerPhone = data.customerPhone || $json.originalRequest?.customerPhone;\n\nif (phoneMatch && !customerPhone) {\n  // Format as E.164: +1XXXXXXXXXX\n  customerPhone = '+1' + phoneMatch[1] + phoneMatch[2] + phoneMatch[3];\n}\n\nif (!customerPhone) {\n  customerPhone = 'unknown';\n}\n\nconst customerName = data.customerName || $json.originalRequest?.customerName || 'Valued Customer';\nconst serviceType = data.serviceType || $json.originalRequest?.serviceType || 'General Service';\n\n// Generate appointment for tomorrow at 10 AM\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\ntomorrow.setHours(10, 0, 0, 0);\n\nconst appointmentId = 'apt_' + Date.now();\nconst appointmentDate = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${serviceType} appointment for ${appointmentDate} at 10:00 AM. Your confirmation number is ${appointmentId}.`,\n  appointment: {\n    id: appointmentId,\n    customerPhone: customerPhone,\n    customerName: customerName,\n    serviceType: serviceType,\n    appointmentDate: appointmentDate,\n    date: tomorrow.toISOString(),\n    status: 'confirmed'\n  }\n};"
       },
       "id": "action-book-appointment",
       "name": "Prepare Appointment Data",
@@ -195,8 +219,8 @@
         "resource": "sms",
         "operation": "send",
         "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
-        "to": "={{ $json.customerPhone }}",
-        "message": "=Hi {{ $json.customerName }}! Your {{ $json.serviceType }} appointment is confirmed for {{ $json.appointmentDate }}. Confirmation #: {{ $json.appointmentId }}. See you soon! - AutoLux"
+        "to": "={{ $json.appointment.customerPhone }}",
+        "message": "=Hi {{ $json.appointment.customerName }}! Your {{ $json.appointment.serviceType }} appointment is confirmed for {{ $json.appointment.appointmentDate }}. Confirmation #: {{ $json.appointment.id }}. See you soon! - AutoLux"
       },
       "id": "send-confirmation-sms",
       "name": "Send Confirmation SMS",
@@ -242,24 +266,64 @@
     },
     {
       "parameters": {
-        "jsCode": "// General Inquiry - fallback\nreturn {\n  success: true,\n  intent: 'general_inquiry',\n  message: `I'm here to help! I can assist you with booking appointments, checking your existing appointments, viewing available times, or checking on your vehicle's service status. What would you like to do?`,\n  suggestions: [\n    'Book an appointment',\n    'Check my appointments',\n    'See available times',\n    'Check service status'\n  ]\n};"
+        "jsCode": "// Format data for SMS from ElevenLabs send_confirmation tool\nconst data = $json.extractedData || {};\nconst customerPhone = data.customerPhone;\nconst customerName = data.customerName || 'Valued Customer';\nconst appointmentDetails = data.appointmentDetails || 'Your appointment has been confirmed';\n\nreturn {\n  customerPhone: customerPhone,\n  customerName: customerName,\n  serviceType: 'Service',\n  appointmentDate: appointmentDetails,\n  appointmentId: 'CONF-' + Date.now()\n};"
       },
-      "id": "action-general-inquiry",
-      "name": "General Inquiry",
+      "id": "format-sms-data",
+      "name": "Format SMS Data",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1050, 800]
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ $json }}"
+        "jsCode": "// General Inquiry - fallback\nreturn {\n  success: true,\n  intent: 'general_inquiry',\n  message: `I'm here to help! I can assist you with booking appointments, checking your existing appointments, viewing available times, or checking on your vehicle's service status. What would you like to do?`,\n  suggestions: [\n    'Book an appointment',\n    'Check my appointments',\n    'See available times',\n    'Check service status'\n  ]\n};"
+      },
+      "id": "action-general-inquiry",
+      "name": "General Inquiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 950]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.message }}"
       },
       "id": "respond-webhook",
       "name": "Respond to Otto",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.appointment.customerPhone }}",
+        "message": "=Hi {{ $json.appointment.customerName }}! Your appointment has been confirmed. {{ $json.appointment.appointmentDate }}. Confirmation #: {{ $json.appointment.id }}. See you soon! - Otto"
+      },
+      "id": "send-standalone-sms",
+      "name": "Send Standalone SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1250, 650],
+      "credentials": {
+        "twilioApi": {
+          "id": "your-twilio-credential-id",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare response for ElevenLabs after sending SMS\nreturn {\n  success: true,\n  message: 'SMS confirmation sent successfully',\n  sms_sent: true,\n  phone_number: $json.to || $json.customerPhone,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "prepare-sms-response",
+      "name": "Prepare SMS Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 650]
     }
   ],
   "connections": {
@@ -294,6 +358,11 @@
           },
           {
             "node": "Service Status?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Confirmation?",
             "type": "main",
             "index": 0
           }
@@ -372,6 +441,35 @@
         ]
       ]
     },
+    "Send Confirmation?": {
+      "main": [
+        [
+          {
+            "node": "Format SMS Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format SMS Data": {
+      "main": [
+        [
+          {
+            "node": "Send Standalone SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Get Appointments": {
       "main": [
         [
@@ -428,6 +526,11 @@
             "node": "Combine Booking Results",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -466,6 +569,28 @@
       ]
     },
     "General Inquiry": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Standalone SMS": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare SMS Response": {
       "main": [
         [
           {

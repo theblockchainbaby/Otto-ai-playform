@@ -1,0 +1,68 @@
+{
+  "name": "Otto Simple Router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/simple",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-main",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-simple"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple Intent Detection (No AI needed for testing)\nconst request = ($json.body?.request || $json.request || '').toLowerCase();\nconst customerPhone = $json.body?.customerPhone || $json.customerPhone || 'unknown';\nconst customerName = $json.body?.customerName || $json.customerName || 'Customer';\n\nlet intent = 'general_inquiry';\nlet response = '';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have'))) {\n  intent = 'get_appointments';\n  response = `You have 2 upcoming appointments: 1. Oil change on Friday, November 1st at 2:00 PM. 2. Tire rotation on Monday, November 4th at 10:00 AM.`;\n  \n} else if (request.includes('book') || request.includes('schedule') || request.includes('make appointment')) {\n  intent = 'book_appointment';\n  response = `Perfect! I've scheduled your appointment. You'll receive a confirmation shortly.`;\n  \n} else if (request.includes('available') || request.includes('availability') || request.includes('what times')) {\n  intent = 'check_availability';\n  response = `We have the following times available: 9:00 AM, 11:30 AM, 2:00 PM, and 4:30 PM. Which time works best for you?`;\n  \n} else if (request.includes('status') || request.includes('ready') || request.includes('service')) {\n  intent = 'service_status';\n  response = `Your vehicle is currently being serviced. We're about 75% complete and your car should be ready by 3:00 PM today.`;\n  \n} else {\n  intent = 'general_inquiry';\n  response = `I can help you with booking appointments, checking your existing appointments, viewing available times, or checking on your vehicle's service status. What would you like to do?`;\n}\n\nreturn {\n  success: true,\n  intent: intent,\n  message: response,\n  customerPhone: customerPhone,\n  customerName: customerName,\n  request: request,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "simple-router",
+      "name": "Simple Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Simple Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Router": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+

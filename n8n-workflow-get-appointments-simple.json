@@ -1,0 +1,68 @@
+{
+  "name": "Otto - Get Appointments (Simple Test)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/get-appointments",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-get-appointments",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-get-appointments-simple"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple test response\nconst customerPhone = $input.item.json.body?.customerPhone || $input.item.json.customerPhone || 'unknown';\n\nconsole.log('Received request:', JSON.stringify($input.item.json, null, 2));\n\nreturn {\n  success: true,\n  message: `I received your request for phone number ${customerPhone}. You have 2 upcoming appointments: 1. Oil change on Friday, November 1st at 2:00 PM. 2. Tire rotation on Monday, November 4th at 10:00 AM.`,\n  appointments: [\n    {\n      id: 'apt_001',\n      type: 'Oil Change',\n      date: 'Friday, November 1, 2024',\n      time: '2:00 PM',\n      status: 'confirmed'\n    },\n    {\n      id: 'apt_002',\n      type: 'Tire Rotation',\n      date: 'Monday, November 4, 2024',\n      time: '10:00 AM',\n      status: 'confirmed'\n    }\n  ],\n  debug: {\n    receivedData: $input.item.json,\n    customerPhone: customerPhone\n  }\n};"
+      },
+      "id": "code-test-response",
+      "name": "Test Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Test Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+

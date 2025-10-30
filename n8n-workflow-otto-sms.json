@@ -1,0 +1,121 @@
+{
+  "name": "Otto SMS Confirmation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dental-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-sms",
+      "name": "SMS Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "otto-sms-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract data from request\nconst patientName = $json.body?.patient_name || $json.patient_name || 'Valued Customer';\nconst contactValue = $json.body?.contact_value || $json.contact_value;\nconst contactMethod = $json.body?.contact_method || $json.contact_method || 'sms';\nconst appointmentId = $json.body?.appointment_id || $json.appointment_id || 'N/A';\nconst notes = $json.body?.notes || $json.notes || '';\n\n// Format the message\nconst message = `Hi ${patientName}! Your appointment is confirmed. Confirmation #${appointmentId}. ${notes} - AutoLux`;\n\nreturn {\n  to: contactValue,\n  message: message,\n  method: contactMethod,\n  patientName: patientName,\n  appointmentId: appointmentId\n};"
+      },
+      "id": "prepare-sms",
+      "name": "Prepare SMS Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "+18884118568",
+        "to": "={{ $json.to }}",
+        "message": "={{ $json.message }}"
+      },
+      "id": "send-sms",
+      "name": "Send SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "twilioApi": {
+          "id": "your-twilio-credential-id",
+          "name": "Twilio Account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check if SMS was sent successfully\nconst smsResult = $('Send SMS').first();\nconst success = !smsResult.error;\n\nreturn {\n  success: success,\n  message: success ? 'Confirmation sent successfully' : 'Failed to send confirmation',\n  error: smsResult.error || null\n};"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "SMS Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare SMS Data": {
+      "main": [
+        [
+          {
+            "node": "Send SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SMS": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
+
