@@ -96,6 +96,9 @@
             padding: 2rem;
             transition: all 0.3s ease;
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .demo-card:hover {
@@ -236,11 +239,11 @@
                 <p>Experience Otto's conversational AI directly through ElevenLabs' interface</p>
             </div>
 
-            <div class="demo-card" onclick="window.open('https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw', '_blank')">
+            <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="demo-card">
                 <div class="demo-icon">📞</div>
                 <h3>Call Otto</h3>
                 <p>Test Otto's phone integration with real voice calls and automotive scenarios</p>
-            </div>
+            </a>
 
             <div class="demo-card" onclick="window.location.href='/otto-dashboard.html'">
                 <div class="demo-icon">🚀</div>
