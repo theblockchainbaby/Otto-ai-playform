@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const crmIntegrationService = require('../services/crmIntegrationService');
 
 /**
  * CRM/DMS Integration API Routes
- * 
+ *
  * These endpoints allow external CRM/DMS systems to integrate with Otto AI
  * without rebuilding their existing infrastructure.
  */
@@ -11,14 +12,14 @@ const router = express.Router();
 // Middleware for API authentication
 const authenticateAPI = (req, res, next) => {
     const apiKey = req.headers['authorization']?.replace('Bearer ', '');
-    
+
     if (!apiKey) {
         return res.status(401).json({
             error: 'Unauthorized',
             message: 'API key required'
         });
     }
-    
+
     // TODO: Validate API key against database
     // For now, accept any key for demo purposes
     req.apiKey = apiKey;
@@ -326,9 +327,181 @@ router.get('/health', (req, res) => {
             vehicles: '/api/v1/integrations/vehicles/sync',
             leads: '/api/v1/integrations/leads/create',
             calls: '/api/v1/integrations/calls/log',
-            webhooks: '/api/v1/integrations/webhooks/register'
+            webhooks: '/api/v1/integrations/webhooks/register',
+            crm: '/api/v1/integrations/crm'
         }
     });
+});
+
+/**
+ * GET /api/v1/integrations/crm/platforms
+ * Get list of supported CRM platforms
+ */
+router.get('/crm/platforms', authenticateAPI, (req, res) => {
+    try {
+        const platforms = crmIntegrationService.getAvailablePlatforms();
+        res.status(200).json({
+            success: true,
+            platforms,
+            message: 'Available CRM platforms'
+        });
+    } catch (error) {
+        console.error('Error getting CRM platforms:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: 'Failed to get CRM platforms'
+        });
+    }
+});
+
+/**
+ * POST /api/v1/integrations/crm/test-connection
+ * Test connection to a CRM platform
+ */
+router.post('/crm/test-connection', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials } = req.body;
+
+        if (!crmType || !credentials) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType and credentials are required'
+            });
+        }
+
+        const result = await crmIntegrationService.testConnection(crmType, credentials);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            data: result
+        });
+    } catch (error) {
+        console.error('CRM connection test error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/v1/integrations/crm/sync-customer
+ * Sync customer to a CRM platform
+ */
+router.post('/crm/sync-customer', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials, customerData } = req.body;
+
+        if (!crmType || !credentials || !customerData) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType, credentials, and customerData are required'
+            });
+        }
+
+        const result = await crmIntegrationService.syncCustomerToCRM(crmType, credentials, customerData);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            data: result
+        });
+    } catch (error) {
+        console.error('Customer sync error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/v1/integrations/crm/sync-appointment
+ * Sync appointment to a CRM platform
+ */
+router.post('/crm/sync-appointment', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials, appointmentData } = req.body;
+
+        if (!crmType || !credentials || !appointmentData) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType, credentials, and appointmentData are required'
+            });
+        }
+
+        const result = await crmIntegrationService.syncAppointmentToCRM(crmType, credentials, appointmentData);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            data: result
+        });
+    } catch (error) {
+        console.error('Appointment sync error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/v1/integrations/crm/sync-lead
+ * Sync lead to a CRM platform
+ */
+router.post('/crm/sync-lead', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials, leadData } = req.body;
+
+        if (!crmType || !credentials || !leadData) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType, credentials, and leadData are required'
+            });
+        }
+
+        const result = await crmIntegrationService.syncLeadToCRM(crmType, credentials, leadData);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            data: result
+        });
+    } catch (error) {
+        console.error('Lead sync error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * GET /api/v1/integrations/crm/get-customer
+ * Get customer from a CRM platform
+ */
+router.get('/crm/get-customer', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, customerId, credentials } = req.query;
+
+        if (!crmType || !customerId || !credentials) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType, customerId, and credentials are required'
+            });
+        }
+
+        const parsedCredentials = JSON.parse(credentials);
+        const result = await crmIntegrationService.getCustomerFromCRM(crmType, parsedCredentials, customerId);
+        res.status(200).json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        console.error('Get customer error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
 });
 
 module.exports = router;
