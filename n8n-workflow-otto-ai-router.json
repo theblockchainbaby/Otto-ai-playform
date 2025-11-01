@@ -327,6 +327,16 @@
     },
     {
       "parameters": {
+        "jsCode": "// Prepare appointment data for database save\n// Extract customer info and format for API\nconst appointment = $json.appointment || {};\nconst customerName = appointment.customerName || 'Unknown Customer';\nconst customerPhone = appointment.customerPhone || '';\nconst serviceType = appointment.serviceType || 'Service';\nconst appointmentDate = appointment.date || new Date().toISOString();\n\n// Generate a unique customer ID based on phone number\nconst customerId = 'cust_' + (customerPhone.replace(/\\D/g, '') || Date.now());\n\nreturn {\n  title: `${serviceType} - ${customerName}`,\n  type: serviceType.toLowerCase().replace(/\\s+/g, '_'),\n  startTime: appointmentDate,\n  endTime: new Date(new Date(appointmentDate).getTime() + 60 * 60000).toISOString(), // 1 hour duration\n  customerId: customerId,\n  notes: `Phone: ${customerPhone}\\nAppointment ID: ${appointment.id}`,\n  customerName: customerName,\n  customerPhone: customerPhone,\n  appointmentId: appointment.id\n};"
+      },
+      "id": "prepare-db-data",
+      "name": "Prepare Database Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1550, 200]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "=http://localhost:3000/api/appointments",
         "authentication": "genericCredentialType",
@@ -341,13 +351,13 @@
           ]
         },
         "sendBody": true,
-        "bodyParametersJson": "={\n  \"customerName\": \"{{ $json.appointment.customerName }}\",\n  \"customerPhone\": \"{{ $json.appointment.customerPhone }}\",\n  \"serviceType\": \"{{ $json.appointment.serviceType }}\",\n  \"appointmentDate\": \"{{ $json.appointment.date }}\",\n  \"status\": \"confirmed\",\n  \"appointmentId\": \"{{ $json.appointment.id }}\"\n}"
+        "bodyParametersJson": "={\n  \"title\": \"{{ $json.title }}\",\n  \"type\": \"{{ $json.type }}\",\n  \"startTime\": \"{{ $json.startTime }}\",\n  \"endTime\": \"{{ $json.endTime }}\",\n  \"customerId\": \"{{ $json.customerId }}\",\n  \"notes\": \"{{ $json.notes }}\"\n}"
       },
       "id": "save-appointment-to-db",
       "name": "Save Appointment to Database",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1650, 200]
+      "position": [1750, 200]
     },
     {
       "parameters": {
@@ -598,6 +608,17 @@
       ]
     },
     "Combine Booking Results": {
+      "main": [
+        [
+          {
+            "node": "Prepare Database Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Database Data": {
       "main": [
         [
           {
