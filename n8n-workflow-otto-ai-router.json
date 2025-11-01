@@ -324,6 +324,68 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1450, 650]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:3000/api/appointments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"customerName\": \"{{ $json.appointment.customerName }}\",\n  \"customerPhone\": \"{{ $json.appointment.customerPhone }}\",\n  \"serviceType\": \"{{ $json.appointment.serviceType }}\",\n  \"appointmentDate\": \"{{ $json.appointment.date }}\",\n  \"status\": \"confirmed\",\n  \"appointmentId\": \"{{ $json.appointment.id }}\"\n}"
+      },
+      "id": "save-appointment-to-db",
+      "name": "Save Appointment to Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:3000/api/v1/integrations/crm/sync-appointment",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OTTO_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"crmType\": \"{{ $json.crmType || 'hubspot' }}\",\n  \"credentials\": {\n    \"apiKey\": \"{{ $json.crmApiKey }}\"\n  },\n  \"appointmentData\": {\n    \"id\": \"{{ $json.appointment.id }}\",\n    \"customerName\": \"{{ $json.appointment.customerName }}\",\n    \"customerPhone\": \"{{ $json.appointment.customerPhone }}\",\n    \"customerEmail\": \"{{ $json.appointment.customerEmail }}\",\n    \"serviceType\": \"{{ $json.appointment.serviceType }}\",\n    \"appointmentDate\": \"{{ $json.appointment.date }}\",\n    \"status\": \"confirmed\"\n  }\n}"
+      },
+      "id": "sync-appointment-to-crm",
+      "name": "Sync Appointment to CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle database save response\nconst dbResponse = $('Save Appointment to Database').first().json;\nconst crmResponse = $('Sync Appointment to CRM').first().json;\n\nreturn {\n  success: true,\n  message: 'Appointment saved and synced successfully',\n  database: {\n    saved: dbResponse?.success || false,\n    appointmentId: dbResponse?.id\n  },\n  crm: {\n    synced: crmResponse?.success || false,\n    crmId: crmResponse?.crmId\n  },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "confirm-save-and-sync",
+      "name": "Confirm Save and Sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2050, 200]
     }
   ],
   "connections": {
@@ -536,6 +598,39 @@
       ]
     },
     "Combine Booking Results": {
+      "main": [
+        [
+          {
+            "node": "Save Appointment to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Appointment to Database": {
+      "main": [
+        [
+          {
+            "node": "Sync Appointment to CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Appointment to CRM": {
+      "main": [
+        [
+          {
+            "node": "Confirm Save and Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Save and Sync": {
       "main": [
         [
           {
