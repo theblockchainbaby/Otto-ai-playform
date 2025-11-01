@@ -333,3 +333,48 @@ You now have a **production-ready AI routing system** that:
 - `ELEVENLABS_SINGLE_TOOL_CONFIG.md` - ElevenLabs details
 - `OLD_VS_NEW_APPROACH.md` - Why this is better
 
+---
+
+## 🗄️ Database & CRM Integration (NEW!)
+
+### Automatic Data Pipeline
+
+The workflow now automatically:
+1. ✅ **Saves appointments to PostgreSQL database**
+2. ✅ **Syncs to customer's CRM** (HubSpot, Salesforce, Pipedrive, Zoho, Freshsales)
+3. ✅ **Sends SMS confirmations** via Twilio
+4. ✅ **Returns response** to ElevenLabs
+
+### Test Database Save
+
+```bash
+curl -X POST http://localhost:3000/api/appointments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Oil Change - John Doe",
+    "type": "oil_change",
+    "startTime": "2024-11-01T10:00:00Z",
+    "endTime": "2024-11-01T11:00:00Z",
+    "customerId": "cust_9163337305",
+    "notes": "Phone: +19163337305"
+  }'
+```
+
+### Test CRM Sync
+
+```bash
+curl -X POST http://localhost:3000/api/v1/integrations/crm/sync-appointment \
+  -H "Authorization: Bearer your-api-key" \
+  -d '{
+    "crmType": "hubspot",
+    "credentials": {"apiKey": "your-hubspot-key"},
+    "appointmentData": {...}
+  }'
+```
+
+### Documentation
+
+- `N8N_DATABASE_CRM_INTEGRATION.md` - Complete integration guide
+- `IMPLEMENTATION_COMPLETE.md` - Implementation summary
+- `CRM_INTEGRATION_GUIDE.md` - API reference
+
