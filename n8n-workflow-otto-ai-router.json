@@ -28,6 +28,74 @@
 
     {
       "parameters": {
+        "jsCode": "// Extract and decode VIN if present in request\nconst request = ($json.body?.request || $json.request || $json.body?.message || $json.message || '').toLowerCase();\nconst vin = $json.body?.vin || $json.vin || $json.query?.vin;\n\nreturn {\n  hasVIN: !!vin,\n  vin: vin,\n  requestText: request,\n  extractedData: $json.extractedData || {}\n};"
+      },
+      "id": "check-for-vin",
+      "name": "Check for VIN",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.hasVIN }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "has-vin-switch",
+      "name": "Has VIN?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:3000/api/vin/decode",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"vin\": \"{{ $json.vin }}\",\n  \"source\": \"auto\"\n}"
+      },
+      "id": "decode-vin",
+      "name": "Decode VIN",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge VIN data with appointment data\nconst vinData = $json.data || {};\nconst formatted = $json.formatted || {};\n\nreturn {\n  ...($('Simple Intent Router').first().json || {}),\n  vehicleData: {\n    vin: vinData.vin,\n    make: vinData.make,\n    model: vinData.model,\n    year: vinData.modelYear || vinData.year,\n    engine: vinData.engine || `${vinData.engineCylinders}cyl`,\n    transmission: vinData.transmission,\n    fuelType: vinData.fuelType,\n    bodyClass: vinData.bodyClass,\n    formatted: formatted\n  },\n  vinDecoded: true\n};"
+      },
+      "id": "merge-vin-data",
+      "name": "Merge VIN Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 500]
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": false

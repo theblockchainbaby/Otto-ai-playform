@@ -199,6 +199,104 @@ app.post('/api/appointments', async (req, res) => {
   }
 });
 
+// VIN Decoding API
+const vinDecodingService = require('./services/vinDecodingService');
+
+app.post('/api/vin/decode', async (req, res) => {
+  try {
+    const { vin, source = 'auto' } = req.body;
+
+    if (!vin) {
+      return res.status(400).json({
+        success: false,
+        error: 'VIN is required'
+      });
+    }
+
+    // Validate VIN format
+    if (!vinDecodingService.validateVIN(vin)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid VIN format. VIN must be 17 characters (alphanumeric, no I/O/Q)'
+      });
+    }
+
+    const decodedData = await vinDecodingService.decodeVin(vin, source);
+
+    res.json({
+      success: true,
+      data: decodedData,
+      formatted: vinDecodingService.formatForCRM(decodedData)
+    });
+  } catch (error) {
+    console.error('VIN decode error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to decode VIN',
+      message: error.message
+    });
+  }
+});
+
+app.post('/api/vin/extract', async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({
+        success: false,
+        error: 'Text is required'
+      });
+    }
+
+    const vin = vinDecodingService.extractVINFromText(text);
+
+    if (!vin) {
+      return res.json({
+        success: true,
+        vin: null,
+        message: 'No VIN found in text'
+      });
+    }
+
+    // Automatically decode the extracted VIN
+    const decodedData = await vinDecodingService.decodeVin(vin);
+
+    res.json({
+      success: true,
+      vin: vin,
+      decoded: decodedData,
+      formatted: vinDecodingService.formatForCRM(decodedData)
+    });
+  } catch (error) {
+    console.error('VIN extraction error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to extract and decode VIN',
+      message: error.message
+    });
+  }
+});
+
+app.get('/api/vin/validate/:vin', (req, res) => {
+  try {
+    const { vin } = req.params;
+    const isValid = vinDecodingService.validateVIN(vin);
+
+    res.json({
+      success: true,
+      vin: vin,
+      valid: isValid,
+      message: isValid ? 'Valid VIN format' : 'Invalid VIN format'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to validate VIN'
+    });
+  }
+});
+
 // Integration API routes
 const integrationsRouter = require('./routes/integrations');
 app.use('/api/v1/integrations', integrationsRouter);
