@@ -3041,6 +3041,13 @@
             }
         }
 
+        // Update auto-refresh when switching tabs
+        const originalSwitchToTab = switchToTab;
+        switchToTab = function(tabName) {
+            originalSwitchToTab(tabName);
+            startTabAutoRefresh(tabName);
+        };
+
         // Load all dashboard statistics with realistic numbers
         async function loadDashboardStats() {
             // BYPASS: Use demo data - skip API calls
@@ -3138,13 +3145,6 @@
                 realtimeUpdates.startAutoRefresh(tabName, refreshFunctions[tabName]);
             }
         }
-
-        // Update auto-refresh when switching tabs
-        const originalSwitchToTab = switchToTab;
-        switchToTab = function(tabName) {
-            originalSwitchToTab(tabName);
-            startTabAutoRefresh(tabName);
-        };
 
         // Modal Management Functions
         function openModal(title, content) {
@@ -5508,88 +5508,136 @@
             }
 
             // Vehicle search and filters
-            document.getElementById('vehicleSearch').addEventListener('input', (e) => {
-                currentFilters.vehicles.search = e.target.value;
-                debounceSearch(() => loadVehicles(), 300);
-            });
+            const vehicleSearch = document.getElementById('vehicleSearch');
+            if (vehicleSearch) {
+                vehicleSearch.addEventListener('input', (e) => {
+                    currentFilters.vehicles.search = e.target.value;
+                    debounceSearch(() => loadVehicles(), 300);
+                });
+            }
 
-            document.getElementById('vehicleStatusFilter').addEventListener('change', (e) => {
-                currentFilters.vehicles.status = e.target.value;
-                loadVehicles();
-            });
+            const vehicleStatusFilter = document.getElementById('vehicleStatusFilter');
+            if (vehicleStatusFilter) {
+                vehicleStatusFilter.addEventListener('change', (e) => {
+                    currentFilters.vehicles.status = e.target.value;
+                    loadVehicles();
+                });
+            }
 
-            document.getElementById('vehicleMakeFilter').addEventListener('change', (e) => {
-                currentFilters.vehicles.make = e.target.value;
-                loadVehicles();
-            });
+            const vehicleMakeFilter = document.getElementById('vehicleMakeFilter');
+            if (vehicleMakeFilter) {
+                vehicleMakeFilter.addEventListener('change', (e) => {
+                    currentFilters.vehicles.make = e.target.value;
+                    loadVehicles();
+                });
+            }
 
-            document.getElementById('vehicleYearFilter').addEventListener('change', (e) => {
-                currentFilters.vehicles.year = e.target.value;
-                loadVehicles();
-            });
+            const vehicleYearFilter = document.getElementById('vehicleYearFilter');
+            if (vehicleYearFilter) {
+                vehicleYearFilter.addEventListener('change', (e) => {
+                    currentFilters.vehicles.year = e.target.value;
+                    loadVehicles();
+                });
+            }
 
             // Lead search and filters
-            document.getElementById('leadSearch').addEventListener('input', (e) => {
-                currentFilters.leads.search = e.target.value;
-                debounceSearch(() => loadLeads(), 300);
-            });
+            const leadSearch = document.getElementById('leadSearch');
+            if (leadSearch) {
+                leadSearch.addEventListener('input', (e) => {
+                    currentFilters.leads.search = e.target.value;
+                    debounceSearch(() => loadLeads(), 300);
+                });
+            }
 
-            document.getElementById('leadStatusFilter').addEventListener('change', (e) => {
-                currentFilters.leads.status = e.target.value;
-                loadLeads();
-            });
+            const leadStatusFilter = document.getElementById('leadStatusFilter');
+            if (leadStatusFilter) {
+                leadStatusFilter.addEventListener('change', (e) => {
+                    currentFilters.leads.status = e.target.value;
+                    loadLeads();
+                });
+            }
 
-            document.getElementById('leadSourceFilter').addEventListener('change', (e) => {
-                currentFilters.leads.source = e.target.value;
-                loadLeads();
-            });
+            const leadSourceFilter = document.getElementById('leadSourceFilter');
+            if (leadSourceFilter) {
+                leadSourceFilter.addEventListener('change', (e) => {
+                    currentFilters.leads.source = e.target.value;
+                    loadLeads();
+                });
+            }
 
-            document.getElementById('leadRepFilter').addEventListener('change', (e) => {
-                currentFilters.leads.rep = e.target.value;
-                loadLeads();
-            });
+            const leadRepFilter = document.getElementById('leadRepFilter');
+            if (leadRepFilter) {
+                leadRepFilter.addEventListener('change', (e) => {
+                    currentFilters.leads.rep = e.target.value;
+                    loadLeads();
+                });
+            }
 
             // Call search and filters
-            document.getElementById('callSearch').addEventListener('input', (e) => {
-                currentFilters.calls.search = e.target.value;
-                debounceSearch(() => loadCalls(), 300);
-            });
+            const callSearch = document.getElementById('callSearch');
+            if (callSearch) {
+                callSearch.addEventListener('input', (e) => {
+                    currentFilters.calls.search = e.target.value;
+                    debounceSearch(() => loadCalls(), 300);
+                });
+            }
 
-            document.getElementById('callStatusFilter').addEventListener('change', (e) => {
-                currentFilters.calls.status = e.target.value;
-                loadCalls();
-            });
+            const callStatusFilter = document.getElementById('callStatusFilter');
+            if (callStatusFilter) {
+                callStatusFilter.addEventListener('change', (e) => {
+                    currentFilters.calls.status = e.target.value;
+                    loadCalls();
+                });
+            }
 
-            document.getElementById('callDirectionFilter').addEventListener('change', (e) => {
-                currentFilters.calls.direction = e.target.value;
-                loadCalls();
-            });
+            const callDirectionFilter = document.getElementById('callDirectionFilter');
+            if (callDirectionFilter) {
+                callDirectionFilter.addEventListener('change', (e) => {
+                    currentFilters.calls.direction = e.target.value;
+                    loadCalls();
+                });
+            }
 
-            document.getElementById('callAgentFilter').addEventListener('change', (e) => {
-                currentFilters.calls.agent = e.target.value;
-                loadCalls();
-            });
+            const callAgentFilter = document.getElementById('callAgentFilter');
+            if (callAgentFilter) {
+                callAgentFilter.addEventListener('change', (e) => {
+                    currentFilters.calls.agent = e.target.value;
+                    loadCalls();
+                });
+            }
 
             // Appointment search and filters
-            document.getElementById('appointmentSearch').addEventListener('input', (e) => {
-                currentFilters.appointments.search = e.target.value;
-                debounceSearch(() => loadAppointments(), 300);
-            });
+            const appointmentSearch = document.getElementById('appointmentSearch');
+            if (appointmentSearch) {
+                appointmentSearch.addEventListener('input', (e) => {
+                    currentFilters.appointments.search = e.target.value;
+                    debounceSearch(() => loadAppointments(), 300);
+                });
+            }
 
-            document.getElementById('appointmentStatusFilter').addEventListener('change', (e) => {
-                currentFilters.appointments.status = e.target.value;
-                loadAppointments();
-            });
+            const appointmentStatusFilter = document.getElementById('appointmentStatusFilter');
+            if (appointmentStatusFilter) {
+                appointmentStatusFilter.addEventListener('change', (e) => {
+                    currentFilters.appointments.status = e.target.value;
+                    loadAppointments();
+                });
+            }
 
-            document.getElementById('appointmentTypeFilter').addEventListener('change', (e) => {
-                currentFilters.appointments.type = e.target.value;
-                loadAppointments();
-            });
+            const appointmentTypeFilter = document.getElementById('appointmentTypeFilter');
+            if (appointmentTypeFilter) {
+                appointmentTypeFilter.addEventListener('change', (e) => {
+                    currentFilters.appointments.type = e.target.value;
+                    loadAppointments();
+                });
+            }
 
-            document.getElementById('appointmentAgentFilter').addEventListener('change', (e) => {
-                currentFilters.appointments.agent = e.target.value;
-                loadAppointments();
-            });
+            const appointmentAgentFilter = document.getElementById('appointmentAgentFilter');
+            if (appointmentAgentFilter) {
+                appointmentAgentFilter.addEventListener('change', (e) => {
+                    currentFilters.appointments.agent = e.target.value;
+                    loadAppointments();
+                });
+            }
         }
 
         let searchTimeout;
