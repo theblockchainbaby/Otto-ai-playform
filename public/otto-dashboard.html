@@ -3095,17 +3095,38 @@
         }
 
         async function loadAllData() {
-            // Initialize search and filters
-            initializeSearchAndFilters();
+            console.log('loadAllData() called');
+            try {
+                // Initialize search and filters
+                initializeSearchAndFilters();
+            } catch (error) {
+                console.error('Error initializing search and filters:', error);
+            }
 
-            // Load dashboard stats
-            await loadDashboardStats();
+            try {
+                // Load dashboard stats
+                console.log('Loading dashboard stats...');
+                loadDashboardStats();
+                console.log('Dashboard stats loaded');
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
 
-            // Load data for the current tab
-            loadCustomers();
+            try {
+                // Load data for the current tab
+                console.log('Loading customers...');
+                loadCustomers();
+                console.log('Customers loading initiated');
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
 
-            // Start real-time auto-refresh
-            startRealtimeUpdates();
+            try {
+                // Start real-time auto-refresh
+                startRealtimeUpdates();
+            } catch (error) {
+                console.error('Error starting real-time updates:', error);
+            }
         }
 
         // Start real-time updates for all data types
@@ -4408,12 +4429,14 @@
         }
 
         async function loadCustomers() {
+            console.log('loadCustomers() called');
             try {
                 const queryParams = buildQueryParams({
                     search: currentFilters.customers.search,
                     assignedToId: currentFilters.customers.rep
                 });
                 const url = `/api/customers${queryParams ? '?' + queryParams : ''}`;
+                console.log('Fetching customers from:', url);
 
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
@@ -5693,7 +5716,7 @@
         function buildQueryParams(filters) {
             const params = new URLSearchParams();
             Object.entries(filters).forEach(([key, value]) => {
-                if (value && value.trim() !== '') {
+                if (value && typeof value === 'string' && value.trim() !== '') {
                     params.append(key, value);
                 }
             });
