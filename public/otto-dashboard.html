@@ -1735,6 +1735,8 @@
     <script src="/src/utils/formUI.js"></script>
     <!-- Real-time Updates Script -->
     <script src="/src/utils/realtimeUpdates.js"></script>
+    <!-- Pagination and Sorting Script -->
+    <script src="/src/utils/pagination.js"></script>
 </head>
 <body>
     <!-- Login Section -->
@@ -4416,13 +4418,43 @@
                             </table>
                         `;
 
-                        document.getElementById('customersContent').innerHTML = customersHtml;
+                        // Update pagination manager
+                        const paginationMgr = paginationManagers.customers;
+                        paginationMgr.totalItems = data.pagination.total;
+
+                        // Add pagination controls
+                        const paginationHtml = createPaginationControls(
+                            paginationMgr,
+                            'handleCustomerPageChange',
+                            'handleCustomerPageSizeChange'
+                        );
+
+                        document.getElementById('customersContent').innerHTML = customersHtml + paginationHtml;
+
+                        // Add sorting to table headers
+                        addTableSorting('.data-table', paginationMgr, (field, direction) => {
+                            console.log(`Sorting by ${field} (${direction})`);
+                            loadCustomers();
+                        });
                     }
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load customers:', error);
+            }
+        }
+
+        // Pagination handlers for customers
+        function handleCustomerPageChange(pageNumber) {
+            if (paginationManagers.customers.goToPage(pageNumber)) {
+                loadCustomers();
+            }
+        }
+
+        function handleCustomerPageSizeChange(size) {
+            if (paginationManagers.customers.setPageSize(parseInt(size))) {
+                loadCustomers();
             }
         }
 
@@ -4514,13 +4546,37 @@
                             </div>
                         `;
 
-                        document.getElementById('vehiclesContent').innerHTML = vehiclesHtml;
+                        // Update pagination manager
+                        const paginationMgr = paginationManagers.vehicles;
+                        paginationMgr.totalItems = data.pagination.total;
+
+                        // Add pagination controls
+                        const paginationHtml = createPaginationControls(
+                            paginationMgr,
+                            'handleVehiclePageChange',
+                            'handleVehiclePageSizeChange'
+                        );
+
+                        document.getElementById('vehiclesContent').innerHTML = vehiclesHtml + paginationHtml;
                     }
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load vehicles:', error);
+            }
+        }
+
+        // Pagination handlers for vehicles
+        function handleVehiclePageChange(pageNumber) {
+            if (paginationManagers.vehicles.goToPage(pageNumber)) {
+                loadVehicles();
+            }
+        }
+
+        function handleVehiclePageSizeChange(size) {
+            if (paginationManagers.vehicles.setPageSize(parseInt(size))) {
+                loadVehicles();
             }
         }
 
@@ -4619,13 +4675,43 @@
                             ` : ''}
                         `;
 
-                        document.getElementById('leadsContent').innerHTML = leadsHtml;
+                        // Update pagination manager
+                        const paginationMgr = paginationManagers.leads;
+                        paginationMgr.totalItems = data.pagination.total;
+
+                        // Add pagination controls
+                        const paginationHtml = createPaginationControls(
+                            paginationMgr,
+                            'handleLeadPageChange',
+                            'handleLeadPageSizeChange'
+                        );
+
+                        document.getElementById('leadsContent').innerHTML = leadsHtml + paginationHtml;
+
+                        // Add sorting to table headers
+                        addTableSorting('.data-table', paginationMgr, (field, direction) => {
+                            console.log(`Sorting by ${field} (${direction})`);
+                            loadLeads();
+                        });
                     }
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load leads:', error);
+            }
+        }
+
+        // Pagination handlers for leads
+        function handleLeadPageChange(pageNumber) {
+            if (paginationManagers.leads.goToPage(pageNumber)) {
+                loadLeads();
+            }
+        }
+
+        function handleLeadPageSizeChange(size) {
+            if (paginationManagers.leads.setPageSize(parseInt(size))) {
+                loadLeads();
             }
         }
 
@@ -4769,13 +4855,43 @@
                             </table>
                         `;
 
-                        document.getElementById('callsContent').innerHTML = callsHtml;
+                        // Update pagination manager
+                        const paginationMgr = paginationManagers.calls;
+                        paginationMgr.totalItems = data.pagination.total;
+
+                        // Add pagination controls
+                        const paginationHtml = createPaginationControls(
+                            paginationMgr,
+                            'handleCallPageChange',
+                            'handleCallPageSizeChange'
+                        );
+
+                        document.getElementById('callsContent').innerHTML = callsHtml + paginationHtml;
+
+                        // Add sorting to table headers
+                        addTableSorting('.data-table', paginationMgr, (field, direction) => {
+                            console.log(`Sorting by ${field} (${direction})`);
+                            loadCalls();
+                        });
                     }
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load calls:', error);
+            }
+        }
+
+        // Pagination handlers for calls
+        function handleCallPageChange(pageNumber) {
+            if (paginationManagers.calls.goToPage(pageNumber)) {
+                loadCalls();
+            }
+        }
+
+        function handleCallPageSizeChange(size) {
+            if (paginationManagers.calls.setPageSize(parseInt(size))) {
+                loadCalls();
             }
         }
 
@@ -4888,13 +5004,43 @@
                             </table>
                         `;
 
-                        document.getElementById('appointmentsContent').innerHTML = appointmentsHtml;
+                        // Update pagination manager
+                        const paginationMgr = paginationManagers.appointments;
+                        paginationMgr.totalItems = data.pagination.total;
+
+                        // Add pagination controls
+                        const paginationHtml = createPaginationControls(
+                            paginationMgr,
+                            'handleAppointmentPageChange',
+                            'handleAppointmentPageSizeChange'
+                        );
+
+                        document.getElementById('appointmentsContent').innerHTML = appointmentsHtml + paginationHtml;
+
+                        // Add sorting to table headers
+                        addTableSorting('.data-table', paginationMgr, (field, direction) => {
+                            console.log(`Sorting by ${field} (${direction})`);
+                            loadAppointments();
+                        });
                     }
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load appointments:', error);
+            }
+        }
+
+        // Pagination handlers for appointments
+        function handleAppointmentPageChange(pageNumber) {
+            if (paginationManagers.appointments.goToPage(pageNumber)) {
+                loadAppointments();
+            }
+        }
+
+        function handleAppointmentPageSizeChange(size) {
+            if (paginationManagers.appointments.setPageSize(parseInt(size))) {
+                loadAppointments();
             }
         }
 
@@ -4971,6 +5117,21 @@
             leads: { search: '', status: '', source: '', rep: '' },
             calls: { search: '', status: '', direction: '', agent: '' },
             appointments: { search: '', status: '', type: '', agent: '' }
+        };
+
+        // Pagination Managers for each data type
+        const paginationManagers = {
+            customers: new PaginationManager(),
+            vehicles: new PaginationManager(),
+            leads: new PaginationManager(),
+            calls: new PaginationManager(),
+            appointments: new PaginationManager(),
+            messages: new PaginationManager(),
+            tasks: new PaginationManager(),
+            campaigns: new PaginationManager(),
+            emergencyCalls: new PaginationManager(),
+            serviceRequests: new PaginationManager(),
+            serviceProviders: new PaginationManager()
         };
 
         function initializeSearchAndFilters() {
