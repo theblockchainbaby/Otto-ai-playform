@@ -1730,6 +1730,11 @@
             100% { opacity: 1; }
         }
     </style>
+    <!-- Form Validation Scripts -->
+    <script src="/src/utils/formValidation.js"></script>
+    <script src="/src/utils/formUI.js"></script>
+    <!-- Real-time Updates Script -->
+    <script src="/src/utils/realtimeUpdates.js"></script>
 </head>
 <body>
     <!-- Login Section -->
@@ -1780,6 +1785,11 @@
                     <div class="user-info">
                         <div class="user-name" id="userName">Loading...</div>
                         <div class="user-role" id="userRole">Loading...</div>
+                    </div>
+                    <!-- Real-time Update Indicator -->
+                    <div id="refreshIndicator" style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
+                        <span id="refreshStatus" style="font-size: 0.85rem; color: var(--text-muted);">Live</span>
+                        <div id="refreshDot" style="width: 8px; height: 8px; background: #00d4aa; border-radius: 50%; animation: pulse 2s infinite;"></div>
                     </div>
                     <button class="btn-logout" onclick="logout()">Sign Out</button>
                 </div>
@@ -3016,7 +3026,55 @@
 
             // Load data for the current tab
             loadCustomers();
+
+            // Start real-time auto-refresh
+            startRealtimeUpdates();
         }
+
+        // Start real-time updates for all data types
+        function startRealtimeUpdates() {
+            // Auto-refresh dashboard statistics
+            realtimeUpdates.startAutoRefresh('stats', loadDashboardStats);
+
+            // Auto-refresh current tab data based on active tab
+            const currentTab = document.querySelector('.tab-button.active')?.dataset.tab || 'customers';
+            startTabAutoRefresh(currentTab);
+        }
+
+        // Start auto-refresh for specific tab
+        function startTabAutoRefresh(tabName) {
+            // Stop all previous tab refreshes
+            ['customers', 'vehicles', 'leads', 'calls', 'appointments', 'messages', 'tasks', 'campaigns', 'emergencyCalls', 'serviceRequests', 'serviceProviders'].forEach(tab => {
+                realtimeUpdates.stopAutoRefresh(tab);
+            });
+
+            // Start refresh for current tab
+            const refreshFunctions = {
+                customers: loadCustomers,
+                vehicles: loadVehicles,
+                leads: loadLeads,
+                calls: loadCalls,
+                appointments: loadAppointments,
+                messages: loadMessages,
+                tasks: loadTasks,
+                campaigns: loadCampaigns,
+                emergencyCalls: loadEmergencyCalls,
+                serviceRequests: loadServiceRequests,
+                serviceProviders: loadServiceProviders,
+                aiAssistant: loadAIStats
+            };
+
+            if (refreshFunctions[tabName]) {
+                realtimeUpdates.startAutoRefresh(tabName, refreshFunctions[tabName]);
+            }
+        }
+
+        // Override switchToTab to update auto-refresh
+        const originalSwitchToTab = window.switchToTab;
+        window.switchToTab = function(tabName) {
+            originalSwitchToTab(tabName);
+            startTabAutoRefresh(tabName);
+        };
 
         // Modal Management Functions
         function openModal(title, content) {
@@ -3054,26 +3112,46 @@
             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
 
-        // Form Validation
-        function validateForm(formId) {
+        // Form Validation - Enhanced with comprehensive validation
+        const validator = new FormValidator();
+
+        function validateForm(formId, validationRulesKey = null) {
             const form = document.getElementById(formId);
-            const fields = form.querySelectorAll('input[required], select[required], textarea[required]');
-            let isValid = true;
+            if (!form) return false;
 
-            fields.forEach(field => {
-                const fieldContainer = field.closest('.form-field');
-                const errorMessage = fieldContainer.querySelector('.error-message');
+            // Collect form data
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
 
-                if (!field.value.trim()) {
-                    fieldContainer.classList.add('error');
-                    if (errorMessage) {
-                        errorMessage.textContent = 'This field is required';
+            // Determine validation rules
+            let rules = VALIDATION_RULES[validationRulesKey] || {};
+
+            // If no specific rules, do basic required field validation
+            if (Object.keys(rules).length === 0) {
+                const fields = form.querySelectorAll('input[required], select[required], textarea[required]');
+                let isValid = true;
+
+                fields.forEach(field => {
+                    if (!field.value.trim()) {
+                        FormUIHelper.showFieldError(field.id, 'This field is required');
+                        isValid = false;
+                    } else {
+                        FormUIHelper.clearFieldError(field.id);
                     }
-                    isValid = false;
-                } else {
-                    fieldContainer.classList.remove('error');
-                }
-            });
+                });
+
+                return isValid;
+            }
+
+            // Use comprehensive validation
+            const isValid = validator.validateForm(data, rules);
+
+            if (!isValid) {
+                FormUIHelper.displayErrors(validator.getErrors());
+                FormUIHelper.showError('Please fix the errors below');
+            } else {
+                FormUIHelper.clearAllErrors();
+            }
 
             return isValid;
         }
@@ -3241,7 +3319,8 @@
         }
 
         async function saveCustomer(customerId = null) {
-            if (!validateForm('customerForm')) {
+            // Validate form with comprehensive rules
+            if (!validateForm('customerForm', 'customer')) {
                 return;
             }
 
@@ -3265,18 +3344,20 @@
                         method: 'PUT',
                         body: JSON.stringify(customerData)
                     });
+                    FormUIHelper.showSuccess('Customer updated successfully!');
                 } else {
                     await apiRequest('/api/customers', {
                         method: 'POST',
                         body: JSON.stringify(customerData)
                     });
+                    FormUIHelper.showSuccess('Customer added successfully!');
                 }
 
                 closeModal();
                 await loadCustomers();
 
             } catch (error) {
-                alert(`Error saving customer: ${error.message}`);
+                FormUIHelper.showError('Error saving customer: ' + error.message);
             } finally {
                 const submitButton = document.querySelector('.btn-primary-modal');
                 if (submitButton) {
@@ -3456,7 +3537,8 @@
         }
 
         async function saveVehicle(vehicleId = null) {
-            if (!validateForm('vehicleForm')) {
+            // Validate form with comprehensive rules
+            if (!validateForm('vehicleForm', 'vehicle')) {
                 return;
             }
 
@@ -3492,18 +3574,20 @@
                         method: 'PUT',
                         body: JSON.stringify(vehicleData)
                     });
+                    FormUIHelper.showSuccess('Vehicle updated successfully!');
                 } else {
                     await apiRequest('/api/vehicles', {
                         method: 'POST',
                         body: JSON.stringify(vehicleData)
                     });
+                    FormUIHelper.showSuccess('Vehicle added successfully!');
                 }
 
                 closeModal();
                 await loadVehicles();
 
             } catch (error) {
-                alert(`Error saving vehicle: ${error.message}`);
+                FormUIHelper.showError('Error saving vehicle: ' + error.message);
             } finally {
                 const submitButton = document.querySelector('.btn-primary-modal');
                 if (submitButton) {
@@ -3663,6 +3747,11 @@
         }
 
         async function saveLead(leadId = null) {
+            // Validate form with comprehensive rules
+            if (!validateForm('leadForm', 'lead')) {
+                return;
+            }
+
             const submitButton = document.querySelector('.btn-primary-modal');
             submitButton.disabled = true;
             submitButton.textContent = leadId ? 'Updating...' : 'Adding...';
@@ -3681,18 +3770,20 @@
                         method: 'PUT',
                         body: JSON.stringify(leadData)
                     });
+                    FormUIHelper.showSuccess('Lead updated successfully!');
                 } else {
                     await apiRequest('/api/leads', {
                         method: 'POST',
                         body: JSON.stringify(leadData)
                     });
+                    FormUIHelper.showSuccess('Lead added successfully!');
                 }
 
                 closeModal();
                 await loadLeads();
 
             } catch (error) {
-                alert(`Error saving lead: ${error.message}`);
+                FormUIHelper.showError('Error saving lead: ' + error.message);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = leadId ? 'Update Lead' : 'Add Lead';
@@ -3887,6 +3978,11 @@
         }
 
         async function saveCall(callId = null) {
+            // Validate form with comprehensive rules
+            if (!validateForm('callForm', 'call')) {
+                return;
+            }
+
             const submitButton = document.querySelector('.btn-primary-modal');
             submitButton.disabled = true;
             submitButton.textContent = callId ? 'Updating...' : 'Logging...';
@@ -3908,18 +4004,20 @@
                         method: 'PUT',
                         body: JSON.stringify(callData)
                     });
+                    FormUIHelper.showSuccess('Call updated successfully!');
                 } else {
                     await apiRequest('/api/calls', {
                         method: 'POST',
                         body: JSON.stringify(callData)
                     });
+                    FormUIHelper.showSuccess('Call logged successfully!');
                 }
 
                 closeModal();
                 await loadCalls();
 
             } catch (error) {
-                alert(`Error saving call: ${error.message}`);
+                FormUIHelper.showError('Error saving call: ' + error.message);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = callId ? 'Update Call' : 'Log Call';
@@ -4170,6 +4268,11 @@
         }
 
         async function saveAppointment(appointmentId = null) {
+            // Validate form with comprehensive rules
+            if (!validateForm('appointmentForm', 'appointment')) {
+                return;
+            }
+
             const submitButton = document.querySelector('.btn-primary-modal');
             submitButton.disabled = true;
             submitButton.textContent = appointmentId ? 'Updating...' : 'Scheduling...';
@@ -4197,18 +4300,20 @@
                         method: 'PUT',
                         body: JSON.stringify(appointmentData)
                     });
+                    FormUIHelper.showSuccess('Appointment updated successfully!');
                 } else {
                     await apiRequest('/api/appointments', {
                         method: 'POST',
                         body: JSON.stringify(appointmentData)
                     });
+                    FormUIHelper.showSuccess('Appointment scheduled successfully!');
                 }
 
                 closeModal();
                 await loadAppointments();
 
             } catch (error) {
-                alert(`Error saving appointment: ${error.message}`);
+                FormUIHelper.showError('Error saving appointment: ' + error.message);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = appointmentId ? 'Update Appointment' : 'Schedule Appointment';
