@@ -2920,82 +2920,7 @@
             document.getElementById('userRole').textContent = user.role || 'ADMIN';
         }
 
-        function switchToTab(tabName) {
-            // Find the tab button and click it
-            const tabButton = document.querySelector(`.tab[onclick*="'${tabName}'"]`);
-            if (tabButton) {
-                switchTab(tabName, tabButton);
-                // Scroll the tab into view
-                setTimeout(() => {
-                    const tabsContainer = document.querySelector('.tabs');
-                    if (tabsContainer && tabButton) {
-                        tabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
-                }, 100);
-            }
-        }
-
-        function switchTab(tabName, button) {
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            button.classList.add('active');
-
-            // Update tab content
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
-
-            currentTab = tabName;
-
-            // Scroll tab into view
-            setTimeout(() => {
-                const tabsContainer = document.querySelector('.tabs');
-                if (tabsContainer && button) {
-                    button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-            }, 50);
-
-            // Load data for the specific tab
-            switch(tabName) {
-                case 'customers':
-                    loadCustomers();
-                    break;
-                case 'vehicles':
-                    loadVehicles();
-                    break;
-                case 'leads':
-                    loadLeads();
-                    break;
-                case 'calls':
-                    loadCalls();
-                    break;
-                case 'appointments':
-                    loadAppointments();
-                    break;
-                case 'messages':
-                    loadMessages();
-                    break;
-                case 'tasks':
-                    loadTasks();
-                    break;
-                case 'campaigns':
-                    loadCampaigns();
-                    break;
-                case 'emergencyCalls':
-                    loadEmergencyCalls();
-                    break;
-                case 'serviceRequests':
-                    loadServiceRequests();
-                    break;
-                case 'serviceProviders':
-                    loadServiceProviders();
-                    break;
-                case 'aiAssistant':
-                    loadAIStats();
-                    break;
-            }
-        }
-
-        // Switch to tab from stat card click
+        // Switch to tab from stat card click or tab button click
         function switchToTab(tabName) {
             // Find the corresponding tab button
             const tabButtons = document.querySelectorAll('.tab');
@@ -3018,9 +2943,41 @@
 
                 currentTab = tabName;
 
+                // Scroll tab into view
+                setTimeout(() => {
+                    const tabsContainer = document.querySelector('.tabs');
+                    if (tabsContainer && targetButton) {
+                        targetButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }, 50);
+
                 // Load data for the specific tab
                 loadTabData(tabName);
             }
+        }
+
+        // Wrapper for direct tab button clicks
+        function switchTab(tabName, button) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+
+            currentTab = tabName;
+
+            // Scroll tab into view
+            setTimeout(() => {
+                const tabsContainer = document.querySelector('.tabs');
+                if (tabsContainer && button) {
+                    button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }, 50);
+
+            // Load data for the specific tab
+            loadTabData(tabName);
         }
 
         // Get display name for tab
@@ -3182,9 +3139,9 @@
             }
         }
 
-        // Override switchToTab to update auto-refresh
-        const originalSwitchToTab = window.switchToTab;
-        window.switchToTab = function(tabName) {
+        // Update auto-refresh when switching tabs
+        const originalSwitchToTab = switchToTab;
+        switchToTab = function(tabName) {
             originalSwitchToTab(tabName);
             startTabAutoRefresh(tabName);
         };
