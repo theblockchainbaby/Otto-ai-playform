@@ -18,8 +18,12 @@ let prisma = null;
 try {
   const { PrismaClient } = require('@prisma/client');
   if (process.env.DATABASE_URL) {
-    prisma = new PrismaClient();
-    console.log('✅ Database connection initialized');
+    prisma = new PrismaClient({
+      errorFormat: 'pretty',
+      log: ['error']
+    });
+    // Don't wait for connection, just initialize
+    console.log('✅ Database client initialized');
   } else {
     console.log('⚠️  No DATABASE_URL provided, running without database');
   }
@@ -66,6 +70,11 @@ app.use(morgan('combined'));
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Pass prisma to app.locals for routes to use
+if (prisma) {
+  app.locals.prisma = prisma;
+}
+
 // Import and use auth routes if database is available
 if (prisma) {
   try {
@@ -74,6 +83,15 @@ if (prisma) {
     console.log('✅ Auth routes loaded');
   } catch (error) {
     console.log('⚠️  Could not load auth routes:', error.message);
+  }
+
+  // Load customers routes
+  try {
+    const customersRoutes = require('./routes/customers');
+    app.use('/api/customers', customersRoutes);
+    console.log('✅ Customers routes loaded');
+  } catch (error) {
+    console.log('⚠️  Could not load customers routes:', error.message);
   }
 }
 
