@@ -504,5 +504,110 @@ router.get('/crm/get-customer', authenticateAPI, async (req, res) => {
     }
 });
 
+/**
+ * GET /api/v1/integrations/crm/customers
+ * Get all customers from a CRM platform
+ */
+router.get('/crm/customers', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials } = req.query;
+
+        if (!crmType || !credentials) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType and credentials are required'
+            });
+        }
+
+        const parsedCredentials = JSON.parse(credentials);
+        const result = await crmIntegrationService.getCustomersFromCRM(crmType, parsedCredentials);
+        res.status(200).json({
+            success: true,
+            data: result,
+            count: result.length
+        });
+    } catch (error) {
+        console.error('Get customers error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/v1/integrations/crm/sync-customers-to-db
+ * Sync customers from CRM to local database
+ */
+router.post('/crm/sync-customers-to-db', authenticateAPI, async (req, res) => {
+    try {
+        const { crmType, credentials } = req.body;
+
+        if (!crmType || !credentials) {
+            return res.status(400).json({
+                error: 'Bad Request',
+                message: 'crmType and credentials are required'
+            });
+        }
+
+        // Get customers from CRM
+        const customers = await crmIntegrationService.getCustomersFromCRM(crmType, credentials);
+
+        // Sync to local database
+        const prisma = require('../db/prisma');
+        let syncedCount = 0;
+        const errors = [];
+
+        for (const customer of customers) {
+            try {
+                await prisma.customer.upsert({
+                    where: { id: customer.crmId || customer.id },
+                    update: {
+                        firstName: customer.firstName,
+                        lastName: customer.lastName,
+                        email: customer.email,
+                        phone: customer.phone,
+                        address: customer.address,
+                        city: customer.city,
+                        state: customer.state,
+                        zipCode: customer.zipCode
+                    },
+                    create: {
+                        id: customer.crmId || customer.id,
+                        firstName: customer.firstName,
+                        lastName: customer.lastName,
+                        email: customer.email,
+                        phone: customer.phone,
+                        address: customer.address,
+                        city: customer.city,
+                        state: customer.state,
+                        zipCode: customer.zipCode
+                    }
+                });
+                syncedCount++;
+            } catch (error) {
+                errors.push({
+                    customer: `${customer.firstName} ${customer.lastName}`,
+                    error: error.message
+                });
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Synced ${syncedCount} customers from ${crmType}`,
+            syncedCount,
+            totalCount: customers.length,
+            errors: errors.length > 0 ? errors : undefined
+        });
+    } catch (error) {
+        console.error('Sync customers error:', error);
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;
 

@@ -1963,6 +1963,7 @@
                     <button class="tab" onclick="switchTab('emergencyCalls', this)">🚨 Emergency</button>
                     <button class="tab" onclick="switchTab('serviceRequests', this)">🔧 Service</button>
                     <button class="tab" onclick="switchTab('serviceProviders', this)">🏢 Providers</button>
+                    <button class="tab" onclick="switchTab('settings', this)">⚙️ Settings</button>
                     <button class="tab" onclick="switchTab('aiAssistant', this)">🤖 AI Assistant</button>
                 </div>
 
@@ -2500,6 +2501,52 @@
                             <div class="loading">
                                 <div class="spinner"></div>
                                 <p>Loading service providers...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="settingsTab" class="tab-pane hidden">
+                        <div class="tab-header">
+                            <h3>CRM Integration Settings</h3>
+                        </div>
+                        <div class="search-filter-bar">
+                            <div style="background: rgba(0, 212, 170, 0.05); border: 1px solid rgba(0, 212, 170, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+                                <h4 style="margin-bottom: 1rem; color: #00d4aa;">🔗 CRM Configuration</h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                    <div>
+                                        <label for="crmType" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">CRM Platform</label>
+                                        <select id="crmType" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(0, 212, 170, 0.3); border-radius: 6px; background: rgba(255,255,255,0.05); color: #fff;">
+                                            <option value="">Select CRM Platform</option>
+                                            <option value="salesforce">Salesforce</option>
+                                            <option value="hubspot">HubSpot</option>
+                                            <option value="pipedrive">Pipedrive</option>
+                                            <option value="zoho">Zoho CRM</option>
+                                            <option value="freshsales">Freshsales</option>
+                                        </select>
+                                    </div>
+                                    <div id="crmCredentialsContainer" style="display: none;">
+                                        <label for="crmCredentials" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">API Credentials (JSON)</label>
+                                        <textarea id="crmCredentials" placeholder='{"apiKey": "your-key", "domain": "your-domain"}' style="width: 100%; padding: 0.75rem; border: 1px solid rgba(0, 212, 170, 0.3); border-radius: 6px; background: rgba(255,255,255,0.05); color: #fff; font-family: monospace; min-height: 100px; resize: vertical;"></textarea>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                                    <button class="btn-add" onclick="testCRMConnection()" style="background: rgba(0, 212, 170, 0.2); border: 1px solid #00d4aa;">
+                                        🧪 Test Connection
+                                    </button>
+                                    <button class="btn-add" onclick="loadCustomersFromCRM()" style="background: rgba(0, 212, 170, 0.2); border: 1px solid #00d4aa;">
+                                        📥 Load Customers from CRM
+                                    </button>
+                                    <button class="btn-add" onclick="syncCustomersToDB()" style="background: rgba(0, 212, 170, 0.2); border: 1px solid #00d4aa;">
+                                        💾 Sync to Database
+                                    </button>
+                                </div>
+                                <div id="crmStatusMessage" style="margin-top: 1rem; padding: 1rem; border-radius: 6px; display: none;"></div>
+                            </div>
+                        </div>
+                        <div id="crmCustomersContent">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Configure CRM and load customers...</p>
                             </div>
                         </div>
                     </div>
@@ -5110,6 +5157,177 @@
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load appointments for calendar:', error);
+            }
+        }
+
+        // CRM Settings Functions
+        document.getElementById('crmType')?.addEventListener('change', function() {
+            const container = document.getElementById('crmCredentialsContainer');
+            if (this.value) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        });
+
+        async function testCRMConnection() {
+            const crmType = document.getElementById('crmType').value;
+            const credentialsText = document.getElementById('crmCredentials').value;
+            const statusDiv = document.getElementById('crmStatusMessage');
+
+            if (!crmType || !credentialsText) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Please select a CRM platform and enter credentials';
+                return;
+            }
+
+            try {
+                const credentials = JSON.parse(credentialsText);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/integrations/crm/test', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function() {
+                    statusDiv.style.display = 'block';
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        statusDiv.style.background = 'rgba(0, 212, 170, 0.2)';
+                        statusDiv.style.color = '#00d4aa';
+                        statusDiv.textContent = '✅ CRM connection successful!';
+                    } else {
+                        statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                        statusDiv.style.color = '#ff6464';
+                        statusDiv.textContent = '❌ Connection failed: ' + (JSON.parse(xhr.responseText).error || 'Unknown error');
+                    }
+                };
+
+                xhr.send(JSON.stringify({ crmType, credentials }));
+            } catch (error) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Invalid JSON credentials: ' + error.message;
+            }
+        }
+
+        async function loadCustomersFromCRM() {
+            const crmType = document.getElementById('crmType').value;
+            const credentialsText = document.getElementById('crmCredentials').value;
+            const statusDiv = document.getElementById('crmStatusMessage');
+
+            if (!crmType || !credentialsText) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Please select a CRM platform and enter credentials';
+                return;
+            }
+
+            try {
+                const credentials = JSON.parse(credentialsText);
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `/api/v1/integrations/crm/customers?crmType=${crmType}&credentials=${encodeURIComponent(JSON.stringify(credentials))}`, true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        displayCRMCustomers(data.data);
+                        statusDiv.style.display = 'block';
+                        statusDiv.style.background = 'rgba(0, 212, 170, 0.2)';
+                        statusDiv.style.color = '#00d4aa';
+                        statusDiv.textContent = `✅ Loaded ${data.count} customers from ${crmType}`;
+                    } else {
+                        statusDiv.style.display = 'block';
+                        statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                        statusDiv.style.color = '#ff6464';
+                        statusDiv.textContent = '❌ Failed to load customers: ' + (JSON.parse(xhr.responseText).error || 'Unknown error');
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        function displayCRMCustomers(customers) {
+            const container = document.getElementById('crmCustomersContent');
+            const html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Location</th>
+                            <th>CRM ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${customers.map(customer => `
+                            <tr>
+                                <td>${customer.firstName} ${customer.lastName}</td>
+                                <td>${customer.email || 'N/A'}</td>
+                                <td>${customer.phone || 'N/A'}</td>
+                                <td>${customer.city || ''}, ${customer.state || ''}</td>
+                                <td style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.crmId.slice(-8)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        async function syncCustomersToDB() {
+            const crmType = document.getElementById('crmType').value;
+            const credentialsText = document.getElementById('crmCredentials').value;
+            const statusDiv = document.getElementById('crmStatusMessage');
+
+            if (!crmType || !credentialsText) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Please select a CRM platform and enter credentials';
+                return;
+            }
+
+            try {
+                const credentials = JSON.parse(credentialsText);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/integrations/crm/sync-customers-to-db', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function() {
+                    statusDiv.style.display = 'block';
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        statusDiv.style.background = 'rgba(0, 212, 170, 0.2)';
+                        statusDiv.style.color = '#00d4aa';
+                        statusDiv.textContent = `✅ Synced ${data.syncedCount}/${data.totalCount} customers to database`;
+                        // Reload customers in the main tab
+                        setTimeout(() => loadCustomers(), 1000);
+                    } else {
+                        statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                        statusDiv.style.color = '#ff6464';
+                        statusDiv.textContent = '❌ Sync failed: ' + (JSON.parse(xhr.responseText).error || 'Unknown error');
+                    }
+                };
+
+                xhr.send(JSON.stringify({ crmType, credentials }));
+            } catch (error) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(255, 100, 100, 0.2)';
+                statusDiv.style.color = '#ff6464';
+                statusDiv.textContent = '❌ Error: ' + error.message;
             }
         }
 

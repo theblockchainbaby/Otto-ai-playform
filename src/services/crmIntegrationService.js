@@ -85,6 +85,17 @@ class CRMIntegrationService {
     }
     return await adapter.testConnection(credentials);
   }
+
+  /**
+   * Get all customers from CRM
+   */
+  async getCustomersFromCRM(crmType, credentials) {
+    const adapter = this.adapters[crmType.toLowerCase()];
+    if (!adapter) {
+      throw new Error(`Unsupported CRM type: ${crmType}`);
+    }
+    return await adapter.getCustomers(credentials);
+  }
 }
 
 /**
@@ -109,6 +120,10 @@ class BaseCRMAdapter {
 
   async getCustomer(credentials, customerId) {
     throw new Error('getCustomer must be implemented');
+  }
+
+  async getCustomers(credentials) {
+    throw new Error('getCustomers must be implemented');
   }
 }
 
@@ -260,6 +275,38 @@ class SalesforceAdapter extends BaseCRMAdapter {
       throw new Error(`Failed to get customer from Salesforce: ${error.message}`);
     }
   }
+
+  async getCustomers(credentials) {
+    try {
+      const token = await this.testConnection(credentials);
+      const { instanceUrl } = credentials;
+
+      const response = await axios.get(
+        `${instanceUrl}/services/data/v57.0/query?q=SELECT+Id,Name,Phone,Email__c,BillingStreet,BillingCity,BillingState,BillingPostalCode+FROM+Account+LIMIT+1000`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`
+          }
+        }
+      );
+
+      return response.data.records.map(record => ({
+        id: record.Id,
+        firstName: record.Name.split(' ')[0],
+        lastName: record.Name.split(' ').slice(1).join(' ') || '',
+        email: record.Email__c,
+        phone: record.Phone,
+        address: record.BillingStreet,
+        city: record.BillingCity,
+        state: record.BillingState,
+        zipCode: record.BillingPostalCode,
+        crmId: record.Id,
+        crmType: 'salesforce'
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get customers from Salesforce: ${error.message}`);
+    }
+  }
 }
 
 /**
@@ -376,6 +423,37 @@ class HubSpotAdapter extends BaseCRMAdapter {
       return response.data;
     } catch (error) {
       throw new Error(`Failed to get customer from HubSpot: ${error.message}`);
+    }
+  }
+
+  async getCustomers(credentials) {
+    try {
+      const { apiKey } = credentials;
+
+      const response = await axios.get(
+        'https://api.hubapi.com/crm/v3/objects/contacts?limit=100&properties=firstname,lastname,email,phone,address,city,state,zip',
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`
+          }
+        }
+      );
+
+      return response.data.results.map(contact => ({
+        id: contact.id,
+        firstName: contact.properties.firstname || '',
+        lastName: contact.properties.lastname || '',
+        email: contact.properties.email,
+        phone: contact.properties.phone,
+        address: contact.properties.address,
+        city: contact.properties.city,
+        state: contact.properties.state,
+        zipCode: contact.properties.zip,
+        crmId: contact.id,
+        crmType: 'hubspot'
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get customers from HubSpot: ${error.message}`);
     }
   }
 }
@@ -501,6 +579,35 @@ class PipedriveAdapter extends BaseCRMAdapter {
       return response.data.data;
     } catch (error) {
       throw new Error(`Failed to get customer from Pipedrive: ${error.message}`);
+    }
+  }
+
+  async getCustomers(credentials) {
+    try {
+      const { apiToken, companyDomain } = credentials;
+
+      const response = await axios.get(
+        `https://${companyDomain}.pipedrive.com/v1/persons`,
+        {
+          params: { api_token: apiToken, limit: 500 }
+        }
+      );
+
+      return response.data.data.map(person => ({
+        id: person.id,
+        firstName: person.first_name || '',
+        lastName: person.last_name || '',
+        email: person.email?.[0]?.value,
+        phone: person.phone?.[0]?.value,
+        address: person.org_id?.address,
+        city: '',
+        state: '',
+        zipCode: '',
+        crmId: person.id,
+        crmType: 'pipedrive'
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get customers from Pipedrive: ${error.message}`);
     }
   }
 }
@@ -653,6 +760,37 @@ class ZohoCRMAdapter extends BaseCRMAdapter {
       throw new Error(`Failed to get customer from Zoho CRM: ${error.message}`);
     }
   }
+
+  async getCustomers(credentials) {
+    try {
+      const { accessToken } = credentials;
+
+      const response = await axios.get(
+        'https://www.zohoapis.com/crm/v2/Accounts?fields=Account_Name,Phone,Email,Billing_Street,Billing_City,Billing_State,Billing_Code&per_page=200',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      );
+
+      return response.data.data.map(account => ({
+        id: account.id,
+        firstName: account.Account_Name?.split(' ')[0] || '',
+        lastName: account.Account_Name?.split(' ').slice(1).join(' ') || '',
+        email: account.Email,
+        phone: account.Phone,
+        address: account.Billing_Street,
+        city: account.Billing_City,
+        state: account.Billing_State,
+        zipCode: account.Billing_Code,
+        crmId: account.id,
+        crmType: 'zoho'
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get customers from Zoho CRM: ${error.message}`);
+    }
+  }
 }
 
 /**
@@ -763,6 +901,37 @@ class FreshsalesAdapter extends BaseCRMAdapter {
       return response.data.contact;
     } catch (error) {
       throw new Error(`Failed to get customer from Freshsales: ${error.message}`);
+    }
+  }
+
+  async getCustomers(credentials) {
+    try {
+      const { apiKey, domain } = credentials;
+
+      const response = await axios.get(
+        `https://${domain}.freshsales.io/api/contacts?page=1&per_page=100`,
+        {
+          headers: {
+            Authorization: `Token token="${apiKey}"`
+          }
+        }
+      );
+
+      return response.data.contacts.map(contact => ({
+        id: contact.id,
+        firstName: contact.first_name || '',
+        lastName: contact.last_name || '',
+        email: contact.email,
+        phone: contact.mobile_number,
+        address: contact.address,
+        city: contact.city,
+        state: contact.state,
+        zipCode: contact.zipcode,
+        crmId: contact.id,
+        crmType: 'freshsales'
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get customers from Freshsales: ${error.message}`);
     }
   }
 }
