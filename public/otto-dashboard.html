@@ -4464,95 +4464,149 @@
 
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        const data = JSON.parse(xhr.responseText);
-                        document.getElementById('customersCount').textContent = data.pagination.total.toLocaleString();
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            document.getElementById('customersCount').textContent = data.pagination.total.toLocaleString();
 
-                        const customersHtml = `
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Customer</th>
-                                        <th>Contact Information</th>
-                                        <th>Location</th>
-                                        <th>Assigned Representative</th>
-                                        <th>Activity</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.customers.map(customer => `
+                            if (!data.customers || data.customers.length === 0) {
+                                document.getElementById('customersContent').innerHTML = `
+                                    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                        <p style="font-size: 1.1rem;">No customers found</p>
+                                        <p style="font-size: 0.9rem;">Add your first customer to get started</p>
+                                    </div>
+                                `;
+                                return;
+                            }
+
+                            const customersHtml = `
+                                <table class="data-table">
+                                    <thead>
                                         <tr>
-                                            <td>
-                                                <div style="font-weight: 600; color: var(--mb-black);">${customer.firstName} ${customer.lastName}</div>
-                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">Customer ID: ${customer.id.slice(-8)}</div>
-                                            </td>
-                                            <td>
-                                                <div>${customer.email || 'No email'}</div>
-                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.phone || 'No phone'}</div>
-                                            </td>
-                                            <td>
-                                                <div>${customer.city || 'N/A'}, ${customer.state || 'N/A'}</div>
-                                                <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.zipCode || 'No ZIP'}</div>
-                                            </td>
-                                            <td>
-                                                ${customer.assignedTo ? `
-                                                    <div style="font-weight: 500;">${customer.assignedTo.firstName} ${customer.assignedTo.lastName}</div>
-                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.assignedTo.email}</div>
-                                                ` : '<span style="color: var(--mb-dark-silver);">Unassigned</span>'}
-                                            </td>
-                                            <td>
-                                                <div style="font-size: 0.8rem;">
-                                                    <div>📞 ${customer._count.calls} calls</div>
-                                                    <div>📈 ${customer._count.leads} leads</div>
-                                                    <div>🚗 ${customer._count.vehicles} vehicles</div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span class="status-badge ${customer._count.leads > 0 ? 'status-qualified' : 'status-new'}">
-                                                    ${customer._count.leads > 0 ? 'Active' : 'New'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div class="action-buttons">
-                                                    <button class="btn-edit" onclick="openEditCustomerModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" title="Edit Customer">
-                                                        ✏️
-                                                    </button>
-                                                    <button class="btn-delete" onclick="deleteCustomer('${customer.id}', '${customer.firstName} ${customer.lastName}')" title="Delete Customer">
-                                                        🗑️
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            <th>Customer</th>
+                                            <th>Contact Information</th>
+                                            <th>Location</th>
+                                            <th>Assigned Representative</th>
+                                            <th>Activity</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        ${data.customers.map(customer => `
+                                            <tr>
+                                                <td>
+                                                    <div style="font-weight: 600; color: var(--mb-black);">${customer.firstName} ${customer.lastName}</div>
+                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">Customer ID: ${customer.id.slice(-8)}</div>
+                                                </td>
+                                                <td>
+                                                    <div>${customer.email || 'No email'}</div>
+                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.phone || 'No phone'}</div>
+                                                </td>
+                                                <td>
+                                                    <div>${customer.city || 'N/A'}, ${customer.state || 'N/A'}</div>
+                                                    <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.zipCode || 'No ZIP'}</div>
+                                                </td>
+                                                <td>
+                                                    ${customer.assignedTo ? `
+                                                        <div style="font-weight: 500;">${customer.assignedTo.firstName} ${customer.assignedTo.lastName}</div>
+                                                        <div style="font-size: 0.8rem; color: var(--mb-dark-silver);">${customer.assignedTo.email}</div>
+                                                    ` : '<span style="color: var(--mb-dark-silver);">Unassigned</span>'}
+                                                </td>
+                                                <td>
+                                                    <div style="font-size: 0.8rem;">
+                                                        <div>📞 ${customer._count.calls} calls</div>
+                                                        <div>📈 ${customer._count.leads} leads</div>
+                                                        <div>🚗 ${customer._count.vehicles} vehicles</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge ${customer._count.leads > 0 ? 'status-qualified' : 'status-new'}">
+                                                        ${customer._count.leads > 0 ? 'Active' : 'New'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn-edit" onclick="openEditCustomerModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" title="Edit Customer">
+                                                            ✏️
+                                                        </button>
+                                                        <button class="btn-delete" onclick="deleteCustomer('${customer.id}', '${customer.firstName} ${customer.lastName}')" title="Delete Customer">
+                                                            🗑️
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            `;
+
+                            // Update pagination manager
+                            const paginationMgr = paginationManagers.customers;
+                            paginationMgr.totalItems = data.pagination.total;
+
+                            // Add pagination controls
+                            const paginationHtml = createPaginationControls(
+                                paginationMgr,
+                                'handleCustomerPageChange',
+                                'handleCustomerPageSizeChange'
+                            );
+
+                            document.getElementById('customersContent').innerHTML = customersHtml + paginationHtml;
+
+                            // Add sorting to table headers
+                            addTableSorting('.data-table', paginationMgr, (field, direction) => {
+                                console.log(`Sorting by ${field} (${direction})`);
+                                loadCustomers();
+                            });
+                        } catch (parseError) {
+                            console.error('Error parsing customer data:', parseError);
+                            document.getElementById('customersContent').innerHTML = `
+                                <div style="text-align: center; padding: 3rem; color: var(--mb-error);">
+                                    <p>Error loading customer data</p>
+                                    <p style="font-size: 0.9rem;">${parseError.message}</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        console.error('Failed to load customers. Status:', xhr.status);
+                        document.getElementById('customersContent').innerHTML = `
+                            <div style="text-align: center; padding: 3rem; color: var(--mb-error);">
+                                <p>Error loading customers (Status: ${xhr.status})</p>
+                                <p style="font-size: 0.9rem;">Please try again or contact support</p>
+                            </div>
                         `;
-
-                        // Update pagination manager
-                        const paginationMgr = paginationManagers.customers;
-                        paginationMgr.totalItems = data.pagination.total;
-
-                        // Add pagination controls
-                        const paginationHtml = createPaginationControls(
-                            paginationMgr,
-                            'handleCustomerPageChange',
-                            'handleCustomerPageSizeChange'
-                        );
-
-                        document.getElementById('customersContent').innerHTML = customersHtml + paginationHtml;
-
-                        // Add sorting to table headers
-                        addTableSorting('.data-table', paginationMgr, (field, direction) => {
-                            console.log(`Sorting by ${field} (${direction})`);
-                            loadCustomers();
-                        });
                     }
+                };
+
+                xhr.onerror = function() {
+                    console.error('Network error loading customers');
+                    document.getElementById('customersContent').innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--mb-error);">
+                            <p>Network error loading customers</p>
+                            <p style="font-size: 0.9rem;">Please check your connection and try again</p>
+                        </div>
+                    `;
+                };
+
+                xhr.ontimeout = function() {
+                    console.error('Request timeout loading customers');
+                    document.getElementById('customersContent').innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--mb-error);">
+                            <p>Request timeout</p>
+                            <p style="font-size: 0.9rem;">The server took too long to respond</p>
+                        </div>
+                    `;
                 };
 
                 xhr.send();
             } catch (error) {
                 console.error('Failed to load customers:', error);
+                document.getElementById('customersContent').innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--mb-error);">
+                        <p>Error loading customers</p>
+                        <p style="font-size: 0.9rem;">${error.message}</p>
+                    </div>
+                `;
             }
         }
 
