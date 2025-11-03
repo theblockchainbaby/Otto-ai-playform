@@ -1737,6 +1737,9 @@
     <script src="/src/utils/realtimeUpdates.js"></script>
     <!-- Pagination and Sorting Script -->
     <script src="/src/utils/pagination.js"></script>
+    <!-- Calendar View Script -->
+    <script src="/src/utils/calendarView.js"></script>
+    <link rel="stylesheet" href="/src/utils/calendarView.css">
 </head>
 <body>
     <!-- Login Section -->
@@ -2127,11 +2130,20 @@
                     <div id="appointmentsTab" class="tab-pane hidden">
                         <div class="tab-header">
                             <h3>Appointment Scheduling</h3>
-                            <button class="btn-add" onclick="openAddAppointmentModal()">
-                                <span>➕</span> Schedule Appointment
-                            </button>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-add" onclick="switchAppointmentView('calendar')" id="calendarViewBtn" style="background: rgba(0, 212, 170, 0.1); border: 1px solid rgba(0, 212, 170, 0.3);">
+                                    <span>📅</span> Calendar View
+                                </button>
+                                <button class="btn-add" onclick="switchAppointmentView('table')" id="tableViewBtn" style="background: #00d4aa; border: 1px solid #00d4aa;">
+                                    <span>📋</span> Table View
+                                </button>
+                                <button class="btn-add" onclick="openAddAppointmentModal()">
+                                    <span>➕</span> Schedule Appointment
+                                </button>
+                            </div>
                         </div>
-                        <div class="search-filter-bar">
+                        <div id="appointmentViewContainer">
+                            <div class="search-filter-bar">
                             <div class="search-section">
                                 <div class="search-input-container">
                                     <input type="text" id="appointmentSearch" placeholder="🔍 Search appointments by customer, title, or notes..." class="search-input">
@@ -2165,12 +2177,15 @@
                                 <button class="btn-filter-clear" onclick="clearAppointmentFilters()">Clear Filters</button>
                             </div>
                         </div>
-                        <div id="appointmentsContent">
-                            <div class="loading">
-                                <div class="spinner"></div>
-                                <p>Loading appointments...</p>
+                            <div id="appointmentsContent">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <p>Loading appointments...</p>
+                                </div>
+                            </div>
                             </div>
                         </div>
+                        <div id="calendarContainer" style="display: none;"></div>
                     </div>
 
                     <div id="messagesTab" class="tab-pane hidden">
@@ -5041,6 +5056,60 @@
         function handleAppointmentPageSizeChange(size) {
             if (paginationManagers.appointments.setPageSize(parseInt(size))) {
                 loadAppointments();
+            }
+        }
+
+        // Calendar View Functions
+        let currentAppointmentView = 'table';
+
+        function switchAppointmentView(view) {
+            currentAppointmentView = view;
+
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            const calendarViewBtn = document.getElementById('calendarViewBtn');
+            const appointmentViewContainer = document.getElementById('appointmentViewContainer');
+            const calendarContainer = document.getElementById('calendarContainer');
+
+            if (view === 'table') {
+                appointmentViewContainer.style.display = 'block';
+                calendarContainer.style.display = 'none';
+                tableViewBtn.style.background = '#00d4aa';
+                tableViewBtn.style.borderColor = '#00d4aa';
+                tableViewBtn.style.color = '#1a1a1a';
+                calendarViewBtn.style.background = 'rgba(0, 212, 170, 0.1)';
+                calendarViewBtn.style.borderColor = 'rgba(0, 212, 170, 0.3)';
+                calendarViewBtn.style.color = '#00d4aa';
+                loadAppointments();
+            } else if (view === 'calendar') {
+                appointmentViewContainer.style.display = 'none';
+                calendarContainer.style.display = 'block';
+                calendarViewBtn.style.background = '#00d4aa';
+                calendarViewBtn.style.borderColor = '#00d4aa';
+                calendarViewBtn.style.color = '#1a1a1a';
+                tableViewBtn.style.background = 'rgba(0, 212, 170, 0.1)';
+                tableViewBtn.style.borderColor = 'rgba(0, 212, 170, 0.3)';
+                tableViewBtn.style.color = '#00d4aa';
+                loadAppointmentsForCalendar();
+            }
+        }
+
+        async function loadAppointmentsForCalendar() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/appointments?limit=1000', true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        calendarView.setAppointments(data.appointments || []);
+                        calendarView.renderCalendar();
+                    }
+                };
+
+                xhr.send();
+            } catch (error) {
+                console.error('Failed to load appointments for calendar:', error);
             }
         }
 
