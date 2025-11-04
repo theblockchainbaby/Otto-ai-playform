@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otto - AI-Powered Automotive Intelligence Platform</title>
-    <meta name="description" content="The world's most advanced AI-powered automotive dealership management system powered by Otto, a custom ElevenLabs AI agent for intelligent phone call handling.">
+    <title>Otto - Replace Your Call Center with AI | Automotive AI Agent</title>
+    <meta name="description" content="Otto is an AI agent that answers every call, qualifies leads, and books appointments automatically. Replace your call center with AI. Start your free trial today.">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -465,6 +465,21 @@
             transform: translateY(0);
         }
 
+        .additional-feature {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Otto Section */
         .otto-section {
             padding: 60px 0;
@@ -552,6 +567,147 @@
         .stat-item p {
             font-size: 1.2rem;
             color: var(--text-muted);
+        }
+
+        /* CTA Forms Section */
+        .cta-forms {
+            background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%);
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .cta-forms::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,210,55,0.03)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .forms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-yellow);
+        }
+
+        .form-card h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-yellow);
+        }
+
+        .form-card .form-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--primary-yellow);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 210, 55, 0.4);
+        }
+
+        .form-submit:active {
+            transform: translateY(0);
+        }
+
+        .form-benefits {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .form-benefits ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .form-benefits li {
+            padding: 0.5rem 0;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-benefits li i {
+            color: var(--success);
+            font-size: 1.1rem;
         }
 
         /* Footer */
@@ -690,23 +846,25 @@
 
         .price {
             display: flex;
-            align-items: baseline;
+            align-items: flex-start;
             justify-content: center;
             margin: 1.5rem 0;
         }
 
         .currency {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-yellow);
+            margin-top: 0.3rem;
+            margin-right: 2px;
         }
 
         .amount {
             font-size: 3.5rem;
             font-weight: 800;
             color: var(--primary-yellow);
-            margin: 0 4px;
             font-family: var(--font-heading);
+            line-height: 1;
         }
 
         .period {
@@ -787,6 +945,41 @@
             margin: 0.5rem 0;
             color: var(--text-muted);
             font-size: 1.05rem;
+        }
+
+        .setup-fee-notice {
+            background: rgba(255, 210, 55, 0.1);
+            border: 1px solid rgba(255, 210, 55, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .setup-fee-notice:hover {
+            background: rgba(255, 210, 55, 0.15);
+            border-color: rgba(255, 210, 55, 0.5);
+        }
+
+        .setup-fee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .setup-fee-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .setup-fee-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
         }
 
         .mobile-menu a {
@@ -873,6 +1066,15 @@
                 grid-template-columns: 1fr;
                 text-align: left;
             }
+
+            .forms-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-card {
+                padding: 2rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -930,18 +1132,15 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-tagline">Automotive Intelligence, Simplified.</div>
-                <h1>Transform Your Dealership with Otto AI</h1>
-                <p>The world's most advanced AI-powered platform for automotive dealerships. Answer calls instantly, manage inventory effortlessly, and close deals faster with Otto—your 24/7 AI assistant.</p>
+                <div class="hero-tagline">Replace Your Call Center with AI</div>
+                <h1>An AI Agent That Answers Every Call, Qualifies Leads & Books Appointments Automatically</h1>
+                <p>Stop missing calls. Stop losing leads. Otto handles every customer interaction 24/7—no human required.</p>
                 <div class="hero-buttons">
-                    <a href="/otto-dashboard.html" class="btn-primary">
-                        <i class="fas fa-rocket"></i> Launch Otto
+                    <a href="#demo-form" class="btn-primary">
+                        <i class="fas fa-calendar-check"></i> Book a Demo
                     </a>
-                    <a href="/demo.html" class="btn-secondary">
-                        <i class="fas fa-play-circle"></i> Try Demo
-                    </a>
-                    <a href="#features" class="btn-secondary">
-                        <i class="fas fa-info-circle"></i> Learn More
+                    <a href="#trial-form" class="btn-secondary">
+                        <i class="fas fa-rocket"></i> Start Free Trial
                     </a>
                 </div>
             </div>
@@ -952,64 +1151,74 @@
     <section id="features" class="features">
         <div class="container">
             <div class="section-title">
-                <h2>Built for Dealerships that Demand Precision</h2>
-                <p>Everything you need to manage a modern automotive dealership with cutting-edge AI technology</p>
+                <h2>Everything You Need to Close More Deals</h2>
+                <p>The complete AI-powered platform for modern automotive dealerships</p>
             </div>
             <div class="features-grid">
+                <!-- Top 3 Features - Always Visible -->
                 <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-robot"></i></div>
-                    <h3>Otto AI Agent</h3>
-                    <p>Custom ElevenLabs conversational AI for intelligent phone call handling, customer recognition, and real-time voice synthesis.</p>
-                    <div class="feature-action">Answer calls before your team even can →</div>
+                    <div class="feature-icon"><i class="fas fa-phone-alt"></i></div>
+                    <h3>Never Miss a Call</h3>
+                    <p>Otto answers every call instantly, qualifies leads, and books appointments—even after hours.</p>
+                    <div class="feature-action">24/7 AI call handling →</div>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-users"></i></div>
-                    <h3>Customer Management</h3>
-                    <p>Complete CRM with 500+ customer profiles, purchase history, service records, and predictive analytics.</p>
-                    <div class="feature-action">Know your customers better →</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-car"></i></div>
-                    <h3>Vehicle Inventory</h3>
-                    <p>Manage 800+ luxury vehicles with detailed specifications, pricing, availability, and automated updates.</p>
-                    <div class="feature-action">Track every vehicle effortlessly →</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-phone-volume"></i></div>
-                    <h3>Call Center Operations</h3>
-                    <p>Advanced call tracking, recording, transcription, and AI-powered sentiment analysis for every interaction.</p>
-                    <div class="feature-action">Never miss a customer insight →</div>
+                    <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+                    <h3>Qualify Leads Automatically</h3>
+                    <p>AI-powered lead scoring identifies hot prospects and routes them to your best closers.</p>
+                    <div class="feature-action">Focus on ready-to-buy customers →</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
-                    <h3>Smart Scheduling</h3>
-                    <p>Intelligent appointment booking with automated reminders, conflict resolution, and resource optimization.</p>
-                    <div class="feature-action">Never double-book again →</div>
+                    <h3>Fill Your Calendar</h3>
+                    <p>Automated appointment scheduling syncs directly to your CRM—no double bookings, no missed opportunities.</p>
+                    <div class="feature-action">More test drives, more sales →</div>
                 </div>
-                <div class="feature-card">
+
+                <!-- Additional Features - Hidden by Default -->
+                <div class="feature-card additional-feature" style="display: none;">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h3>Complete Customer CRM</h3>
+                    <p>Track every customer interaction, purchase history, and service record in one place.</p>
+                    <div class="feature-action">Know your customers better →</div>
+                </div>
+                <div class="feature-card additional-feature" style="display: none;">
+                    <div class="feature-icon"><i class="fas fa-car"></i></div>
+                    <h3>Smart Inventory Management</h3>
+                    <p>Real-time vehicle tracking with automated pricing, availability updates, and VIN decoding.</p>
+                    <div class="feature-action">Track every vehicle effortlessly →</div>
+                </div>
+                <div class="feature-card additional-feature" style="display: none;">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Call Analytics & Insights</h3>
+                    <p>Track call volume, conversion rates, and sentiment analysis to optimize your sales process.</p>
+                    <div class="feature-action">Data-driven decisions →</div>
+                </div>
+                <div class="feature-card additional-feature" style="display: none;">
                     <div class="feature-icon"><i class="fas fa-ambulance"></i></div>
-                    <h3>Emergency Services</h3>
-                    <p>24/7 roadside assistance coordination with GPS tracking, service provider network, and real-time updates.</p>
+                    <h3>Emergency Roadside Assistance</h3>
+                    <p>24/7 emergency call handling with GPS tracking and service provider coordination.</p>
                     <div class="feature-action">Be there when it matters most →</div>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card additional-feature" style="display: none;">
                     <div class="feature-icon"><i class="fas fa-barcode"></i></div>
-                    <h3>VIN Decoding</h3>
-                    <p>Automatic vehicle identification and data extraction. Otto decodes VINs to get make, model, year, engine specs, and more—enriching every customer interaction.</p>
+                    <h3>Instant VIN Decoding</h3>
+                    <p>Automatic vehicle identification with complete specs, history, and pricing data.</p>
                     <div class="feature-action">Know every vehicle instantly →</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-database"></i></div>
-                    <h3>Appointment Database</h3>
-                    <p>Automatic appointment booking and storage with vehicle data. Every booking is saved to your database and synced to your CRM in real-time.</p>
-                    <div class="feature-action">Never lose a booking →</div>
-                </div>
-                <div class="feature-card" style="border: 2px solid var(--primary-yellow); background: rgba(255, 210, 55, 0.05);">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, var(--primary-yellow) 0%, #F59E0B 100%);"><i class="fas fa-plug"></i></div>
+                <div class="feature-card additional-feature" style="display: none; border: 2px solid var(--primary-yellow); background: rgba(255, 210, 55, 0.05);">
+                    <div class="feature-icon"><i class="fas fa-plug"></i></div>
                     <h3>CRM/DMS Integration</h3>
-                    <p>Seamlessly connect to your existing CRM/DMS systems. No data migration needed. Works with CDK, Reynolds, DealerSocket, and more.</p>
+                    <p>Seamlessly connect to CDK, Reynolds, DealerSocket, and any existing CRM system.</p>
                     <div class="feature-action"><a href="/integrations.html" style="color: var(--primary-yellow); text-decoration: none;">View all integrations →</a></div>
                 </div>
+            </div>
+
+            <!-- See More Button -->
+            <div style="text-align: center; margin-top: 3rem;">
+                <button id="toggleFeaturesBtn" onclick="toggleFeatures()" class="btn-secondary" style="padding: 14px 32px; font-size: 1.05rem; cursor: pointer; border: 2px solid var(--primary-yellow); background: transparent; color: var(--primary-yellow); border-radius: 12px; font-weight: 700; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-chevron-down"></i> See All Features
+                </button>
             </div>
         </div>
     </section>
@@ -1027,7 +1236,7 @@
                     Works With Your Existing CRM/DMS
                 </h2>
                 <p style="font-size: 1.3rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.8;">
-                    No need to rebuild your systems. Otto AI integrates seamlessly with <strong style="color: var(--text-light);">CDK Global, Reynolds & Reynolds, DealerSocket, VinSolutions</strong>, and any custom CRM via REST API. Your data stays in your system, synced in real-time.
+                    No need to rebuild your systems. Otto AI integrates seamlessly with <strong style="color: var(--text-light);">CDK Global, Reynolds & Reynolds, DealerSocket, VinSolutions</strong>, and any existing CRM. Your data stays in your system, synced in real-time.
                 </p>
                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
                     <div style="padding: 12px 24px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; backdrop-filter: blur(12px);">
@@ -1058,18 +1267,17 @@
     <section id="otto" class="otto-section">
         <div class="container">
             <div class="otto-content">
-                <div class="otto-badge">🎯 Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw</div>
                 <h2>Meet Otto - Your AI Phone Agent</h2>
-                <p>Otto is a custom-trained ElevenLabs conversational AI agent specifically designed for automotive customer service. With advanced natural language processing and your custom voice, Otto handles calls with the professionalism of your best sales representative.</p>
+                <p>Otto is your 24/7 AI receptionist that answers every call, qualifies leads, and books appointments automatically. Trained specifically for automotive dealerships, Otto handles customer conversations with the professionalism of your best sales representative—without ever taking a break.</p>
                 <div class="hero-buttons" style="margin-top: 2rem;">
                     <a href="/demo.html" class="btn-primary">
-                        Try Otto Demo
+                        <i class="fas fa-play-circle"></i> Try Otto Demo
                     </a>
                     <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3701k70bz4gcfd6vq1bkh57d15bw" target="_blank" class="btn-secondary">
-                        Chat with Otto
+                        <i class="fas fa-comments"></i> Chat with Otto Live
                     </a>
                     <a href="/otto-dashboard.html#ai-assistant" class="btn-secondary">
-                        Configure Otto
+                        <i class="fas fa-tachometer-alt"></i> View Dashboard
                     </a>
                 </div>
             </div>
@@ -1104,8 +1312,37 @@
     <section id="pricing" class="pricing-section">
         <div class="container">
             <div class="section-header">
-                <h2>Choose Your Otto AI Plan</h2>
-                <p>Flexible pricing options to fit dealerships of all sizes</p>
+                <h2>Simple, Transparent Pricing</h2>
+                <p>Start with a 14-day free trial. No credit card required.</p>
+            </div>
+
+            <!-- Setup Fee Notice -->
+            <div class="setup-fee-notice">
+                <div style="display: inline-flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+                    <i class="fas fa-info-circle" style="color: var(--primary-yellow); font-size: 1.5rem;"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-light); margin: 0;">One-Time Setup Fee: $499</h3>
+                </div>
+                <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                    After your 14-day free trial, a one-time setup fee applies to configure Otto for your dealership.
+                </p>
+                <div class="setup-fee-grid">
+                    <div class="setup-fee-item">
+                        <i class="fas fa-phone-alt" style="color: var(--primary-yellow); font-size: 1.2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        <p style="margin: 0; font-weight: 600; color: var(--text-light);">Call Routing Setup</p>
+                    </div>
+                    <div class="setup-fee-item">
+                        <i class="fas fa-plug" style="color: var(--primary-yellow); font-size: 1.2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        <p style="margin: 0; font-weight: 600; color: var(--text-light);">CRM Integration</p>
+                    </div>
+                    <div class="setup-fee-item">
+                        <i class="fas fa-microphone" style="color: var(--primary-yellow); font-size: 1.2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        <p style="margin: 0; font-weight: 600; color: var(--text-light);">Custom Greetings</p>
+                    </div>
+                    <div class="setup-fee-item">
+                        <i class="fas fa-graduation-cap" style="color: var(--primary-yellow); font-size: 1.2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        <p style="margin: 0; font-weight: 600; color: var(--text-light);">Otto AI Training</p>
+                    </div>
+                </div>
             </div>
 
             <div class="pricing-grid">
@@ -1131,7 +1368,7 @@
                         </ul>
                     </div>
                     <div class="plan-action">
-                        <a href="/purchase.html?plan=starter" class="btn-secondary">Get Started</a>
+                        <a href="#trial-form" class="btn-primary">Start Free Trial</a>
                     </div>
                 </div>
 
@@ -1160,7 +1397,7 @@
                         </ul>
                     </div>
                     <div class="plan-action">
-                        <a href="/purchase.html?plan=professional" class="btn-primary">Start Free Trial</a>
+                        <a href="#trial-form" class="btn-primary">Start Free Trial</a>
                     </div>
                 </div>
 
@@ -1168,10 +1405,8 @@
                 <div class="pricing-card">
                     <div class="plan-header">
                         <h3>Enterprise</h3>
-                        <div class="price">
-                            <span class="currency">$</span>
-                            <span class="amount">1,999</span>
-                            <span class="period">/month</span>
+                        <div class="price" style="margin: 1.5rem 0;">
+                            <span style="font-size: 2rem; font-weight: 700; color: var(--primary-yellow); font-family: var(--font-heading);">Custom Pricing</span>
                         </div>
                         <p class="plan-description">Full-scale solution for large dealership groups</p>
                     </div>
@@ -1180,7 +1415,7 @@
                             <li>Everything in Professional</li>
                             <li>Multi-location Support</li>
                             <li>Custom Otto Training</li>
-                            <li>API Access & Integrations</li>
+                            <li>Advanced Integrations</li>
                             <li>Emergency Call Handling</li>
                             <li>White-label Options</li>
                             <li>Dedicated Account Manager</li>
@@ -1188,13 +1423,156 @@
                         </ul>
                     </div>
                     <div class="plan-action">
-                        <a href="/purchase.html?plan=enterprise" class="btn-secondary">Contact Sales</a>
+                        <a href="#demo-form" class="btn-secondary">Contact Sales</a>
                     </div>
                 </div>
             </div>
 
+            <!-- Pricing Footer with Regional Pricing -->
             <div class="pricing-footer">
-                <p><strong>Payment options:</strong> Monthly or annual billing • No setup fees</p>
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;"><strong>Payment options:</strong> Monthly or annual billing (save 15% with annual)</p>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">All plans include 14-day free trial • Cancel anytime • No long-term contracts</p>
+                </div>
+
+                <!-- Regional Pricing Notice -->
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; justify-content: center;">
+                        <i class="fas fa-globe" style="color: var(--primary-yellow);"></i>
+                        <h4 style="margin: 0; font-size: 1.2rem; font-weight: 700;">Global Pricing</h4>
+                    </div>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        We offer purchasing-power adjusted pricing for dealerships in different regions:
+                    </p>
+                    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                        <div>
+                            <p style="margin: 0; font-weight: 600; color: var(--text-light);">🇺🇸 US / 🇪🇺 EU / 🇨🇦 Canada</p>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Standard pricing (as shown)</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-weight: 600; color: var(--text-light);">🌎 LATAM / 🌍 Africa / 🌏 Asia</p>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Adjusted pricing available</p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; margin-bottom: 0; font-size: 0.9rem; color: var(--text-muted);">
+                        <a href="#demo-form" style="color: var(--primary-yellow); text-decoration: none; font-weight: 600;">Contact us</a> for regional pricing details
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Forms Section -->
+    <section class="cta-forms">
+        <div class="container">
+            <div class="forms-container">
+                <!-- Demo Form -->
+                <div class="form-card" id="demo-form">
+                    <h2><i class="fas fa-calendar-check"></i> Book a Demo</h2>
+                    <p class="form-subtitle">See Otto in action. Schedule a personalized demo with our team.</p>
+
+                    <form id="demoForm" onsubmit="handleDemoSubmit(event)">
+                        <div class="form-group">
+                            <label for="demo-name">Full Name *</label>
+                            <input type="text" id="demo-name" name="name" required placeholder="John Smith">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="demo-email">Work Email *</label>
+                            <input type="email" id="demo-email" name="email" required placeholder="john@dealership.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="demo-phone">Phone Number *</label>
+                            <input type="tel" id="demo-phone" name="phone" required placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="demo-company">Dealership Name *</label>
+                            <input type="text" id="demo-company" name="company" required placeholder="ABC Motors">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="demo-size">Dealership Size</label>
+                            <select id="demo-size" name="size">
+                                <option value="">Select size</option>
+                                <option value="1-5">1-5 employees</option>
+                                <option value="6-20">6-20 employees</option>
+                                <option value="21-50">21-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="200+">200+ employees</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="demo-message">What would you like to see?</label>
+                            <textarea id="demo-message" name="message" placeholder="Tell us about your needs..."></textarea>
+                        </div>
+
+                        <button type="submit" class="form-submit">
+                            <i class="fas fa-calendar-check"></i> Schedule Demo
+                        </button>
+                    </form>
+
+                    <div class="form-benefits">
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> 30-minute personalized demo</li>
+                            <li><i class="fas fa-check-circle"></i> See Otto handle real calls</li>
+                            <li><i class="fas fa-check-circle"></i> Custom pricing quote</li>
+                            <li><i class="fas fa-check-circle"></i> No commitment required</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Trial Form -->
+                <div class="form-card" id="trial-form">
+                    <h2><i class="fas fa-rocket"></i> Start Free Trial</h2>
+                    <p class="form-subtitle">Try Otto risk-free for 14 days. No credit card required.</p>
+
+                    <form id="trialForm" onsubmit="handleTrialSubmit(event)">
+                        <div class="form-group">
+                            <label for="trial-name">Full Name *</label>
+                            <input type="text" id="trial-name" name="name" required placeholder="John Smith">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trial-email">Work Email *</label>
+                            <input type="email" id="trial-email" name="email" required placeholder="john@dealership.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trial-phone">Phone Number *</label>
+                            <input type="tel" id="trial-phone" name="phone" required placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trial-company">Dealership Name *</label>
+                            <input type="text" id="trial-company" name="company" required placeholder="ABC Motors">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trial-plan">Select Plan</label>
+                            <select id="trial-plan" name="plan">
+                                <option value="starter">Starter - $299/month</option>
+                                <option value="professional" selected>Professional - $599/month</option>
+                                <option value="enterprise">Enterprise - Custom</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="form-submit">
+                            <i class="fas fa-rocket"></i> Start Free Trial
+                        </button>
+                    </form>
+
+                    <div class="form-benefits">
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> 14-day free trial</li>
+                            <li><i class="fas fa-check-circle"></i> No credit card required</li>
+                            <li><i class="fas fa-check-circle"></i> Full platform access</li>
+                            <li><i class="fas fa-check-circle"></i> Cancel anytime</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1231,7 +1609,6 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 Otto AI Platform. Built with ❤️ for the automotive industry.</p>
-                <p>Powered by ElevenLabs AI • OpenAI GPT-4 • Twilio</p>
             </div>
         </div>
     </footer>
@@ -1327,6 +1704,80 @@
                 header.classList.remove('scrolled');
             }
         });
+
+        // Toggle features visibility
+        function toggleFeatures() {
+            const additionalFeatures = document.querySelectorAll('.additional-feature');
+            const toggleBtn = document.getElementById('toggleFeaturesBtn');
+            const icon = toggleBtn.querySelector('i');
+
+            const isHidden = additionalFeatures[0].style.display === 'none';
+
+            additionalFeatures.forEach((feature, index) => {
+                if (isHidden) {
+                    setTimeout(() => {
+                        feature.style.display = 'block';
+                    }, index * 100);
+                } else {
+                    feature.style.display = 'none';
+                }
+            });
+
+            if (isHidden) {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Show Less';
+            } else {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> See All Features';
+            }
+        }
+
+        // Form submission handlers
+        function handleDemoSubmit(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Show success message
+            alert('Thank you for your interest! Our team will contact you within 24 hours to schedule your personalized demo.');
+
+            // Log to console (in production, send to backend)
+            console.log('Demo request:', data);
+
+            // Reset form
+            event.target.reset();
+
+            // In production, send to backend:
+            // fetch('/api/demo-requests', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // });
+        }
+
+        function handleTrialSubmit(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Show success message
+            alert('Welcome to Otto! Check your email for login credentials and setup instructions. Your 14-day free trial starts now!');
+
+            // Log to console (in production, send to backend)
+            console.log('Trial signup:', data);
+
+            // Reset form
+            event.target.reset();
+
+            // In production, send to backend and redirect:
+            // fetch('/api/trial-signups', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // }).then(() => {
+            //     window.location.href = '/otto-dashboard.html';
+            // });
+        }
     </script>
 
 
