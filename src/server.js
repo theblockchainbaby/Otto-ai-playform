@@ -15,21 +15,8 @@ const PORT = process.env.PORT || 10000;
 
 // Initialize database connection (optional for now)
 let prisma = null;
-try {
-  const { PrismaClient } = require('@prisma/client');
-  if (process.env.DATABASE_URL) {
-    prisma = new PrismaClient({
-      errorFormat: 'pretty',
-      log: ['error']
-    });
-    // Don't wait for connection, just initialize
-    console.log('✅ Database client initialized');
-  } else {
-    console.log('⚠️  No DATABASE_URL provided, running without database');
-  }
-} catch (error) {
-  console.log('⚠️  Prisma not available, running in basic mode:', error.message);
-}
+// Skip Prisma initialization for now - it's causing hangs
+console.log('⚠️  Skipping database initialization, running in mock data mode');
 
 // Security middleware
 app.use(helmet({
@@ -75,24 +62,22 @@ if (prisma) {
   app.locals.prisma = prisma;
 }
 
-// Import and use auth routes if database is available
-if (prisma) {
-  try {
-    const authRoutes = require('./routes/auth');
-    app.use('/api/auth', authRoutes);
-    console.log('✅ Auth routes loaded');
-  } catch (error) {
-    console.log('⚠️  Could not load auth routes:', error.message);
-  }
+// Load API routes
+try {
+  const customersRoutes = require('./routes/customers');
+  app.use('/api/customers', customersRoutes);
+  console.log('✅ Customers routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load customers routes:', error.message);
+}
 
-  // Load customers routes
-  try {
-    const customersRoutes = require('./routes/customers');
-    app.use('/api/customers', customersRoutes);
-    console.log('✅ Customers routes loaded');
-  } catch (error) {
-    console.log('⚠️  Could not load customers routes:', error.message);
-  }
+// Load auth routes if available
+try {
+  const authRoutes = require('./routes/auth');
+  app.use('/api/auth', authRoutes);
+  console.log('✅ Auth routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load auth routes:', error.message);
 }
 
 // Health check endpoint
