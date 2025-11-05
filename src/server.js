@@ -432,26 +432,54 @@ async function handleMediaStreamConnection(twilioWs, request) {
           elevenLabsWs.on('open', () => {
             console.log(`🤖 Connected to ElevenLabs for ${callSid}`);
             console.log(`🎙️  Audio streaming ready - Twilio (mulaw) <-> ElevenLabs (PCM)`);
+
+            // Send initial handshake to ElevenLabs
+            const initMessage = {
+              type: 'conversation_initiation_client_data'
+            };
+            elevenLabsWs.send(JSON.stringify(initMessage));
+            console.log(`🤝 Sent handshake to ElevenLabs`);
           });
 
           elevenLabsWs.on('message', (data) => {
-            // Forward ElevenLabs audio to Twilio
+            // Handle ElevenLabs messages
             if (twilioWs.readyState === WebSocket.OPEN) {
               try {
-                // ElevenLabs sends raw PCM audio data (binary)
-                // Convert to base64 for Twilio
-                const base64Audio = Buffer.from(data).toString('base64');
-                const mediaMessage = {
-                  event: 'media',
-                  streamSid: callSid,
-                  media: {
-                    payload: base64Audio
-                  }
-                };
-                twilioWs.send(JSON.stringify(mediaMessage));
-                console.log(`🔊 Sent ${data.length} bytes of audio to Twilio`);
+                const message = JSON.parse(data.toString());
+
+                // Handle ping events
+                if (message.type === 'ping') {
+                  const pongMessage = {
+                    type: 'pong',
+                    event_id: message.ping_event.event_id
+                  };
+                  elevenLabsWs.send(JSON.stringify(pongMessage));
+                  console.log(`🏓 Pong sent to ElevenLabs`);
+                }
+
+                // Handle audio events
+                if (message.type === 'audio' && message.audio_event && message.audio_event.audio_base_64) {
+                  const mediaMessage = {
+                    event: 'media',
+                    streamSid: callSid,
+                    media: {
+                      payload: message.audio_event.audio_base_64
+                    }
+                  };
+                  twilioWs.send(JSON.stringify(mediaMessage));
+                  console.log(`🔊 Sent audio to Twilio (event ${message.audio_event.event_id})`);
+                }
+
+                // Log other events
+                if (message.type === 'user_transcript') {
+                  console.log(`👤 User: ${message.user_transcription_event.user_transcript}`);
+                }
+                if (message.type === 'agent_response') {
+                  console.log(`🤖 Otto: ${message.agent_response_event.agent_response}`);
+                }
+
               } catch (error) {
-                console.error(`Error forwarding audio from ElevenLabs: ${error.message}`);
+                console.error(`Error handling ElevenLabs message: ${error.message}`);
               }
             }
           });
@@ -476,10 +504,12 @@ async function handleMediaStreamConnection(twilioWs, request) {
       } else if (message.event === 'media' && message.media && elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
         // Forward Twilio audio to ElevenLabs
         // Twilio sends mulaw-encoded audio as base64
-        // ElevenLabs expects raw PCM audio (binary)
-        const audioBuffer = Buffer.from(message.media.payload, 'base64');
-        elevenLabsWs.send(audioBuffer);
-        console.log(`🎤 Sent ${audioBuffer.length} bytes of audio to ElevenLabs`);
+        // ElevenLabs expects JSON with user_audio_chunk (base64)
+        const audioMessage = {
+          user_audio_chunk: message.media.payload
+        };
+        elevenLabsWs.send(JSON.stringify(audioMessage));
+        console.log(`🎤 Sent audio chunk to ElevenLabs`);
       } else if (message.event === 'stop') {
         console.log(`📞 Media stream stopped for ${callSid}`);
         if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
