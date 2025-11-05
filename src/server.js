@@ -297,18 +297,86 @@ app.post('/api/twilio/voice', async (req, res) => {
   }
 });
 
-// Twilio webhook endpoint (basic - old)
-app.post('/api/twilio/otto/incoming', (req, res) => {
-  console.log('Incoming Twilio webhook:', req.body);
+// Twilio webhook endpoint - Otto incoming calls
+app.post('/api/twilio/otto/incoming', async (req, res) => {
+  try {
+    const { From, To, CallSid, CallerName } = req.body;
 
-  // Basic TwiML response
-  const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say voice="alice">Hello! You've reached Otto AI. We're currently setting up our system. Please call back soon!</Say>
-</Response>`;
+    console.log('🔊 Otto incoming call:', { From, To, CallSid, CallerName });
 
-  res.type('text/xml');
-  res.send(twiml);
+    // Log call to database if available
+    let customer = null;
+    if (prisma && From) {
+      try {
+        customer = await prisma.customer.findFirst({
+          where: { phone: From },
+          include: {
+            vehicles: { take: 3, orderBy: { createdAt: 'desc' } },
+            appointments: { take: 3, orderBy: { createdAt: 'desc' } }
+          }
+        });
+
+        // Create call record
+        if (customer) {
+          await prisma.call.create({
+            data: {
+              direction: 'INBOUND',
+              status: 'RINGING',
+              outcome: `Otto AI Agent - Call from ${From}`,
+              startedAt: new Date(),
+              customerId: customer.id,
+              notes: `Otto AI Agent call - Twilio CallSid: ${CallSid}, Caller: ${CallerName || 'Unknown'}`
+            }
+          });
+          console.log('✅ Call logged to database');
+        }
+      } catch (dbError) {
+        console.error('❌ Database error (non-fatal):', dbError.message);
+        // Continue even if database fails
+      }
+    }
+
+    // Generate TwiML with Otto agent
+    const twilio = require('twilio');
+    const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+
+    console.log('🤖 Agent ID:', agentId);
+    console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
+
+    // Generate TwiML that connects to ElevenLabs Otto agent
+    const twiml = new twilio.twiml.VoiceResponse();
+    const connect = twiml.connect();
+    const stream = connect.stream({
+      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+    });
+
+    // Configure Otto agent with parameters
+    stream.parameter({
+      name: 'agent_id',
+      value: agentId
+    });
+    stream.parameter({
+      name: 'authorization',
+      value: `Bearer ${elevenLabsKey}`
+    });
+
+    const twimlString = twiml.toString();
+    console.log('📤 Sending TwiML with Otto agent');
+    console.log('📄 TwiML:', twimlString);
+
+    res.type('text/xml');
+    res.send(twimlString);
+  } catch (error) {
+    console.error('❌ Error in /api/twilio/otto/incoming:', error);
+
+    const twilio = require('twilio');
+    const response = new twilio.twiml.VoiceResponse();
+    response.say('Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.');
+
+    res.type('text/xml');
+    res.send(response.toString());
+  }
 });
 
 // Catch all route for SPA
