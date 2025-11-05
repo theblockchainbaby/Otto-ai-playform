@@ -259,7 +259,7 @@ app.post('/api/twilio/voice', async (req, res) => {
       console.log('⚠️  Database not available, skipping call logging');
     }
 
-    // Generate TwiML for ElevenLabs - Use exact format from elevenLabsService
+    // Generate TwiML for ElevenLabs - Try Twilio-specific endpoint
     const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
     const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
 
@@ -267,13 +267,13 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
     console.log('🤖 Agent ID:', agentId);
 
-    // Use the exact TwiML format that works in elevenLabsService.generateOttoTwiML()
+    // Try using ElevenLabs' Twilio-specific WebSocket endpoint
+    // This endpoint is specifically designed for Twilio Media Streams
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Connect>
-        <Stream url="wss://api.elevenlabs.io/v1/convai/conversation/ws">
-            <Parameter name="agent_id" value="${agentId}" />
-            <Parameter name="authorization" value="Bearer ${elevenLabsKey}" />
+        <Stream url="wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}">
+            <Parameter name="xi-api-key" value="${elevenLabsKey}" />
         </Stream>
     </Connect>
 </Response>`;
