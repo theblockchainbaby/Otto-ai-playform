@@ -443,22 +443,25 @@ async function handleMediaStreamConnection(twilioWs, request) {
 
           elevenLabsWs.on('message', (data) => {
             // Handle ElevenLabs messages
-            if (twilioWs.readyState === WebSocket.OPEN) {
-              try {
-                const message = JSON.parse(data.toString());
+            try {
+              const message = JSON.parse(data.toString());
 
-                // Handle ping events
-                if (message.type === 'ping') {
-                  const pongMessage = {
-                    type: 'pong',
-                    event_id: message.ping_event.event_id
-                  };
-                  elevenLabsWs.send(JSON.stringify(pongMessage));
-                  console.log(`🏓 Pong sent to ElevenLabs`);
-                }
+              // Log ALL message types for debugging
+              console.log(`📨 ElevenLabs message type: ${message.type}`);
 
-                // Handle audio events
-                if (message.type === 'audio' && message.audio_event && message.audio_event.audio_base_64) {
+              // Handle ping events
+              if (message.type === 'ping') {
+                const pongMessage = {
+                  type: 'pong',
+                  event_id: message.ping_event.event_id
+                };
+                elevenLabsWs.send(JSON.stringify(pongMessage));
+                console.log(`🏓 Pong sent to ElevenLabs`);
+              }
+
+              // Handle audio events
+              if (message.type === 'audio' && message.audio_event && message.audio_event.audio_base_64) {
+                if (twilioWs.readyState === WebSocket.OPEN) {
                   const mediaMessage = {
                     event: 'media',
                     streamSid: callSid,
@@ -467,20 +470,23 @@ async function handleMediaStreamConnection(twilioWs, request) {
                     }
                   };
                   twilioWs.send(JSON.stringify(mediaMessage));
-                  console.log(`🔊 Sent audio to Twilio (event ${message.audio_event.event_id})`);
+                  console.log(`🔊 Sent audio to Twilio (event ${message.audio_event.event_id}, ${message.audio_event.audio_base_64.length} bytes)`);
+                } else {
+                  console.log(`⚠️  Twilio not ready, skipping audio event ${message.audio_event.event_id}`);
                 }
-
-                // Log other events
-                if (message.type === 'user_transcript') {
-                  console.log(`👤 User: ${message.user_transcription_event.user_transcript}`);
-                }
-                if (message.type === 'agent_response') {
-                  console.log(`🤖 Otto: ${message.agent_response_event.agent_response}`);
-                }
-
-              } catch (error) {
-                console.error(`Error handling ElevenLabs message: ${error.message}`);
               }
+
+              // Log other events
+              if (message.type === 'user_transcript') {
+                console.log(`👤 User: ${message.user_transcription_event.user_transcript}`);
+              }
+              if (message.type === 'agent_response') {
+                console.log(`🤖 Otto: ${message.agent_response_event.agent_response}`);
+              }
+
+            } catch (error) {
+              console.error(`Error handling ElevenLabs message: ${error.message}`);
+              console.error(`Raw data: ${data.toString().substring(0, 200)}`);
             }
           });
 
