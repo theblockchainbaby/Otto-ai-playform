@@ -248,34 +248,50 @@ app.post('/api/twilio/voice', async (req, res) => {
       console.error('Database error (non-fatal):', dbError);
     }
 
-    // Generate TwiML for ElevenLabs
+    // Generate TwiML for ElevenLabs using Twilio SDK
+    const twilio = require('twilio');
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+
     const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+    const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+
     console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
+    console.log('🤖 Agent ID:', agentId);
 
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Connect>
-    <Stream url="wss://api.elevenlabs.io/v1/convai/conversation/ws">
-      <Parameter name="agent_id" value="agent_2201k8q07eheexe8j4vkt0b9vecb"/>
-      <Parameter name="authorization" value="Bearer ${elevenLabsKey}"/>
-    </Stream>
-  </Connect>
-</Response>`;
+    // Connect to ElevenLabs WebSocket
+    const connect = response.connect();
+    const stream = connect.stream({
+      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+    });
 
+    stream.parameter({
+      name: 'agent_id',
+      value: agentId
+    });
+
+    stream.parameter({
+      name: 'authorization',
+      value: `Bearer ${elevenLabsKey}`
+    });
+
+    const twimlString = response.toString();
     console.log('📤 Sending TwiML response to Twilio');
+    console.log('📄 TwiML:', twimlString);
+
     res.type('text/xml');
-    res.send(twiml);
+    res.send(twimlString);
   } catch (error) {
     console.error('❌ Error connecting to Otto:', error);
 
-    const fallbackTwiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say voice="alice">Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.</Say>
-</Response>`;
+    const twilio = require('twilio');
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    response.say('Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.');
 
     res.type('text/xml');
-    res.send(fallbackTwiml);
+    res.send(response.toString());
   }
 });
 
