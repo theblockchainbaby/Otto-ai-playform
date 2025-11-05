@@ -297,16 +297,18 @@ app.post('/api/twilio/voice', async (req, res) => {
   }
 });
 
-// Import Twilio routes (new implementation with chunked audio)
-const twilioRoutes = require('./routes/twilio');
-app.use('/api/twilio', twilioRoutes);
-app.locals.prisma = prisma; // Make prisma available to routes
-console.log('✅ Twilio routes loaded');
-
 // Media Stream Proxy - Bridge Twilio Media Streams to ElevenLabs WebSocket
 const WebSocket = require('ws');
 const http = require('http');
-const { handleMediaStreamConnection } = require('./routes/twilio');
+
+// Import Twilio routes (new implementation with chunked audio)
+const twilioModule = require('./routes/twilio');
+const twilioRoutes = twilioModule; // The default export is the router
+const handleMediaStreamConnection = twilioModule.handleMediaStreamConnection; // Named export
+
+app.use('/api/twilio', twilioRoutes);
+app.locals.prisma = prisma; // Make prisma available to routes
+console.log('✅ Twilio routes loaded');
 
 // Create HTTP server for WebSocket upgrade
 const server = http.createServer(app);

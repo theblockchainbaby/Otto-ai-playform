@@ -267,6 +267,7 @@ function handleMediaStreamConnection(twilioWs, request) {
   });
 }
 
+// Export both router and handleMediaStreamConnection
 module.exports = router;
 module.exports.handleMediaStreamConnection = handleMediaStreamConnection;
 
