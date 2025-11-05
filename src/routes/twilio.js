@@ -1,12 +1,11 @@
 const express = require('express');
-const expressWs = require('express-ws');
 const twilio = require('twilio');
 const WebSocket = require('ws');
 
 const router = express.Router();
 
-// Enable WebSocket support on this router
-expressWs(router);
+// NOTE: WebSocket support is enabled on the main app in server.js
+// DO NOT call expressWs(router) here - it will conflict with the main app setup
 
 // Twilio Media Stream configuration
 const TWILIO_SAMPLE_RATE = 8000; // 8kHz
@@ -87,12 +86,14 @@ router.ws('/test', (ws, req) => {
 });
 
 // Express-WS route for media stream (preferred method for Render)
+console.log('🔧 Registering WebSocket route: /media-stream');
 router.ws('/media-stream', (twilioWs, req) => {
-  console.log('📱 Twilio Media Stream connected via express-ws');
+  console.log('📱📱📱 WEBSOCKET CONNECTION ESTABLISHED 📱📱📱');
   console.log('📍 Request URL:', req.url);
-  console.log('📍 Request headers:', req.headers);
+  console.log('📍 Request headers:', JSON.stringify(req.headers, null, 2));
   handleMediaStreamConnection(twilioWs, req);
 });
+console.log('✅ WebSocket route registered');
 
 // WebSocket handler for media stream
 function handleMediaStreamConnection(twilioWs, request) {
