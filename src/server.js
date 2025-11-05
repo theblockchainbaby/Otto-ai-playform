@@ -394,7 +394,7 @@ async function handleMediaStreamConnection(twilioWs, request) {
   console.log(`📍 Full URL: ${request.url}`);
 
   let elevenLabsWs = null;
-  const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+  const agentId = 'agent_3701k70bz4gcfd6vq1bkh57d15bw'; // Correct agent ID
   const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
 
   try {
@@ -429,15 +429,18 @@ async function handleMediaStreamConnection(twilioWs, request) {
       // Forward ElevenLabs audio to Twilio
       if (twilioWs.readyState === WebSocket.OPEN) {
         try {
-          const base64Audio = data.toString('base64');
-          const mediaMessage = {
-            event: 'media',
-            streamSid: callSid,
-            media: {
-              payload: base64Audio
-            }
-          };
-          twilioWs.send(JSON.stringify(mediaMessage));
+          // ElevenLabs sends JSON with audio data
+          const message = JSON.parse(data.toString());
+          if (message.type === 'audio' && message.audio) {
+            const mediaMessage = {
+              event: 'media',
+              streamSid: callSid,
+              media: {
+                payload: message.audio
+              }
+            };
+            twilioWs.send(JSON.stringify(mediaMessage));
+          }
         } catch (error) {
           console.error(`Error forwarding audio from ElevenLabs: ${error.message}`);
         }
@@ -462,9 +465,12 @@ async function handleMediaStreamConnection(twilioWs, request) {
         const message = JSON.parse(data);
 
         if (message.event === 'media' && message.media && elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
-          // Forward Twilio audio to ElevenLabs
-          const audioBuffer = Buffer.from(message.media.payload, 'base64');
-          elevenLabsWs.send(audioBuffer);
+          // Forward Twilio audio to ElevenLabs as JSON
+          const audioMessage = {
+            type: 'audio',
+            audio: message.media.payload
+          };
+          elevenLabsWs.send(JSON.stringify(audioMessage));
         } else if (message.event === 'start') {
           console.log(`📞 Media stream started for ${callSid}`);
         } else if (message.event === 'stop') {
