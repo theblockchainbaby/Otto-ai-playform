@@ -385,9 +385,8 @@ server.on('upgrade', (request, socket, head) => {
 });
 
 async function handleMediaStreamConnection(twilioWs, request) {
-  // Parse the full URL including query parameters
-  const fullUrl = request.url.startsWith('http') ? request.url : `http://localhost${request.url}`;
-  const url = new URL(fullUrl);
+  // Parse the full URL including query parameters from the request
+  const url = new URL(request.url, `http://${request.headers.host}`);
   const callSid = url.searchParams.get('callSid');
 
   console.log(`📱 Twilio Media Stream connected: ${callSid}`);
