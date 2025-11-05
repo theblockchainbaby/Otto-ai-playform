@@ -259,7 +259,8 @@ app.post('/api/twilio/voice', async (req, res) => {
       console.log('⚠️  Database not available, skipping call logging');
     }
 
-    // Simple approach: Just forward to ElevenLabs' direct Twilio endpoint
+    // Use Twilio SDK to generate TwiML (same as twilioSimple.js)
+    const twilio = require('twilio');
     const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
     const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
 
@@ -267,22 +268,31 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
     console.log('🤖 Agent ID:', agentId);
 
-    // Use ElevenLabs' official Twilio inbound endpoint
-    // This is their hosted endpoint that handles all the WebSocket complexity
-    const elevenLabsUrl = `https://api.elevenlabs.io/v1/convai/conversation/twilio?agent_id=${agentId}`;
+    // Generate TwiML using Twilio SDK (exact same as twilioSimple.js)
+    const twiml = new twilio.twiml.VoiceResponse();
 
-    console.log('🔗 Redirecting to ElevenLabs URL:', elevenLabsUrl);
+    // Connect to ElevenLabs Conversational AI
+    const connect = twiml.connect();
+    const stream = connect.stream({
+      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+    });
 
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <Redirect method="POST">${elevenLabsUrl}</Redirect>
-</Response>`;
+    // Configure Otto agent
+    stream.parameter({
+      name: 'agent_id',
+      value: agentId
+    });
+    stream.parameter({
+      name: 'authorization',
+      value: `Bearer ${elevenLabsKey}`
+    });
 
+    const twimlString = twiml.toString();
     console.log('📤 Sending TwiML response to Twilio');
-    console.log('📄 TwiML:', twiml);
+    console.log('📄 TwiML:', twimlString);
 
     res.type('text/xml');
-    res.send(twiml);
+    res.send(twimlString);
   } catch (error) {
     console.error('❌ Error connecting to Otto:', error);
 
