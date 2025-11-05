@@ -316,13 +316,20 @@ const wss = new WebSocket.Server({ noServer: true });
 
 // Handle WebSocket upgrade requests
 server.on('upgrade', (request, socket, head) => {
+  console.log('🔌 WebSocket upgrade request received');
+  console.log('📍 URL:', request.url);
+  
   const pathname = new URL(request.url, 'http://localhost').pathname;
+  console.log('📍 Pathname:', pathname);
 
   if (pathname === '/api/twilio/media-stream') {
+    console.log('✅ Upgrading to WebSocket for media stream');
     wss.handleUpgrade(request, socket, head, (ws) => {
+      console.log('✅ WebSocket upgrade complete, calling handler');
       handleMediaStreamConnection(ws, request);
     });
   } else {
+    console.log('❌ Unknown WebSocket path, destroying socket');
     socket.destroy();
   }
 });
