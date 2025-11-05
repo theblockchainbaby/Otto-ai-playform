@@ -73,9 +73,24 @@ router.post('/otto/incoming', async (req, res) => {
   }
 });
 
-// Express-WS route for media stream (preferred method for Railway/Render)
+// Test WebSocket endpoint
+router.ws('/test', (ws, req) => {
+  console.log('🧪 Test WebSocket connection established');
+  ws.send('WebSocket connection successful!');
+  ws.on('message', (msg) => {
+    console.log('🧪 Received test message:', msg.toString());
+    ws.send(`Echo: ${msg}`);
+  });
+  ws.on('close', () => {
+    console.log('🧪 Test WebSocket closed');
+  });
+});
+
+// Express-WS route for media stream (preferred method for Render)
 router.ws('/media-stream', (twilioWs, req) => {
   console.log('📱 Twilio Media Stream connected via express-ws');
+  console.log('📍 Request URL:', req.url);
+  console.log('📍 Request headers:', req.headers);
   handleMediaStreamConnection(twilioWs, req);
 });
 

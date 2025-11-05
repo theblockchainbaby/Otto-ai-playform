@@ -300,6 +300,14 @@ app.post('/api/twilio/voice', async (req, res) => {
 // Media Stream Proxy - Bridge Twilio Media Streams to ElevenLabs WebSocket
 const WebSocket = require('ws');
 const http = require('http');
+const expressWs = require('express-ws');
+
+// Create HTTP server for WebSocket upgrade
+const server = http.createServer(app);
+
+// Enable express-ws on the main app (required for Render)
+expressWs(app, server);
+console.log('✅ Express-WS enabled on main app');
 
 // Import Twilio routes (new implementation with chunked audio)
 const twilioModule = require('./routes/twilio');
@@ -310,8 +318,7 @@ app.use('/api/twilio', twilioRoutes);
 app.locals.prisma = prisma; // Make prisma available to routes
 console.log('✅ Twilio routes loaded');
 
-// Create HTTP server for WebSocket upgrade
-const server = http.createServer(app);
+// Create WebSocket server for fallback
 const wss = new WebSocket.Server({ noServer: true });
 
 // Handle WebSocket upgrade requests
