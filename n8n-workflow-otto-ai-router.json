@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Simple Intent Detection - No AI needed\n// Get request text from various possible locations\nconst request = ($json.body?.request || $json.request || $json.body?.message || $json.message || '').toLowerCase();\n\n// Extract customer data from all possible locations\nconst customerPhone = $json.body?.phone_number || $json.phone_number || $json.body?.customerPhone || $json.customerPhone || $json.query?.customerPhone;\nconst customerName = $json.body?.customer_name || $json.customer_name || $json.body?.customerName || $json.customerName || $json.query?.customerName;\nconst appointmentDetails = $json.body?.appointment_details || $json.appointment_details || $json.query?.appointment_details;\n\n// If this is a send_confirmation request from ElevenLabs\nif (customerPhone && appointmentDetails) {\n  return {\n    intent: 'send_confirmation',\n    confidence: 1.0,\n    extractedData: {\n      customerPhone: customerPhone,\n      customerName: customerName || 'Valued Customer',\n      appointmentDetails: appointmentDetails\n    },\n    originalRequest: $json\n  };\n}\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show') || request.includes('list') || request.includes('get'))) {\n  intent = 'get_appointments';\n} else if (request.includes('create') || request.includes('book') || request.includes('schedule') || request.includes('make appointment') || request.includes('make an appointment') || request.includes('reserve')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots') || request.includes('when can i')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service') || request.includes('car')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName,\n    request: request\n  },\n  originalRequest: $json\n};"
+        "jsCode": "// Simple Intent Detection - No AI needed\nconst request = ($json.body?.request || $json.request || '').toLowerCase();\n\n// Handle data from ElevenLabs send_confirmation tool\nconst customerPhone = $json.body?.phone_number || $json.phone_number || $json.body?.customerPhone || $json.customerPhone;\nconst customerName = $json.body?.customer_name || $json.customer_name || $json.body?.customerName || $json.customerName;\nconst appointmentDetails = $json.body?.appointment_details || $json.appointment_details;\n\n// If this is a send_confirmation request from ElevenLabs\nif (customerPhone && appointmentDetails) {\n  return {\n    intent: 'send_confirmation',\n    confidence: 1.0,\n    extractedData: {\n      customerPhone: customerPhone,\n      customerName: customerName || 'Valued Customer',\n      appointmentDetails: appointmentDetails\n    },\n    originalRequest: $json\n  };\n}\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show'))) {\n  intent = 'get_appointments';\n} else if (request.includes('book') || request.includes('schedule') || request.includes('make appointment')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName\n  },\n  originalRequest: $json\n};"
       },
       "id": "simple-intent-router",
       "name": "Simple Intent Router",
@@ -226,7 +226,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Book Appointment - Extract phone number from request text\nconst data = $json.extractedData || {};\nconst request = data.request || '';\n\n// Try to extract phone number from the request text\n// Matches patterns like: 916-333-7305, (916) 333-7305, 9163337305, +1 916 333 7305\nconst phoneRegex = /(?:\\+?1[-.]?)?\\(?([0-9]{3})\\)?[-.]?([0-9]{3})[-.]?([0-9]{4})/;\nconst phoneMatch = request.match(phoneRegex);\n\nlet customerPhone = data.customerPhone || $json.originalRequest?.customerPhone;\n\nif (phoneMatch && !customerPhone) {\n  // Format as E.164: +1XXXXXXXXXX\n  customerPhone = '+1' + phoneMatch[1] + phoneMatch[2] + phoneMatch[3];\n}\n\nif (!customerPhone) {\n  customerPhone = 'unknown';\n}\n\nconst customerName = data.customerName || $json.originalRequest?.customerName || 'Valued Customer';\nconst serviceType = data.serviceType || $json.originalRequest?.serviceType || 'General Service';\n\n// Generate appointment for tomorrow at 10 AM\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\ntomorrow.setHours(10, 0, 0, 0);\n\nconst appointmentId = 'apt_' + Date.now();\nconst appointmentDate = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${serviceType} appointment for ${appointmentDate} at 10:00 AM. Your confirmation number is ${appointmentId}.`,\n  appointment: {\n    id: appointmentId,\n    customerPhone: customerPhone,\n    customerName: customerName,\n    serviceType: serviceType,\n    appointmentDate: appointmentDate,\n    date: tomorrow.toISOString(),\n    status: 'confirmed'\n  }\n};"
+        "jsCode": "// Book Appointment - Simple Response (No integrations needed)\nconst data = $json.extractedData || {};\nconst customerPhone = data.customerPhone || $json.originalRequest?.body?.customerPhone || $json.originalRequest?.customerPhone || 'unknown';\nconst customerName = data.customerName || $json.originalRequest?.body?.customerName || $json.originalRequest?.customerName || 'Valued Customer';\nconst serviceType = data.serviceType || $json.originalRequest?.body?.serviceType || $json.originalRequest?.serviceType || 'General Service';\n\n// Generate appointment for tomorrow at 10 AM\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\ntomorrow.setHours(10, 0, 0, 0);\n\nconst appointmentId = 'apt_' + Date.now();\nconst formattedDate = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });\n\nreturn {\n  success: true,\n  intent: 'book_appointment',\n  message: `Perfect! I've scheduled your ${serviceType} appointment for ${formattedDate} at 10:00 AM. Your confirmation number is ${appointmentId}.`,\n  appointment: {\n    id: appointmentId,\n    customerPhone: customerPhone,\n    customerName: customerName,\n    serviceType: serviceType,\n    date: tomorrow.toISOString(),\n    dateFormatted: formattedDate,\n    status: 'confirmed'\n  }\n};"
       },
       "id": "action-book-appointment",
       "name": "Prepare Appointment Data",
@@ -757,6 +757,50 @@
         [
           {
             "node": "Respond to Otto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMS Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare SMS Data": {
+      "main": [
+        [
+          {
+            "node": "Send SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SMS": {
+      "main": [
+        [
+          {
+            "node": "Format SMS Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format SMS Response": {
+      "main": [
+        [
+          {
+            "node": "Respond SMS Webhook",
             "type": "main",
             "index": 0
           }

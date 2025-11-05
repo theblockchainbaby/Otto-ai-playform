@@ -13,11 +13,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Initialize database connection (optional for now)
-let prisma = null;
-// Skip Prisma initialization for now - it's causing hangs
-console.log('⚠️  Skipping database initialization, running in mock data mode');
-
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -37,10 +32,11 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting
+// Rate limiting - relaxed for development
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 1000, // limit each IP to 1000 requests per minute (very generous for dev)
+  message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
 
@@ -54,24 +50,40 @@ app.use(compression());
 // Logging middleware
 app.use(morgan('combined'));
 
+// Disable caching in development
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
+// Serve client-side utility scripts and styles from src/utils
+app.use('/src/utils', express.static(path.join(__dirname, 'utils')));
+
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Pass prisma to app.locals for routes to use
-if (prisma) {
-  app.locals.prisma = prisma;
-}
+// Skip database initialization - running in mock data mode
+console.log('⚠️  Skipping database initialization, running in mock data mode');
 
-// Load API routes
-try {
-  const customersRoutes = require('./routes/customers');
-  app.use('/api/customers', customersRoutes);
-  console.log('✅ Customers routes loaded');
-} catch (error) {
-  console.log('⚠️  Could not load customers routes:', error.message);
-}
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: '🤖 Otto AI Platform is running',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
-// Load auth routes if available
+// Import customers routes
+const customersRoutes = require('./routes/customers');
+app.use('/api/customers', customersRoutes);
+console.log('✅ Customers routes loaded');
+
+// Import auth routes (mock mode)
 try {
   const authRoutes = require('./routes/auth');
   app.use('/api/auth', authRoutes);
@@ -80,33 +92,113 @@ try {
   console.log('⚠️  Could not load auth routes:', error.message);
 }
 
-// Health check endpoint
-app.get('/health', async (req, res) => {
-  let dbStatus = 'disconnected';
-  try {
-    if (prisma) {
-      await prisma.$queryRaw`SELECT 1`;
-      dbStatus = 'connected';
-    }
-  } catch (error) {
-    console.log('Database health check failed:', error.message);
-  }
+// Import vehicles routes
+try {
+  const vehiclesRoutes = require('./routes/vehicles');
+  app.use('/api/vehicles', vehiclesRoutes);
+  console.log('✅ Vehicles routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load vehicles routes:', error.message);
+}
 
-  res.json({
-    success: true,
-    message: '🤖 Otto AI Platform is running',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    database: dbStatus,
-    features: {
-      database: !!prisma,
-      twilio: !!process.env.TWILIO_ACCOUNT_SID,
-      openai: !!process.env.OPENAI_API_KEY,
-      elevenlabs: !!process.env.ELEVENLABS_API_KEY
-    }
-  });
-});
+// Import AI routes
+try {
+  const aiRoutes = require('./routes/ai');
+  app.use('/api/ai', aiRoutes);
+  console.log('✅ AI routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load AI routes:', error.message);
+}
+
+// Import appointments routes
+try {
+  const appointmentsRoutes = require('./routes/appointments');
+  app.use('/api/appointments', appointmentsRoutes);
+  console.log('✅ Appointments routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load appointments routes:', error.message);
+}
+
+// Import leads routes
+try {
+  const leadsRoutes = require('./routes/leads');
+  app.use('/api/leads', leadsRoutes);
+  console.log('✅ Leads routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load leads routes:', error.message);
+}
+
+// Import calls routes
+try {
+  const callsRoutes = require('./routes/calls');
+  app.use('/api/calls', callsRoutes);
+  console.log('✅ Calls routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load calls routes:', error.message);
+}
+
+// Import users routes
+try {
+  const usersRoutes = require('./routes/users');
+  app.use('/api/users', usersRoutes);
+  console.log('✅ Users routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load users routes:', error.message);
+}
+
+// Import messages routes
+try {
+  const messagesRoutes = require('./routes/messages');
+  app.use('/api/messages', messagesRoutes);
+  console.log('✅ Messages routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load messages routes:', error.message);
+}
+
+// Import tasks routes
+try {
+  const tasksRoutes = require('./routes/tasks');
+  app.use('/api/tasks', tasksRoutes);
+  console.log('✅ Tasks routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load tasks routes:', error.message);
+}
+
+// Import campaigns routes
+try {
+  const campaignsRoutes = require('./routes/campaigns');
+  app.use('/api/campaigns', campaignsRoutes);
+  console.log('✅ Campaigns routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load campaigns routes:', error.message);
+}
+
+// Import emergency calls routes
+try {
+  const emergencyCallsRoutes = require('./routes/emergencyCalls');
+  app.use('/api/emergency-calls', emergencyCallsRoutes);
+  console.log('✅ Emergency calls routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load emergency calls routes:', error.message);
+}
+
+// Import service requests routes
+try {
+  const serviceRequestsRoutes = require('./routes/serviceRequests');
+  app.use('/api/service-requests', serviceRequestsRoutes);
+  console.log('✅ Service requests routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load service requests routes:', error.message);
+}
+
+// Import service providers routes
+try {
+  const serviceProvidersRoutes = require('./routes/serviceProviders');
+  app.use('/api/service-providers', serviceProvidersRoutes);
+  console.log('✅ Service providers routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load service providers routes:', error.message);
+}
 
 // API routes
 app.get('/api/status', (req, res) => {
@@ -118,293 +210,16 @@ app.get('/api/status', (req, res) => {
       'Customer management',
       'Appointment scheduling',
       'Lead tracking',
-      'Emergency assistance',
-      'CRM/DMS Integrations'
+      'Emergency assistance'
     ]
   });
 });
 
-// Appointments API
-app.post('/api/appointments', async (req, res) => {
-  try {
-    const { title, type, startTime, endTime, customerId, notes } = req.body;
-    
-    console.log('📅 Appointment request received:', { title, type, startTime, customerId });
-    
-    // Validate required fields
-    if (!title || !type || !startTime || !customerId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing required fields',
-        required: ['title', 'type', 'startTime', 'customerId']
-      });
-    }
-    
-    // If database is available, create appointment in database
-    if (prisma) {
-      try {
-        const appointment = await prisma.appointment.create({
-          data: {
-            title,
-            type,
-            startTime: new Date(startTime),
-            endTime: new Date(endTime || startTime),
-            duration: 60, // default 60 minutes
-            status: 'SCHEDULED',
-            customerId,
-            notes: notes || '',
-            description: notes || ''
-          }
-        });
-        
-        console.log('✅ Appointment created in database:', appointment.id);
-        
-        return res.json({
-          success: true,
-          id: appointment.id,
-          appointmentId: appointment.id,
-          title: appointment.title,
-          startTime: appointment.startTime,
-          status: appointment.status,
-          message: 'Appointment created successfully'
-        });
-      } catch (dbError) {
-        console.error('Database error:', dbError.message);
-        // Fall through to mock response
-      }
-    }
-    
-    // Mock response if database not available
-    const appointmentId = `appt_${Date.now()}`;
-    console.log('⚠️  No database - returning mock appointment:', appointmentId);
-    
-    res.json({
-      success: true,
-      id: appointmentId,
-      appointmentId,
-      title,
-      type,
-      startTime,
-      endTime: endTime || startTime,
-      customerId,
-      notes,
-      status: 'SCHEDULED',
-      message: 'Appointment created successfully (mock - no database)'
-    });
-    
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create appointment',
-      message: error.message
-    });
-  }
-});
-
-// VIN Decoding API
-const vinDecodingService = require('./services/vinDecodingService');
-
-app.post('/api/vin/decode', async (req, res) => {
-  try {
-    const { vin, source = 'auto' } = req.body;
-
-    if (!vin) {
-      return res.status(400).json({
-        success: false,
-        error: 'VIN is required'
-      });
-    }
-
-    // Validate VIN format
-    if (!vinDecodingService.validateVIN(vin)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid VIN format. VIN must be 17 characters (alphanumeric, no I/O/Q)'
-      });
-    }
-
-    const decodedData = await vinDecodingService.decodeVin(vin, source);
-
-    res.json({
-      success: true,
-      data: decodedData,
-      formatted: vinDecodingService.formatForCRM(decodedData)
-    });
-  } catch (error) {
-    console.error('VIN decode error:', error.message);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to decode VIN',
-      message: error.message
-    });
-  }
-});
-
-app.post('/api/vin/extract', async (req, res) => {
-  try {
-    const { text } = req.body;
-
-    if (!text) {
-      return res.status(400).json({
-        success: false,
-        error: 'Text is required'
-      });
-    }
-
-    const vin = vinDecodingService.extractVINFromText(text);
-
-    if (!vin) {
-      return res.json({
-        success: true,
-        vin: null,
-        message: 'No VIN found in text'
-      });
-    }
-
-    // Automatically decode the extracted VIN
-    const decodedData = await vinDecodingService.decodeVin(vin);
-
-    res.json({
-      success: true,
-      vin: vin,
-      decoded: decodedData,
-      formatted: vinDecodingService.formatForCRM(decodedData)
-    });
-  } catch (error) {
-    console.error('VIN extraction error:', error.message);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to extract and decode VIN',
-      message: error.message
-    });
-  }
-});
-
-app.get('/api/vin/validate/:vin', (req, res) => {
-  try {
-    const { vin } = req.params;
-    const isValid = vinDecodingService.validateVIN(vin);
-
-    res.json({
-      success: true,
-      vin: vin,
-      valid: isValid,
-      message: isValid ? 'Valid VIN format' : 'Invalid VIN format'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to validate VIN'
-    });
-  }
-});
-
-// Integration API routes
-const integrationsRouter = require('./routes/integrations');
-app.use('/api/v1/integrations', integrationsRouter);
-
-// n8n Webhook routes
-const n8nWebhooksRouter = require('./routes/n8nWebhooks');
-app.use('/api/n8n', n8nWebhooksRouter);
-
-// Twilio webhook routes
-// POST /api/twilio/reminder-call - Handle automated reminder calls from n8n
-app.post('/api/twilio/reminder-call', (req, res) => {
-  try {
-    const { name, type, time } = req.query;
-
-    console.log('Reminder call:', { name, type, time });
-
-    // Generate Otto's reminder message with ElevenLabs voice
-    const reminderMessage = `Hello ${name || 'valued customer'}, this is Otto from AutoLux. I'm calling to remind you about your ${type || 'service'} appointment tomorrow at ${time}. Please press 1 to confirm your appointment, or press 2 if you need to reschedule. Thank you!`;
-
-    const twilio = require('twilio');
-    const twiml = new twilio.twiml.VoiceResponse();
-
-    // Use ElevenLabs Conversational AI for natural interaction
-    if (process.env.ELEVENLABS_API_KEY) {
-      // Connect to Otto AI agent for interactive conversation
-      const connect = twiml.connect();
-      const stream = connect.stream({
-        url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
-      });
-      stream.parameter({
-        name: 'agent_id',
-        value: 'agent_2201k8q07eheexe8j4vkt0b9vecb'
-      });
-      stream.parameter({
-        name: 'authorization',
-        value: `Bearer ${process.env.ELEVENLABS_API_KEY}`
-      });
-      stream.parameter({
-        name: 'first_message',
-        value: reminderMessage
-      });
-    } else {
-      // Fallback to basic TwiML with gather
-      const gather = twiml.gather({
-        numDigits: 1,
-        action: '/api/twilio/reminder-response',
-        method: 'POST',
-        timeout: 10
-      });
-      gather.say({ voice: 'Polly.Matthew-Neural' }, reminderMessage);
-
-      // If no input, repeat the message
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'We did not receive your response. Please call us back to confirm your appointment. Goodbye!');
-    }
-
-    res.type('text/xml');
-    res.send(twiml.toString());
-  } catch (error) {
-    console.error('Error handling reminder call:', error);
-
-    const twilio = require('twilio');
-    const twiml = new twilio.twiml.VoiceResponse();
-    twiml.say('Thank you for your time. We look forward to seeing you at your appointment.');
-
-    res.type('text/xml');
-    res.send(twiml.toString());
-  }
-});
-
-// POST /api/twilio/reminder-response - Handle reminder call responses
-app.post('/api/twilio/reminder-response', (req, res) => {
-  try {
-    const { Digits, CallSid } = req.body;
-
-    console.log('Reminder response:', { Digits, CallSid });
-
-    const twilio = require('twilio');
-    const twiml = new twilio.twiml.VoiceResponse();
-
-    if (Digits === '1') {
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'Perfect! Your appointment is confirmed. We look forward to seeing you. Have a great day!');
-    } else if (Digits === '2') {
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'No problem. Please call us at 1-888-411-8568 to reschedule your appointment. Thank you!');
-    } else {
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, 'We did not understand your response. Please call us at 1-888-411-8568. Thank you!');
-    }
-
-    res.type('text/xml');
-    res.send(twiml.toString());
-  } catch (error) {
-    console.error('Error handling reminder response:', error);
-
-    const twilio = require('twilio');
-    const twiml = new twilio.twiml.VoiceResponse();
-    twiml.say('Thank you for your time. Goodbye!');
-
-    res.type('text/xml');
-    res.send(twiml.toString());
-  }
-});
-
-// Basic Twilio incoming call endpoint
+// Twilio webhook endpoint (basic)
 app.post('/api/twilio/otto/incoming', (req, res) => {
   console.log('Incoming Twilio webhook:', req.body);
 
+  // Basic TwiML response
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="alice">Hello! You've reached Otto AI. We're currently setting up our system. Please call back soon!</Say>
@@ -416,7 +231,7 @@ app.post('/api/twilio/otto/incoming', (req, res) => {
 
 // Catch all route for SPA
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  res.sendFile(path.join(__dirname, '../public/otto-dashboard.html'));
 });
 
 // Error handling middleware
@@ -430,34 +245,10 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const server = app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🤖 Otto AI Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-  console.log(`📊 Database: ${prisma ? 'Connected' : 'Not configured'}`);
-});
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('🛑 Shutting down gracefully...');
-  if (prisma) {
-    await prisma.$disconnect();
-  }
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
-});
-
-process.on('SIGTERM', async () => {
-  console.log('🛑 SIGTERM received, shutting down gracefully...');
-  if (prisma) {
-    await prisma.$disconnect();
-  }
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
 });
 
 module.exports = app;

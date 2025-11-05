@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Tab Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: #0F2A44;
+            color: white;
+            border-color: #0F2A44;
+        }
+        .tab:hover {
+            border-color: #4A90B8;
+        }
+        .tab-pane {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .console-log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            color: #00ff00;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard Tab Switching Test</h1>
+    <p>Click the tabs below to test if switching works:</p>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('customers', this)">👥 Customers</button>
+        <button class="tab" onclick="switchTab('vehicles', this)">🚗 Vehicles</button>
+        <button class="tab" onclick="switchTab('leads', this)">📈 Sales Leads</button>
+    </div>
+
+    <div id="customersTab" class="tab-pane">
+        <h2>Customers Tab</h2>
+        <p>This is the customers content.</p>
+    </div>
+
+    <div id="vehiclesTab" class="tab-pane hidden">
+        <h2>Vehicles Tab</h2>
+        <p>This is the vehicles content.</p>
+    </div>
+
+    <div id="leadsTab" class="tab-pane hidden">
+        <h2>Leads Tab</h2>
+        <p>This is the leads content.</p>
+    </div>
+
+    <div class="console-log" id="consoleLog">
+        <div class="log-entry">Console output will appear here...</div>
+    </div>
+
+    <script>
+        let currentTab = 'customers';
+        const logContainer = document.getElementById('consoleLog');
+
+        function log(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+
+        function switchTab(tabName, button) {
+            log(`switchTab called: tabName="${tabName}", button=${button ? 'provided' : 'null'}`);
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                log(`  Removed active from: ${tab.textContent}`);
+            });
+            
+            if (button) {
+                button.classList.add('active');
+                log(`  Added active to: ${button.textContent}`);
+            }
+
+            // Update tab content
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.add('hidden');
+                log(`  Hid pane: ${pane.id}`);
+            });
+            
+            const targetPane = document.getElementById(tabName + 'Tab');
+            if (targetPane) {
+                targetPane.classList.remove('hidden');
+                log(`  ✓ Showing tab pane: ${tabName}Tab`);
+            } else {
+                log(`  ✗ ERROR: Tab pane not found: ${tabName}Tab`);
+            }
+
+            currentTab = tabName;
+            log(`  Current tab set to: ${currentTab}`);
+        }
+
+        // CSP workaround - intercept clicks
+        document.addEventListener('click', function(e) {
+            let target = e.target;
+
+            while (target && target !== document) {
+                const onclickAttr = target.getAttribute('onclick');
+                if (onclickAttr) {
+                    log(`Click intercepted: ${onclickAttr}`);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    executeOnclickHandler(target, onclickAttr);
+                    return;
+                }
+                target = target.parentElement;
+            }
+        }, true);
+
+        function executeOnclickHandler(element, code) {
+            log(`Executing: ${code}`);
+            
+            // Parse function calls with 'this' parameter
+            const thisMatch = code.match(/^(\w+)\('([^']+)',\s*this\)$/);
+            if (thisMatch) {
+                const funcName = thisMatch[1];
+                const arg1 = thisMatch[2];
+                log(`  Matched pattern: ${funcName}('${arg1}', this)`);
+                if (typeof window[funcName] === 'function') {
+                    window[funcName](arg1, element);
+                    return;
+                } else {
+                    log(`  ERROR: Function not found: ${funcName}`);
+                }
+            }
+
+            log(`  ERROR: Could not parse: ${code}`);
+        }
+
+        log('Page loaded successfully');
+        log('Try clicking the tabs above');
+    </script>
+</body>
+</html>
+

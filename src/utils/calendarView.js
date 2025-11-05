@@ -82,9 +82,9 @@ class CalendarView {
         let html = `
             <div class="calendar-container">
                 <div class="calendar-header">
-                    <button class="calendar-nav-btn" onclick="calendarView.previousMonth()">◀</button>
+                    <button class="calendar-nav-btn" data-action="prev-month">◀</button>
                     <h2>${monthNames[month]} ${year}</h2>
-                    <button class="calendar-nav-btn" onclick="calendarView.nextMonth()">▶</button>
+                    <button class="calendar-nav-btn" data-action="next-month">▶</button>
                 </div>
                 
                 <div class="calendar-weekdays">
@@ -110,8 +110,8 @@ class CalendarView {
                     const isSelected = this.selectedDate && this.formatDate(this.selectedDate) === dateStr;
 
                     html += `
-                        <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
-                             onclick="calendarView.selectDate(new Date('${dateStr}'))">
+                        <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
+                             data-date="${dateStr}">
                             <div class="calendar-day-number">${day}</div>
                             <div class="calendar-day-appointments">
                     `;
@@ -149,9 +149,9 @@ class CalendarView {
         let html = `
             <div class="calendar-week-container">
                 <div class="calendar-header">
-                    <button class="calendar-nav-btn" onclick="calendarView.previousWeek()">◀</button>
+                    <button class="calendar-nav-btn" data-action="prev-week">◀</button>
                     <h2>Week of ${this.formatDate(startOfWeek)}</h2>
-                    <button class="calendar-nav-btn" onclick="calendarView.nextWeek()">▶</button>
+                    <button class="calendar-nav-btn" data-action="next-week">▶</button>
                 </div>
                 
                 <div class="calendar-week-grid">
@@ -177,8 +177,8 @@ class CalendarView {
             appointments.forEach(apt => {
                 const statusClass = apt.status.toLowerCase();
                 html += `
-                    <div class="calendar-week-appointment ${statusClass}" 
-                         onclick="openEditAppointmentModal(${JSON.stringify(apt).replace(/"/g, '&quot;')})"
+                    <div class="calendar-week-appointment ${statusClass}"
+                         data-apt='${JSON.stringify(apt).replace(/"/g, '&quot;')}'
                          title="${apt.title}">
                         <div class="calendar-week-appointment-time">${this.formatTime(apt.startTime)}</div>
                         <div class="calendar-week-appointment-title">${apt.title}</div>
@@ -209,9 +209,9 @@ class CalendarView {
         let html = `
             <div class="calendar-day-container">
                 <div class="calendar-header">
-                    <button class="calendar-nav-btn" onclick="calendarView.previousDay()">◀</button>
+                    <button class="calendar-nav-btn" data-action="prev-day">◀</button>
                     <h2>${dayNames[date.getDay()]}, ${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}</h2>
-                    <button class="calendar-nav-btn" onclick="calendarView.nextDay()">▶</button>
+                    <button class="calendar-nav-btn" data-action="next-day">▶</button>
                 </div>
                 
                 <div class="calendar-day-timeline">
@@ -231,8 +231,8 @@ class CalendarView {
             appointments.forEach(apt => {
                 const statusClass = apt.status.toLowerCase();
                 html += `
-                    <div class="calendar-day-appointment ${statusClass}" 
-                         onclick="openEditAppointmentModal(${JSON.stringify(apt).replace(/"/g, '&quot;')})">
+                    <div class="calendar-day-appointment ${statusClass}"
+                         data-apt='${JSON.stringify(apt).replace(/"/g, '&quot;')}'>
                         <div class="calendar-day-appointment-time">
                             ${this.formatTime(apt.startTime)} - ${this.formatTime(apt.endTime)}
                         </div>
@@ -329,13 +329,10 @@ class CalendarView {
 
         let html = `
             <div class="calendar-view-controls">
-                <button class="view-mode-btn ${this.viewMode === 'month' ? 'active' : ''}" 
-                        onclick="calendarView.switchViewMode('month')">Month</button>
-                <button class="view-mode-btn ${this.viewMode === 'week' ? 'active' : ''}" 
-                        onclick="calendarView.switchViewMode('week')">Week</button>
-                <button class="view-mode-btn ${this.viewMode === 'day' ? 'active' : ''}" 
-                        onclick="calendarView.switchViewMode('day')">Day</button>
-                <button class="view-mode-btn" onclick="calendarView.goToToday()">Today</button>
+                <button class="view-mode-btn ${this.viewMode === 'month' ? 'active' : ''}" data-mode="month">Month</button>
+                <button class="view-mode-btn ${this.viewMode === 'week' ? 'active' : ''}" data-mode="week">Week</button>
+                <button class="view-mode-btn ${this.viewMode === 'day' ? 'active' : ''}" data-mode="day">Day</button>
+                <button class="view-mode-btn" data-action="go-today">Today</button>
             </div>
         `;
 
@@ -348,6 +345,67 @@ class CalendarView {
         }
 
         container.innerHTML = html;
+
+        // Attach event listeners (CSP-safe)
+        // View mode buttons
+        const modeBtns = container.querySelectorAll('.view-mode-btn[data-mode]');
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.switchViewMode(btn.dataset.mode);
+            });
+        });
+
+        // Today button
+        const todayBtn = container.querySelector('.view-mode-btn[data-action="go-today"]');
+        if (todayBtn) {
+            todayBtn.addEventListener('click', () => this.goToToday());
+        }
+
+        // Navigation buttons
+        const navBtns = container.querySelectorAll('.calendar-nav-btn[data-action]');
+        navBtns.forEach(btn => {
+            const action = btn.dataset.action;
+            btn.addEventListener('click', () => {
+                switch (action) {
+                    case 'prev-month': this.previousMonth(); break;
+                    case 'next-month': this.nextMonth(); break;
+                    case 'prev-week': this.previousWeek(); break;
+                    case 'next-week': this.nextWeek(); break;
+                    case 'prev-day': this.previousDay(); break;
+                    case 'next-day': this.nextDay(); break;
+                }
+            });
+        });
+
+        // Month day cells
+        const dayCells = container.querySelectorAll('.calendar-day[data-date]');
+        dayCells.forEach(el => {
+            el.addEventListener('click', () => {
+                const parts = (el.dataset.date || '').split('-');
+                if (parts.length === 3) {
+                    const y = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    const d = parseInt(parts[2], 10);
+                    this.selectDate(new Date(y, m, d));
+                }
+            });
+        });
+
+        // Appointment click handlers (week/day views)
+        const apptEls = container.querySelectorAll('.calendar-week-appointment[data-apt], .calendar-day-appointment[data-apt]');
+        apptEls.forEach(el => {
+            el.addEventListener('click', () => {
+                try {
+                    const json = (el.dataset.apt || '').replace(/&quot;/g, '"');
+                    const apt = JSON.parse(json);
+                    if (typeof window.openEditAppointmentModal === 'function') {
+                        window.openEditAppointmentModal(apt);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse appointment data:', e);
+                }
+            });
+        });
     }
 
     /**

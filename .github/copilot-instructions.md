@@ -1,105 +1,184 @@
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
-- [x] Verify that the copilot-instructions.md file in the .github directory is created.
+# Otto AI Platform - AI Coding Agent Instructions
 
-- [x] Clarify Project Requirements - Node.js/TypeScript project with Prisma ORM, PostgreSQL, authentication, REST API endpoints for automotive AI dealership management system
+## Project Overview
 
-- [ ] Scaffold the Project
-	<!--
-	Ensure that the previous step has been marked as completed.
-	Call project setup tool with projectType parameter.
-	Run scaffolding command to create project files and folders.
-	Use '.' as the working directory.
-	If no appropriate projectType is available, search documentation using available tools.
-	Otherwise, create the project structure manually using available file creation tools.
-	-->
+Otto AI is an **enterprise-grade automotive dealership management platform** powered by ElevenLabs conversational AI for intelligent phone call handling, appointment scheduling, and complete business automation. The platform combines a Node.js/Express backend with a vanilla JavaScript frontend, integrated with n8n workflows for automation.
 
-- [ ] Customize the Project
-	<!--
-	Verify that all previous steps have been completed successfully and you have marked the step as completed.
-	Develop a plan to modify codebase according to user requirements.
-	Apply modifications using appropriate tools and user-provided references.
-	Skip this step for "Hello World" projects.
-	-->
+**Live Production:** https://ottoagent.net | **Phone:** +1 (888) 411-8568
 
-- [ ] Install Required Extensions
-	<!-- ONLY install extensions provided mentioned in the get_project_setup_info. Skip this step otherwise and mark as completed. -->
+## Architecture & Core Components
 
-- [ ] Compile the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Install any missing dependencies.
-	Run diagnostics and resolve any issues.
-	Check for markdown files in project folder for relevant instructions on how to do this.
-	-->
+### 1. Backend Stack
+- **Node.js + Express + TypeScript** - REST API server (`src/server.ts`)
+- **Prisma ORM** - Database management with PostgreSQL
+- **AI Integration Layer** - ElevenLabs (Otto agent), OpenAI GPT-4, Twilio
+- **Authentication** - JWT-based with role-based access control
 
-- [ ] Create and Run Task
-	<!--
-	Verify that all previous steps have been completed.
-	Check https://code.visualstudio.com/docs/debugtest/tasks to determine if the project needs a task. If so, use the create_and_run_task to create and launch a task based on package.json, README.md, and project structure.
-	Skip this step otherwise.
-	 -->
+### 2. Otto AI Agent Architecture
+Otto is a **custom ElevenLabs conversational AI agent** (ID: `agent_3701k70bz4gcfd6vq1bkh57d15bw`) that:
+- Handles inbound customer calls via Twilio
+- Uses **ONE intelligent webhook** (`/api/twilio/otto/ai-router`) that routes ALL requests through GPT-4 intent analysis
+- Automatically triggers n8n workflows for appointment booking, SMS/email confirmations, calendar events
+- Extracts and decodes VINs from customer conversations for vehicle data enrichment
 
-- [ ] Launch the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Prompt user for debug mode, launch only if confirmed.
-	 -->
+**Key Pattern:** Instead of multiple webhooks, Otto uses a **single AI router** that analyzes intent and dynamically routes to appropriate workflows (see `OTTO_AI_ROUTER_SETUP.md`).
 
-- [ ] Ensure Documentation is Complete
-	<!--
-	Verify that all previous steps have been completed.
-	Verify that README.md and the copilot-instructions.md file in the .github directory exists and contains current project information.
-	Clean up the copilot-instructions.md file in the .github directory by removing all HTML comments.
-	 -->
+### 3. n8n Workflow Integration
+Critical workflows in project root (`n8n-workflow-*.json`):
+- `otto-ai-router.json` - Main routing hub with GPT-4 intent analysis
+- `appointment-booking.json` - Creates calendar events, sends SMS/email confirmations
+- `complete-followups.json` - 24-hour wait → reminder SMS → follow-up call with Otto's voice
 
-<!--
-## Execution Guidelines
-PROGRESS TRACKING:
-- If any tools are available to manage the above todo list, use it to track progress through this checklist.
-- After completing each step, mark it complete and add a summary.
-- Read current todo list status before starting each new step.
+**n8n Instance:** https://dualpay.app.n8n.cloud
 
-COMMUNICATION RULES:
-- Avoid verbose explanations or printing full command outputs.
-- If a step is skipped, state that briefly (e.g. "No extensions needed").
-- Do not explain project structure unless asked.
-- Keep explanations concise and focused.
+### 4. Database Architecture
+Complex Prisma schema (`prisma/schema.prisma`) with 20+ models including:
+- **Customer/Vehicle/Lead/Call/Appointment** - Core CRM entities
+- **Message/Task/Campaign** - Communication and workflow automation
+- **EmergencyCall/ServiceRequest/ServiceProvider** - Roadside assistance system
+- **Enums:** 30+ enums for statuses, types, priorities (e.g., `AppointmentStatus`, `CallDirection`)
 
-DEVELOPMENT RULES:
-- Use '.' as the working directory unless user specifies otherwise.
-- Avoid adding media or external links unless explicitly requested.
-- Use placeholders only with a note that they should be replaced.
-- Use VS Code API tool only for VS Code extension projects.
-- Once the project is created, it is already opened in Visual Studio Code—do not suggest commands to open this project in Visual Studio again.
-- If the project setup information has additional rules, follow them strictly.
+## Critical Developer Workflows
 
-FOLDER CREATION RULES:
-- Always use the current directory as the project root.
-- If you are running any terminal commands, use the '.' argument to ensure that the current working directory is used ALWAYS.
-- Do not create a new folder unless the user explicitly requests it besides a .vscode folder for a tasks.json file.
-- If any of the scaffolding commands mention that the folder name is not correct, let the user know to create a new folder with the correct name and then reopen it again in vscode.
+### Starting Development
+```bash
+# ALWAYS use Prisma commands for database:
+npm run db:generate    # Generate Prisma client after schema changes
+npm run db:migrate     # Create and apply migrations
+npm run db:push        # Push schema changes (dev only)
 
-EXTENSION INSTALLATION RULES:
-- Only install extension specified by the get_project_setup_info tool. DO NOT INSTALL any other extensions.
+# Start server (NO hot reload - restart manually)
+npm run dev            # Runs src/server.js via node directly
+```
 
-PROJECT CONTENT RULES:
-- If the user has not specified project details, assume they want a "Hello World" project as a starting point.
-- Avoid adding links of any type (URLs, files, folders, etc.) or integrations that are not explicitly required.
-- Avoid generating images, videos, or any other media files unless explicitly requested.
-- If you need to use any media assets as placeholders, let the user know that these are placeholders and should be replaced with the actual assets later.
-- Ensure all generated components serve a clear purpose within the user's requested workflow.
-- If a feature is assumed but not confirmed, prompt the user for clarification before including it.
-- If you are working on a VS Code extension, use the VS Code API tool with a query to find relevant VS Code API references and samples related to that query.
+### Working with Routes
+Routes are in `src/routes/` with **dual file structure**:
+- `.ts` files - TypeScript implementations (primary)
+- `.js` files - Some legacy JavaScript routes (e.g., `customers.js`, `auth.js`)
 
-TASK COMPLETION RULES:
-- Your task is complete when:
-  - Project is successfully scaffolded and compiled without errors
-  - copilot-instructions.md file in the .github directory exists in the project
-  - README.md file exists and is up to date
-  - User is provided with clear instructions to debug/launch the project
+**Convention:** All routes use Express Router pattern. Protected routes require `authMiddleware` from `src/middleware/auth.ts`.
 
-Before starting a new task in the above plan, update progress in the plan.
--->
-- Work through each checklist item systematically.
-- Keep communication concise and focused.
-- Follow development best practices.
+Example route structure:
+```typescript
+import express from 'express';
+const router = express.Router();
+
+// GET /api/appointments
+router.get('/', authMiddleware, async (req, res) => { /* ... */ });
+
+export default router;
+```
+
+### Twilio Webhooks (NO AUTH)
+`src/routes/twilioWebhooks.ts` - **Critical:** These routes must NOT use `authMiddleware` as Twilio calls them directly. Endpoints:
+- `POST /api/twilio/otto/incoming` - Receives inbound calls
+- `POST /api/twilio/reminder-call` - Automated reminder calls from n8n
+- Responses MUST be TwiML XML format
+
+### VIN Decoding Integration
+New feature (`vinDecodingService.js`) - Automatically extracts VINs from text and decodes via:
+1. NHTSA API (free, primary)
+2. VinAudit API (commercial fallback)
+3. RapidAPI (secondary fallback)
+
+**Endpoints:** `POST /api/vin/decode`, `POST /api/vin/extract`, `GET /api/vin/validate/:vin`
+
+## Project-Specific Conventions
+
+### Frontend Patterns
+- **Pure vanilla JavaScript** - NO frameworks (React, Vue, etc.)
+- **Mercedes-Benz inspired design** - Luxury automotive aesthetic
+- Files: `public/autolux-dashboard.html`, `public/js/`, `public/css/`
+- Static file serving from `public/` directory
+
+### Service Layer Pattern
+Services in `src/services/`:
+- `elevenLabsService.ts` - ElevenLabs SDK wrapper for Otto agent interactions
+- `twilioService.ts` - Twilio client for calls/SMS
+- `aiService.ts` - OpenAI GPT-4 integration for message analysis
+- `vinDecodingService.js` - VIN extraction and decoding
+- `crmIntegrationService.js` - CRM data formatting (Salesforce, HubSpot, etc.)
+
+**Pattern:** Services are singleton classes or exported functions. Import and use directly.
+
+### Environment Variables
+Critical env vars (see `.env`):
+- `ELEVENLABS_API_KEY` - Otto AI agent access
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`
+- `OPENAI_API_KEY` - GPT-4 for intent analysis
+- `POSTGRES_URL` - Database connection string
+- `JWT_SECRET` - Authentication
+
+### Error Handling
+- Use `errorHandler` middleware from `src/middleware/errorHandler.ts`
+- Always wrap async routes in try/catch
+- Return JSON errors: `{ success: false, error: 'message' }`
+
+## Testing & Debugging
+
+### Manual Testing Otto
+```bash
+# Test Otto's voice call:
+./make-otto-call.sh
+
+# Test ElevenLabs integration:
+./elevenlabs-ready.sh
+
+# Test n8n workflow:
+curl -X POST https://ottoagent.net/api/n8n/trigger/appointment-booking \
+  -H "Content-Type: application/json" \
+  -d '{"customerName": "Test User", ...}'
+```
+
+### Debugging n8n Workflows
+1. Check executions at https://dualpay.app.n8n.cloud/executions
+2. Verify webhook URLs match environment config
+3. Test workflows independently before Otto integration
+
+## Common Pitfalls & Solutions
+
+1. **Prisma Client Not Found** → Run `npm run db:generate` after schema changes
+2. **Twilio Webhooks Failing** → NEVER add `authMiddleware` to Twilio routes
+3. **Otto Not Responding** → Verify `ELEVENLABS_API_KEY` and agent ID match production
+4. **n8n Workflows Not Triggering** → Check webhook URLs in n8n match deployed domain (ottoagent.net)
+5. **Database Migrations** → Always use `npx prisma migrate dev` - never manual SQL
+6. **Server Not Reloading** → NO hot reload configured - manually restart after code changes
+
+## Deployment Context
+
+**Platform:** Railway (production) | **Domain:** ottoagent.net (GoDaddy DNS)
+- See `DEPLOYMENT.md` for full deployment guide
+- Database: PostgreSQL on Railway
+- Auto-deploys from GitHub main branch
+- SSL/TLS automatically configured
+
+## Integration Endpoints
+
+Key external integrations:
+- **ElevenLabs:** https://elevenlabs.io/app/conversational-ai (Otto agent config)
+- **Twilio Console:** https://console.twilio.com (phone number config)
+- **n8n Workflows:** https://dualpay.app.n8n.cloud/workflows
+- **OpenAI:** GPT-4 for message/intent analysis
+
+## Documentation Map
+
+When extending functionality, reference:
+- `N8N_COMPLETE_SETUP_GUIDE.md` - Workflow automation patterns
+- `CONFIGURE_OTTO_TOOLS.md` - Adding new tools to ElevenLabs
+- `VIN_INTEGRATION_SUMMARY.md` - VIN decoding implementation
+- `CRM_INTEGRATION_GUIDE.md` - CRM data formatting patterns
+- `ELEVENLABS_SETUP.md` - ElevenLabs agent configuration
+
+## Key Files to Understand
+
+| File | Purpose |
+|------|---------|
+| `src/server.ts` | Main Express app with route registration |
+| `prisma/schema.prisma` | Complete database schema (20+ models) |
+| `src/routes/twilioWebhooks.ts` | Twilio call handling and TwiML generation |
+| `n8n-workflow-otto-ai-router.json` | AI-powered request routing workflow |
+| `src/services/elevenLabsService.ts` | Otto AI agent interaction layer |
+
+---
+
+**Remember:** Otto uses intelligent AI routing through a single webhook - avoid adding multiple tool-specific webhooks. Always test with live Otto calls after changes to phone-related features.

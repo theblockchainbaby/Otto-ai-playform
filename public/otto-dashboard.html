@@ -1782,24 +1782,24 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" class="form-input" value="john.anderson@autolux.com" required>
+                    <input type="email" id="email" class="form-input" value="admin@ottoagent.net" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" class="form-input" value="admin123" required>
                 </div>
-                
+
                 <button type="submit" id="loginBtn" class="btn-primary">
                     <span id="loginText">Sign In</span>
                 </button>
             </form>
-            
+
             <div class="test-accounts">
                 <h4>Demo Accounts</h4>
-                <p><strong>Administrator:</strong> admin@automotive-ai.com / admin123</p>
-                <p><strong>Sales Manager:</strong> manager@automotive-ai.com / manager123</p>
-                <p><strong>Sales Representative:</strong> john.doe@automotive-ai.com / sales123</p>
+                <p><strong>Administrator:</strong> admin@ottoagent.net / admin123</p>
+                <p><strong>Sales Manager:</strong> manager@ottoagent.net / manager123</p>
+                <p><strong>Sales Representative:</strong> sales@ottoagent.net / sales123</p>
             </div>
             
             <div id="loginAlert" class="alert hidden"></div>
@@ -2894,8 +2894,6 @@
         }
 
         function switchTab(tabName, button) {
-            console.log('switchTab called:', tabName, button);
-
             // Update active tab
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             if (button) {
@@ -2907,15 +2905,11 @@
             const targetPane = document.getElementById(tabName + 'Tab');
             if (targetPane) {
                 targetPane.classList.remove('hidden');
-                console.log('Showing tab pane:', tabName + 'Tab');
-            } else {
-                console.error('Tab pane not found:', tabName + 'Tab');
             }
 
             currentTab = tabName;
 
             // Always load data for the specific tab (even if clicking same tab)
-            console.log('Loading data for tab:', tabName);
             switch(tabName) {
                 case 'customers':
                     loadCustomers();
@@ -2953,15 +2947,11 @@
                 case 'aiAssistant':
                     loadAIStats();
                     break;
-                default:
-                    console.error('Unknown tab:', tabName);
             }
         }
 
         // Switch to tab from stat card click
         function switchToTab(tabName) {
-            console.log('switchToTab called:', tabName);
-
             // Find the corresponding tab button
             const tabButtons = document.querySelectorAll('.tab');
             let targetButton = null;
@@ -2973,8 +2963,6 @@
             });
 
             if (targetButton) {
-                console.log('Found target button:', targetButton.textContent);
-
                 // Update active tab
                 document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 targetButton.classList.add('active');
@@ -2984,18 +2972,12 @@
                 const targetPane = document.getElementById(tabName + 'Tab');
                 if (targetPane) {
                     targetPane.classList.remove('hidden');
-                    console.log('Showing tab pane:', tabName + 'Tab');
-                } else {
-                    console.error('Tab pane not found:', tabName + 'Tab');
                 }
 
                 currentTab = tabName;
 
                 // Load data for the specific tab
-                console.log('Loading data for tab:', tabName);
                 loadTabData(tabName);
-            } else {
-                console.error('Target button not found for tab:', tabName);
             }
         }
 
@@ -6345,8 +6327,6 @@
             while (target && target !== document) {
                 const onclickAttr = target.getAttribute('onclick');
                 if (onclickAttr) {
-                    console.log('Click intercepted on element with onclick:', onclickAttr);
-
                     // Prevent the CSP error by handling it ourselves
                     e.preventDefault();
                     e.stopPropagation();
@@ -6360,13 +6340,10 @@
         }, true); // Use capture phase to intercept before CSP blocks it
 
         function executeOnclickHandler(element, code) {
-            console.log('Executing onclick handler:', code);
-
-            // Parse simple function calls like "functionName()" or "functionName('arg1', 'arg2')"
+            // Parse simple function calls like "functionName()"
             const simpleCallMatch = code.match(/^(\w+)\(\s*\)$/);
             if (simpleCallMatch) {
                 const funcName = simpleCallMatch[1];
-                console.log('Matched simple call:', funcName);
                 if (typeof window[funcName] === 'function') {
                     window[funcName]();
                     return;
@@ -6378,7 +6355,6 @@
             if (thisMatch) {
                 const funcName = thisMatch[1];
                 const arg1 = thisMatch[2];
-                console.log('Matched this call:', funcName, arg1);
                 if (typeof window[funcName] === 'function') {
                     window[funcName](arg1, element);
                     return;
@@ -6390,7 +6366,6 @@
             if (oneArgMatch) {
                 const funcName = oneArgMatch[1];
                 const arg1 = oneArgMatch[2];
-                console.log('Matched one arg call:', funcName, arg1);
                 if (typeof window[funcName] === 'function') {
                     window[funcName](arg1);
                     return;
@@ -6403,7 +6378,6 @@
                 const funcName = twoArgMatch[1];
                 const arg1 = twoArgMatch[2];
                 const arg2 = twoArgMatch[3];
-                console.log('Matched two arg call:', funcName, arg1, arg2);
                 if (typeof window[funcName] === 'function') {
                     window[funcName](arg1, arg2);
                     return;
@@ -6415,7 +6389,6 @@
             if (jsonArgMatch) {
                 const funcName = jsonArgMatch[1];
                 const jsonStr = jsonArgMatch[2].replace(/&quot;/g, '"');
-                console.log('Matched JSON call:', funcName);
                 try {
                     const jsonArg = JSON.parse(jsonStr);
                     if (typeof window[funcName] === 'function') {
@@ -6426,8 +6399,6 @@
                     console.error('Failed to parse JSON argument:', e);
                 }
             }
-
-            console.warn('Could not execute onclick handler:', code);
         }
     </script>
 </body>
