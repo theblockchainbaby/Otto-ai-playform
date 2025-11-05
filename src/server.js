@@ -260,17 +260,19 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
     console.log('🤖 Agent ID:', agentId);
 
+    // Try the signed URL approach for ElevenLabs
+    // This creates a WebSocket URL with the agent ID in the path
+    const elevenLabsWsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`;
+
+    console.log('🔗 WebSocket URL:', elevenLabsWsUrl);
+
     // Connect to ElevenLabs WebSocket
     const connect = response.connect();
     const stream = connect.stream({
-      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+      url: elevenLabsWsUrl
     });
 
-    stream.parameter({
-      name: 'agent_id',
-      value: agentId
-    });
-
+    // Add authorization header
     stream.parameter({
       name: 'authorization',
       value: `Bearer ${elevenLabsKey}`
