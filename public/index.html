@@ -2109,9 +2109,15 @@
                 if (entry.isIntersecting) {
                     const statNumbers = entry.target.querySelectorAll('.stat-item h3');
                     statNumbers.forEach(stat => {
-                        const finalNumber = stat.textContent;
-                        const isPercentage = finalNumber.includes('%');
-                        const number = parseInt(finalNumber.replace(/\D/g, ''));
+                        const originalText = stat.textContent.trim();
+
+                        // Skip animation for non-numeric stats (24/7, $299, <10s)
+                        if (originalText.includes('/') || originalText.includes('$') || originalText.includes('<')) {
+                            return; // Keep original text as-is
+                        }
+
+                        const isPercentage = originalText.includes('%');
+                        const number = parseInt(originalText.replace(/\D/g, ''));
 
                         let current = 0;
                         const increment = number / 50;
@@ -2121,7 +2127,7 @@
                                 current = number;
                                 clearInterval(timer);
                             }
-                            stat.textContent = Math.floor(current) + (isPercentage ? '%' : '+');
+                            stat.textContent = Math.floor(current) + (isPercentage ? '%' : '');
                         }, 30);
                     });
                     observer.unobserve(entry.target);
