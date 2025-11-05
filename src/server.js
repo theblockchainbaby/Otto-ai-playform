@@ -259,7 +259,7 @@ app.post('/api/twilio/voice', async (req, res) => {
       console.log('⚠️  Database not available, skipping call logging');
     }
 
-    // Generate TwiML for ElevenLabs - Try Twilio-specific endpoint
+    // Simple approach: Just forward to ElevenLabs' direct Twilio endpoint
     const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
     const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
 
@@ -267,15 +267,15 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
     console.log('🤖 Agent ID:', agentId);
 
-    // Try using ElevenLabs' Twilio-specific WebSocket endpoint
-    // This endpoint is specifically designed for Twilio Media Streams
+    // Use ElevenLabs' official Twilio inbound endpoint
+    // This is their hosted endpoint that handles all the WebSocket complexity
+    const elevenLabsUrl = `https://api.elevenlabs.io/v1/convai/conversation/twilio?agent_id=${agentId}`;
+
+    console.log('🔗 Redirecting to ElevenLabs URL:', elevenLabsUrl);
+
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Connect>
-        <Stream url="wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}">
-            <Parameter name="xi-api-key" value="${elevenLabsKey}" />
-        </Stream>
-    </Connect>
+    <Redirect method="POST">${elevenLabsUrl}</Redirect>
 </Response>`;
 
     console.log('📤 Sending TwiML response to Twilio');
