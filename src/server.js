@@ -462,15 +462,29 @@ async function handleMediaStreamConnection(twilioWs, request) {
               // Handle audio events
               if (message.type === 'audio' && message.audio_event && message.audio_event.audio_base_64) {
                 if (twilioWs.readyState === WebSocket.OPEN) {
-                  const mediaMessage = {
-                    event: 'media',
-                    streamSid: callSid,
-                    media: {
-                      payload: message.audio_event.audio_base_64
-                    }
-                  };
-                  twilioWs.send(JSON.stringify(mediaMessage));
-                  console.log(`🔊 Sent audio to Twilio (event ${message.audio_event.event_id}, ${message.audio_event.audio_base_64.length} bytes)`);
+                  // ElevenLabs sends large audio chunks, but Twilio expects smaller chunks
+                  // Split the audio into smaller chunks (20ms of audio at 8kHz = 160 bytes)
+                  const base64Audio = message.audio_event.audio_base_64;
+                  const CHUNK_SIZE = 640; // 640 base64 chars ≈ 480 bytes of audio ≈ 20ms at 8kHz mulaw
+
+                  let offset = 0;
+                  let chunkCount = 0;
+
+                  while (offset < base64Audio.length) {
+                    const chunk = base64Audio.substring(offset, offset + CHUNK_SIZE);
+                    const mediaMessage = {
+                      event: 'media',
+                      streamSid: callSid,
+                      media: {
+                        payload: chunk
+                      }
+                    };
+                    twilioWs.send(JSON.stringify(mediaMessage));
+                    offset += CHUNK_SIZE;
+                    chunkCount++;
+                  }
+
+                  console.log(`🔊 Sent audio to Twilio (event ${message.audio_event.event_id}, ${base64Audio.length} bytes split into ${chunkCount} chunks)`);
                 } else {
                   console.log(`⚠️  Twilio not ready, skipping audio event ${message.audio_event.event_id}`);
                 }
