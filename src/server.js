@@ -332,22 +332,21 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
       }
     }
 
-    // Route to ElevenLabs native Twilio integration
-    // The phone number +18884118568 is configured in ElevenLabs to route to Otto agent
-    // ElevenLabs will handle the entire conversation and store it
+    // Route to media stream proxy for ElevenLabs
     const twilio = require('twilio');
     const twiml = new twilio.twiml.VoiceResponse();
 
-    // Use SIP trunk to route to ElevenLabs
-    // This uses ElevenLabs' native Twilio integration
-    // Try TLS first (more secure), fallback to TCP
-    const dial = twiml.dial();
-    dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5061;transport=tls');
+    // Connect to our media stream proxy
+    const proxyUrl = `wss://${req.get('host')}/api/twilio/media-stream?callSid=${CallSid}`;
+    const connect = twiml.connect();
+    connect.stream({
+      url: proxyUrl
+    });
 
     const twimlString = twiml.toString();
     console.log('📤📤📤 SENDING TWIML 📤📤📤');
     console.log('TwiML:', twimlString);
-    console.log('Routing to: sip:+18884118568@sip.rtc.elevenlabs.io:5061;transport=tls');
+    console.log('Media stream proxy URL:', proxyUrl);
 
     res.type('text/xml');
     res.send(twimlString);
@@ -363,6 +362,134 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
     res.send(response.toString());
   }
 });
+
+// Media Stream Proxy - Bridge Twilio Media Streams to ElevenLabs WebSocket
+const WebSocket = require('ws');
+const http = require('http');
+
+// Create HTTP server for WebSocket upgrade
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ noServer: true });
+
+// Handle WebSocket upgrade requests
+server.on('upgrade', (request, socket, head) => {
+  const pathname = new URL(request.url, 'http://localhost').pathname;
+
+  if (pathname === '/api/twilio/media-stream') {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      handleMediaStreamConnection(ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
+async function handleMediaStreamConnection(twilioWs, request) {
+  const url = new URL(request.url, 'http://localhost');
+  const callSid = url.searchParams.get('callSid');
+
+  console.log(`📱 Twilio Media Stream connected: ${callSid}`);
+
+  let elevenLabsWs = null;
+  const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+  const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+
+  try {
+    // Get signed URL from ElevenLabs
+    console.log(`🔑 Getting signed URL for agent ${agentId}`);
+    const signedUrlResponse = await fetch(
+      `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+      {
+        method: 'GET',
+        headers: {
+          'xi-api-key': elevenLabsKey
+        }
+      }
+    );
+
+    if (!signedUrlResponse.ok) {
+      throw new Error(`Failed to get signed URL: ${signedUrlResponse.statusText}`);
+    }
+
+    const { signed_url } = await signedUrlResponse.json();
+    console.log(`✅ Got signed URL for ${callSid}`);
+
+    // Connect to ElevenLabs
+    console.log(`🤖 Connecting to ElevenLabs...`);
+    elevenLabsWs = new WebSocket(signed_url);
+
+    elevenLabsWs.on('open', () => {
+      console.log(`🤖 Connected to ElevenLabs for ${callSid}`);
+    });
+
+    elevenLabsWs.on('message', (data) => {
+      // Forward ElevenLabs audio to Twilio
+      if (twilioWs.readyState === WebSocket.OPEN) {
+        try {
+          const base64Audio = data.toString('base64');
+          const mediaMessage = {
+            event: 'media',
+            streamSid: callSid,
+            media: {
+              payload: base64Audio
+            }
+          };
+          twilioWs.send(JSON.stringify(mediaMessage));
+        } catch (error) {
+          console.error(`Error forwarding audio from ElevenLabs: ${error.message}`);
+        }
+      }
+    });
+
+    elevenLabsWs.on('close', () => {
+      console.log(`🤖 ElevenLabs connection closed for ${callSid}`);
+      if (twilioWs.readyState === WebSocket.OPEN) {
+        twilioWs.close();
+      }
+    });
+
+    elevenLabsWs.on('error', (error) => {
+      console.error(`🤖 ElevenLabs error for ${callSid}:`, error.message);
+    });
+
+    // Handle Twilio messages
+    twilioWs.on('message', (data) => {
+      try {
+        const message = JSON.parse(data);
+
+        if (message.event === 'media' && message.media && elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+          // Forward Twilio audio to ElevenLabs
+          const audioBuffer = Buffer.from(message.media.payload, 'base64');
+          elevenLabsWs.send(audioBuffer);
+        } else if (message.event === 'start') {
+          console.log(`📞 Media stream started for ${callSid}`);
+        } else if (message.event === 'stop') {
+          console.log(`📞 Media stream stopped for ${callSid}`);
+          if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+            elevenLabsWs.close();
+          }
+        }
+      } catch (error) {
+        console.error(`Error parsing Twilio message: ${error.message}`);
+      }
+    });
+
+    twilioWs.on('close', () => {
+      console.log(`📱 Twilio connection closed for ${callSid}`);
+      if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+        elevenLabsWs.close();
+      }
+    });
+
+    twilioWs.on('error', (error) => {
+      console.error(`📱 Twilio error for ${callSid}:`, error.message);
+    });
+
+  } catch (error) {
+    console.error(`❌ Error setting up media stream for ${callSid}:`, error.message);
+    twilioWs.close();
+  }
+}
 
 // API endpoint to fetch conversations from ElevenLabs
 app.get('/api/elevenlabs/conversations', async (req, res) => {
@@ -468,13 +595,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
+// Start server with WebSocket support
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🤖 Otto AI Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`📞 Twilio webhook: https://ottoagent.net/api/twilio/otto/incoming`);
-  console.log(`🤖 ElevenLabs handles all conversations and stores data`);
+  console.log(`📡 WebSocket media stream: wss://ottoagent.net/api/twilio/media-stream`);
 });
 
 module.exports = app;
