@@ -267,20 +267,15 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🤖 Agent ID:', agentId);
     console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
 
-    // Use direct WebSocket connection to ElevenLabs
+    // Use direct WebSocket connection to ElevenLabs with query parameters
     const twiml = new twilio.twiml.VoiceResponse();
     const connect = twiml.connect();
-    const stream = connect.stream({
-      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
-    });
 
-    stream.parameter({
-      name: 'agent_id',
-      value: agentId
-    });
-    stream.parameter({
-      name: 'authorization',
-      value: `Bearer ${elevenLabsKey}`
+    // Build WebSocket URL with query parameters
+    const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation/ws?agent_id=${agentId}&xi-api-key=${elevenLabsKey}`;
+
+    const stream = connect.stream({
+      url: wsUrl
     });
 
     const twimlString = twiml.toString();
