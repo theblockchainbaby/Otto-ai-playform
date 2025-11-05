@@ -385,119 +385,121 @@ server.on('upgrade', (request, socket, head) => {
 });
 
 async function handleMediaStreamConnection(twilioWs, request) {
-  // Parse the full URL including query parameters from the request
-  const url = new URL(request.url, `http://${request.headers.host}`);
-  const callSid = url.searchParams.get('callSid');
-
-  console.log(`📱 Twilio Media Stream connected: ${callSid}`);
-  console.log(`📍 Full URL: ${request.url}`);
-
+  // Initialize variables
+  let callSid = null;
   let elevenLabsWs = null;
   const agentId = 'agent_3701k70bz4gcfd6vq1bkh57d15bw'; // Correct agent ID
   const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
 
-  try {
-    // Get signed URL from ElevenLabs
-    console.log(`🔑 Getting signed URL for agent ${agentId}`);
-    const signedUrlResponse = await fetch(
-      `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
-      {
-        method: 'GET',
-        headers: {
-          'xi-api-key': elevenLabsKey
-        }
-      }
-    );
+  console.log(`📱 Twilio Media Stream connected: ${callSid}`);
+  console.log(`📍 Full URL: ${request.url}`);
 
-    if (!signedUrlResponse.ok) {
-      throw new Error(`Failed to get signed URL: ${signedUrlResponse.statusText}`);
-    }
+  // Handle Twilio messages - wait for 'start' event to get callSid
+  twilioWs.on('message', async (data) => {
+    try {
+      const message = JSON.parse(data);
 
-    const { signed_url } = await signedUrlResponse.json();
-    console.log(`✅ Got signed URL for ${callSid}`);
+      if (message.event === 'start' && message.start && message.start.callSid) {
+        // Now we have the callSid from Twilio's start event
+        callSid = message.start.callSid;
+        console.log(`📞 Media stream started for ${callSid}`);
 
-    // Connect to ElevenLabs
-    console.log(`🤖 Connecting to ElevenLabs...`);
-    elevenLabsWs = new WebSocket(signed_url);
-
-    elevenLabsWs.on('open', () => {
-      console.log(`🤖 Connected to ElevenLabs for ${callSid}`);
-    });
-
-    elevenLabsWs.on('message', (data) => {
-      // Forward ElevenLabs audio to Twilio
-      if (twilioWs.readyState === WebSocket.OPEN) {
+        // Now that we have callSid, connect to ElevenLabs
         try {
-          // ElevenLabs sends JSON with audio data
-          const message = JSON.parse(data.toString());
-          if (message.type === 'audio' && message.audio) {
-            const mediaMessage = {
-              event: 'media',
-              streamSid: callSid,
-              media: {
-                payload: message.audio
+          // Get signed URL from ElevenLabs
+          console.log(`🔑 Getting signed URL for agent ${agentId}`);
+          const signedUrlResponse = await fetch(
+            `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+            {
+              method: 'GET',
+              headers: {
+                'xi-api-key': elevenLabsKey
               }
-            };
-            twilioWs.send(JSON.stringify(mediaMessage));
+            }
+          );
+
+          if (!signedUrlResponse.ok) {
+            throw new Error(`Failed to get signed URL: ${signedUrlResponse.statusText}`);
           }
+
+          const { signed_url } = await signedUrlResponse.json();
+          console.log(`✅ Got signed URL for ${callSid}`);
+
+          // Connect to ElevenLabs
+          console.log(`🤖 Connecting to ElevenLabs...`);
+          elevenLabsWs = new WebSocket(signed_url);
+
+          elevenLabsWs.on('open', () => {
+            console.log(`🤖 Connected to ElevenLabs for ${callSid}`);
+          });
+
+          elevenLabsWs.on('message', (data) => {
+            // Forward ElevenLabs audio to Twilio
+            if (twilioWs.readyState === WebSocket.OPEN) {
+              try {
+                // ElevenLabs sends JSON with audio data
+                const message = JSON.parse(data.toString());
+                if (message.type === 'audio' && message.audio) {
+                  const mediaMessage = {
+                    event: 'media',
+                    streamSid: callSid,
+                    media: {
+                      payload: message.audio
+                    }
+                  };
+                  twilioWs.send(JSON.stringify(mediaMessage));
+                }
+              } catch (error) {
+                console.error(`Error forwarding audio from ElevenLabs: ${error.message}`);
+              }
+            }
+          });
+
+          elevenLabsWs.on('close', (code, reason) => {
+            console.log(`🤖 ElevenLabs connection closed for ${callSid} - Code: ${code}, Reason: ${reason}`);
+            if (twilioWs.readyState === WebSocket.OPEN) {
+              twilioWs.close();
+            }
+          });
+
+          elevenLabsWs.on('error', (error) => {
+            console.error(`🤖 ElevenLabs error for ${callSid}:`, error.message);
+            console.error(`🤖 Error details:`, error);
+          });
+
         } catch (error) {
-          console.error(`Error forwarding audio from ElevenLabs: ${error.message}`);
+          console.error(`❌ Error setting up ElevenLabs connection for ${callSid}:`, error.message);
+          twilioWs.close();
+        }
+
+      } else if (message.event === 'media' && message.media && elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+        // Forward Twilio audio to ElevenLabs as JSON
+        const audioMessage = {
+          type: 'audio',
+          audio: message.media.payload
+        };
+        elevenLabsWs.send(JSON.stringify(audioMessage));
+      } else if (message.event === 'stop') {
+        console.log(`📞 Media stream stopped for ${callSid}`);
+        if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+          elevenLabsWs.close();
         }
       }
-    });
+    } catch (error) {
+      console.error(`Error parsing Twilio message: ${error.message}`);
+    }
+  });
 
-    elevenLabsWs.on('close', (code, reason) => {
-      console.log(`🤖 ElevenLabs connection closed for ${callSid} - Code: ${code}, Reason: ${reason}`);
-      if (twilioWs.readyState === WebSocket.OPEN) {
-        twilioWs.close();
-      }
-    });
+  twilioWs.on('close', () => {
+    console.log(`📱 Twilio connection closed for ${callSid}`);
+    if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
+      elevenLabsWs.close();
+    }
+  });
 
-    elevenLabsWs.on('error', (error) => {
-      console.error(`🤖 ElevenLabs error for ${callSid}:`, error.message);
-      console.error(`🤖 Error details:`, error);
-    });
-
-    // Handle Twilio messages
-    twilioWs.on('message', (data) => {
-      try {
-        const message = JSON.parse(data);
-
-        if (message.event === 'media' && message.media && elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
-          // Forward Twilio audio to ElevenLabs as JSON
-          const audioMessage = {
-            type: 'audio',
-            audio: message.media.payload
-          };
-          elevenLabsWs.send(JSON.stringify(audioMessage));
-        } else if (message.event === 'start') {
-          console.log(`📞 Media stream started for ${callSid}`);
-        } else if (message.event === 'stop') {
-          console.log(`📞 Media stream stopped for ${callSid}`);
-          if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
-            elevenLabsWs.close();
-          }
-        }
-      } catch (error) {
-        console.error(`Error parsing Twilio message: ${error.message}`);
-      }
-    });
-
-    twilioWs.on('close', () => {
-      console.log(`📱 Twilio connection closed for ${callSid}`);
-      if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
-        elevenLabsWs.close();
-      }
-    });
-
-    twilioWs.on('error', (error) => {
-      console.error(`📱 Twilio error for ${callSid}:`, error.message);
-    });
-
-  } catch (error) {
-    console.error(`❌ Error setting up media stream for ${callSid}:`, error.message);
-    twilioWs.close();
-  }
+  twilioWs.on('error', (error) => {
+    console.error(`📱 Twilio error for ${callSid}:`, error.message);
+  });
 }
 
 // API endpoint to fetch conversations from ElevenLabs
