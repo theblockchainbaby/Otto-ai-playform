@@ -140,12 +140,7 @@ router.post('/voice/incoming', verifyTwilioWebhook, async (req, res) => {
         outcome: 'IN_PROGRESS',
         startedAt: new Date(),
         customerId: customer?.id,
-        metadata: {
-          twilioCallSid: CallSid,
-          callerName: CallerName,
-          aiVoiceEnabled: true,
-          customerRecognized: !!customer
-        }
+        notes: `Twilio CallSid: ${CallSid}, Caller: ${CallerName || 'Unknown'}, AI Voice: Yes`
       }
     });
 
@@ -229,11 +224,7 @@ router.post('/voice/menu', verifyTwilioWebhook, async (req, res) => {
       await prisma.call.update({
         where: { id: callId as string },
         data: {
-          metadata: {
-            menuSelection: Digits,
-            scenario: scenario,
-            updatedAt: new Date().toISOString()
-          }
+          notes: `Menu selection: ${Digits}, Scenario: ${scenario}`
         }
       });
     }
@@ -349,11 +340,7 @@ router.post('/voice/emergency', verifyTwilioWebhook, async (req, res) => {
         where: { id: callId as string },
         data: {
           outcome: 'EMERGENCY',
-          metadata: {
-            priority: 'CRITICAL',
-            emergencyFlag: true,
-            escalatedAt: new Date().toISOString()
-          }
+          notes: 'CRITICAL PRIORITY - Emergency call escalated'
         }
       });
     }
@@ -438,12 +425,11 @@ router.post('/voice/status', verifyTwilioWebhook, async (req, res) => {
     
     console.log('Call status update:', { CallSid, CallStatus, CallDuration });
 
-    // Find and update call record
+    // Find and update call record by notes containing CallSid
     const call = await prisma.call.findFirst({
       where: {
-        metadata: {
-          path: ['twilioCallSid'],
-          equals: CallSid
+        notes: {
+          contains: CallSid
         }
       }
     });
@@ -452,14 +438,9 @@ router.post('/voice/status', verifyTwilioWebhook, async (req, res) => {
       await prisma.call.update({
         where: { id: call.id },
         data: {
-          status: CallStatus === 'completed' ? 'COMPLETED' : CallStatus.toUpperCase(),
+          status: CallStatus === 'completed' ? 'COMPLETED' : CallStatus.toUpperCase() as any,
           duration: CallDuration ? parseInt(CallDuration) : null,
-          endedAt: CallStatus === 'completed' ? new Date() : null,
-          metadata: {
-            ...call.metadata,
-            finalStatus: CallStatus,
-            statusUpdatedAt: new Date().toISOString()
-          }
+          endedAt: CallStatus === 'completed' ? new Date() : null
         }
       });
     }
@@ -496,10 +477,35 @@ router.get('/test-voice', async (req, res) => {
 });
 
 // POST /api/twilio/voice - Simple endpoint that connects directly to ElevenLabs Otto
-router.post('/voice', async (req, res) => {
+router.post('/voice', async (req: express.Request, res: express.Response) => {
   try {
     const { From, To, CallSid } = req.body;
     console.log('Incoming call to Otto:', { From, To, CallSid });
+
+    // Log call to database (simple version without metadata)
+    try {
+      // Look up customer by phone number
+      const customer = await prisma.customer.findFirst({
+        where: { phone: From }
+      });
+
+      // Create call record
+      if (customer) {
+        await prisma.call.create({
+          data: {
+            direction: 'INBOUND',
+            status: 'RINGING',
+            outcome: 'Otto AI Agent',
+            startedAt: new Date(),
+            customerId: customer.id,
+            notes: `Twilio CallSid: ${CallSid}`
+          }
+        });
+      }
+    } catch (dbError) {
+      console.error('Database error (non-fatal):', dbError);
+      // Continue even if database fails
+    }
 
     // Generate TwiML that connects directly to ElevenLabs Otto agent
     const twilio = require('twilio');

@@ -27,6 +27,7 @@ import twilioWebhookRoutes from './routes/twilioWebhooks';
 
 // Import JavaScript routes for features not yet migrated to TypeScript
 const aiRoutes = require('./routes/ai.js');
+const twilioSimpleRoutes = require('./routes/twilioSimple.js');
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -101,7 +102,8 @@ app.use('/api/service-providers', authMiddleware, serviceProviderRoutes);
 app.use('/api/ai', aiRoutes); // Using JavaScript route temporarily
 // app.use('/api/ai', authMiddleware, aiMessageRoutes);
 // app.use('/api/ai/calls', authMiddleware, aiCallRoutes);
-app.use('/api/twilio', twilioWebhookRoutes); // No auth middleware for Twilio webhooks
+app.use('/api/twilio', twilioSimpleRoutes); // Simple JavaScript version - no auth middleware for Twilio webhooks
+// app.use('/api/twilio', twilioWebhookRoutes); // TypeScript version has compilation errors
 
 // 404 handler
 app.use('*', (req, res) => {
