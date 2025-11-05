@@ -249,16 +249,21 @@ app.post('/api/twilio/voice', async (req, res) => {
     }
 
     // Generate TwiML for ElevenLabs
+    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+    console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
+    console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
+
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
     <Stream url="wss://api.elevenlabs.io/v1/convai/conversation/ws">
       <Parameter name="agent_id" value="agent_2201k8q07eheexe8j4vkt0b9vecb"/>
-      <Parameter name="authorization" value="Bearer ${process.env.ELEVENLABS_API_KEY}"/>
+      <Parameter name="authorization" value="Bearer ${elevenLabsKey}"/>
     </Stream>
   </Connect>
 </Response>`;
 
+    console.log('📤 Sending TwiML response to Twilio');
     res.type('text/xml');
     res.send(twiml);
   } catch (error) {
