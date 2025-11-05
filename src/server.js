@@ -64,8 +64,17 @@ app.use('/src/utils', express.static(path.join(__dirname, 'utils')));
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Skip database initialization - running in mock data mode
-console.log('⚠️  Skipping database initialization, running in mock data mode');
+// Initialize Prisma Client
+let prisma;
+try {
+  const { PrismaClient } = require('@prisma/client');
+  prisma = new PrismaClient();
+  console.log('✅ Database connection initialized');
+  console.log('📊 DATABASE_URL present:', process.env.DATABASE_URL ? 'YES' : 'NO');
+} catch (error) {
+  console.error('⚠️  Database initialization failed:', error.message);
+  console.log('⚠️  Running in mock data mode');
+}
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -222,30 +231,32 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔊 Incoming call to Otto:', { From, To, CallSid });
 
     // Log call to database if available
-    try {
-      const { PrismaClient } = require('@prisma/client');
-      const prisma = new PrismaClient();
-
-      const customer = await prisma.customer.findFirst({
-        where: { phone: From }
-      });
-
-      if (customer) {
-        await prisma.call.create({
-          data: {
-            direction: 'INBOUND',
-            status: 'RINGING',
-            outcome: 'Otto AI Agent',
-            startedAt: new Date(),
-            customerId: customer.id,
-            notes: `Twilio CallSid: ${CallSid}`
-          }
+    if (prisma) {
+      try {
+        const customer = await prisma.customer.findFirst({
+          where: { phone: From }
         });
-      }
 
-      await prisma.$disconnect();
-    } catch (dbError) {
-      console.error('Database error (non-fatal):', dbError);
+        if (customer) {
+          await prisma.call.create({
+            data: {
+              direction: 'INBOUND',
+              status: 'RINGING',
+              outcome: 'Otto AI Agent',
+              startedAt: new Date(),
+              customerId: customer.id,
+              notes: `Twilio CallSid: ${CallSid}`
+            }
+          });
+          console.log('✅ Call logged to database');
+        } else {
+          console.log('ℹ️  Customer not found, call not logged');
+        }
+      } catch (dbError) {
+        console.error('❌ Database error (non-fatal):', dbError.message);
+      }
+    } else {
+      console.log('⚠️  Database not available, skipping call logging');
     }
 
     // Generate TwiML for ElevenLabs using Twilio SDK
