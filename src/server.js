@@ -336,8 +336,9 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
 
     // Use SIP trunk to route to ElevenLabs
     // This uses ElevenLabs' native Twilio integration
+    // Try TLS first (more secure), fallback to TCP
     const dial = twiml.dial();
-    dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5060;transport=tcp');
+    dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5061;transport=tls');
 
     const twimlString = twiml.toString();
     console.log('📤 Routing to ElevenLabs via SIP trunk');
