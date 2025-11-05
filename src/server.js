@@ -304,7 +304,11 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
   try {
     const { From, To, CallSid, CallerName } = req.body;
 
-    console.log('🔊 Otto incoming call:', { From, To, CallSid, CallerName });
+    console.log('🔊🔊🔊 OTTO INCOMING CALL 🔊🔊🔊');
+    console.log('From:', From);
+    console.log('To:', To);
+    console.log('CallSid:', CallSid);
+    console.log('CallerName:', CallerName);
 
     // Recognize customer by phone number
     let customer = null;
@@ -341,11 +345,13 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
     dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5061;transport=tls');
 
     const twimlString = twiml.toString();
-    console.log('📤 Routing to ElevenLabs via SIP trunk');
-    console.log('📄 TwiML:', twimlString);
+    console.log('📤📤📤 SENDING TWIML 📤📤📤');
+    console.log('TwiML:', twimlString);
+    console.log('Routing to: sip:+18884118568@sip.rtc.elevenlabs.io:5061;transport=tls');
 
     res.type('text/xml');
     res.send(twimlString);
+    console.log('✅✅✅ TWIML SENT ✅✅✅');
   } catch (error) {
     console.error('❌ Error in /api/twilio/otto/incoming:', error);
 
