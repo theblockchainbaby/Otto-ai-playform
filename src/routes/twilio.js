@@ -96,13 +96,18 @@ console.log('✅ WebSocket route registered');
 
 // WebSocket handler for media stream
 function handleMediaStreamConnection(twilioWs, request) {
-  console.log('📱 Twilio Media Stream handler called');
+  console.log('📱📱📱 MEDIA STREAM HANDLER STARTED 📱📱📱');
+  console.log('WebSocket readyState:', twilioWs.readyState);
+  console.log('WebSocket protocol:', twilioWs.protocol);
   
   let callSid = null;
   let streamSid = null;
   let elevenLabsWs = null;
-  const agentId = process.env.OTTO_AGENT_ID || 'agent_3701k70bz4gcfd6vq1bkh57d15bw';
+  const agentId = process.env.OTTO_AGENT_ID || 'agent_2201k8q07eheexe8j4vkt0b9vecb';
   const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+  
+  console.log('🔑 Agent ID:', agentId);
+  console.log('🔑 API Key present:', !!elevenLabsKey);
 
   // Function to split base64 audio into chunks and send to Twilio
   function sendAudioInChunks(base64Audio) {
@@ -159,10 +164,11 @@ function handleMediaStreamConnection(twilioWs, request) {
   twilioWs.on('message', async (message) => {
     try {
       const msg = JSON.parse(message.toString());
+      console.log('📨 Received Twilio message:', msg.event);
 
       switch (msg.event) {
         case 'connected':
-          console.log('📱 Twilio connected event');
+          console.log('✅✅✅ TWILIO CONNECTED EVENT ✅✅✅');
           break;
 
         case 'start':
@@ -281,11 +287,15 @@ function handleMediaStreamConnection(twilioWs, request) {
   });
 
   twilioWs.on('error', (error) => {
-    console.error('📱 Twilio WebSocket error:', error);
+    console.error('❌❌❌ TWILIO WEBSOCKET ERROR ❌❌❌');
+    console.error('Error:', error);
   });
 
-  twilioWs.on('close', () => {
-    console.log('📱 Twilio connection closed for', callSid);
+  twilioWs.on('close', (code, reason) => {
+    console.log('📱📱📱 TWILIO CONNECTION CLOSED 📱📱📱');
+    console.log('CallSid:', callSid);
+    console.log('Close code:', code);
+    console.log('Close reason:', reason ? reason.toString() : 'none');
     if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN) {
       elevenLabsWs.close();
     }
