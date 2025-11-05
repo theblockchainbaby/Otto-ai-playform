@@ -336,33 +336,19 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
       }
     }
 
-    // Generate TwiML with Otto agent
+    // Use ElevenLabs native Twilio integration
+    // The phone number is already configured in ElevenLabs to handle inbound calls
+    // We just need to redirect to ElevenLabs' SIP endpoint
     const twilio = require('twilio');
-    const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
-    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
-
-    console.log('🤖 Agent ID:', agentId);
-    console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
-
-    // Generate TwiML that connects to ElevenLabs Otto agent
     const twiml = new twilio.twiml.VoiceResponse();
-    const connect = twiml.connect();
-    const stream = connect.stream({
-      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
-    });
 
-    // Configure Otto agent with parameters
-    stream.parameter({
-      name: 'agent_id',
-      value: agentId
-    });
-    stream.parameter({
-      name: 'authorization',
-      value: `Bearer ${elevenLabsKey}`
-    });
+    // Use SIP trunk to connect to ElevenLabs
+    // This routes through ElevenLabs' native Twilio integration
+    const dial = twiml.dial();
+    dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5060;transport=tcp');
 
     const twimlString = twiml.toString();
-    console.log('📤 Sending TwiML with Otto agent');
+    console.log('📤 Sending TwiML with SIP trunk to ElevenLabs');
     console.log('📄 TwiML:', twimlString);
 
     res.type('text/xml');
