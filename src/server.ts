@@ -105,6 +105,60 @@ app.use('/api/ai', aiRoutes); // Using JavaScript route temporarily
 app.use('/api/twilio', twilioSimpleRoutes); // Simple JavaScript version - no auth middleware for Twilio webhooks
 // app.use('/api/twilio', twilioWebhookRoutes); // TypeScript version has compilation errors
 
+// Direct Twilio webhook endpoint (backup in case route doesn't load)
+app.post('/api/twilio/voice', async (req, res) => {
+  try {
+    const { From, To, CallSid } = req.body;
+    console.log('🔊 Incoming call to Otto:', { From, To, CallSid });
+
+    // Log call to database
+    try {
+      const customer = await prisma.customer.findFirst({
+        where: { phone: From }
+      });
+
+      if (customer) {
+        await prisma.call.create({
+          data: {
+            direction: 'INBOUND',
+            status: 'RINGING',
+            outcome: 'Otto AI Agent',
+            startedAt: new Date(),
+            customerId: customer.id,
+            notes: `Twilio CallSid: ${CallSid}`
+          }
+        });
+      }
+    } catch (dbError) {
+      console.error('Database error (non-fatal):', dbError);
+    }
+
+    // Generate TwiML for ElevenLabs
+    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Connect>
+    <Stream url="wss://api.elevenlabs.io/v1/convai/conversation/ws">
+      <Parameter name="agent_id" value="agent_2201k8q07eheexe8j4vkt0b9vecb"/>
+      <Parameter name="authorization" value="Bearer ${process.env.ELEVENLABS_API_KEY}"/>
+    </Stream>
+  </Connect>
+</Response>`;
+
+    res.type('text/xml');
+    res.send(twiml);
+  } catch (error) {
+    console.error('❌ Error connecting to Otto:', error);
+
+    const fallbackTwiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say voice="alice">Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.</Say>
+</Response>`;
+
+    res.type('text/xml');
+    res.send(fallbackTwiml);
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   // For API routes, return JSON error
