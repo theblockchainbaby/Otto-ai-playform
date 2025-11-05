@@ -51,8 +51,7 @@ router.post('/otto/incoming', async (req, res) => {
     // Connect to media stream proxy
     const host = process.env.HOST || req.get('host');
     connect.stream({
-      url: `wss://${host}/api/twilio/media-stream`,
-      track: 'both_tracks'
+      url: `wss://${host}/api/twilio/media-stream`
     });
 
     console.log('📤📤📤 SENDING TWIML 📤📤📤');
