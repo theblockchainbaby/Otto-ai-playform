@@ -271,30 +271,68 @@ app.post('/api/twilio/voice', async (req, res) => {
     console.log('🔑 Key starts with:', elevenLabsKey ? elevenLabsKey.substring(0, 8) + '...' : 'MISSING');
     console.log('🤖 Agent ID:', agentId);
 
-    // Try the signed URL approach for ElevenLabs
-    // This creates a WebSocket URL with the agent ID in the path
-    const elevenLabsWsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`;
+    // Get signed URL from ElevenLabs API
+    try {
+      const https = require('https');
 
-    console.log('🔗 WebSocket URL:', elevenLabsWsUrl);
+      const signedUrlPromise = new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.elevenlabs.io',
+          path: `/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+          method: 'GET',
+          headers: {
+            'xi-api-key': elevenLabsKey
+          }
+        };
 
-    // Connect to ElevenLabs WebSocket
-    const connect = response.connect();
-    const stream = connect.stream({
-      url: elevenLabsWsUrl
-    });
+        const req = https.request(options, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => {
+            if (res.statusCode === 200) {
+              resolve(JSON.parse(data));
+            } else {
+              reject(new Error(`ElevenLabs API returned ${res.statusCode}: ${data}`));
+            }
+          });
+        });
 
-    // Add authorization header
-    stream.parameter({
-      name: 'authorization',
-      value: `Bearer ${elevenLabsKey}`
-    });
+        req.on('error', reject);
+        req.end();
+      });
 
-    const twimlString = response.toString();
-    console.log('📤 Sending TwiML response to Twilio');
-    console.log('📄 TwiML:', twimlString);
+      const signedUrlData = await signedUrlPromise;
+      const elevenLabsWsUrl = signedUrlData.signed_url;
 
-    res.type('text/xml');
-    res.send(twimlString);
+      console.log('✅ Got signed URL from ElevenLabs');
+      console.log('🔗 WebSocket URL:', elevenLabsWsUrl);
+
+      // Connect to ElevenLabs WebSocket with signed URL
+      const connect = response.connect();
+      connect.stream({ url: elevenLabsWsUrl });
+
+      const twimlString = response.toString();
+      console.log('📤 Sending TwiML response to Twilio');
+      console.log('📄 TwiML:', twimlString);
+
+      res.type('text/xml');
+      res.send(twimlString);
+
+    } catch (apiError) {
+      console.error('❌ Failed to get signed URL from ElevenLabs:', apiError.message);
+
+      // Fallback to direct connection
+      const elevenLabsWsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`;
+      console.log('⚠️  Falling back to direct connection:', elevenLabsWsUrl);
+
+      const connect = response.connect();
+      const stream = connect.stream({ url: elevenLabsWsUrl });
+      stream.parameter({ name: 'authorization', value: `Bearer ${elevenLabsKey}` });
+
+      const twimlString = response.toString();
+      res.type('text/xml');
+      res.send(twimlString);
+    }
   } catch (error) {
     console.error('❌ Error connecting to Otto:', error);
 
