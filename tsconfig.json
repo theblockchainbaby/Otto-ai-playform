@@ -16,7 +16,8 @@
     "declarationMap": true,
     "sourceMap": true,
     "types": ["node"],
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "noEmitOnError": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
