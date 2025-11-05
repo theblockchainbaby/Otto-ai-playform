@@ -262,25 +262,84 @@ app.post('/api/twilio/voice', async (req, res) => {
     // Use Twilio SDK to generate TwiML
     const twilio = require('twilio');
     const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
 
     console.log('🤖 Agent ID:', agentId);
+    console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
 
-    // Use Redirect to ElevenLabs' official Twilio endpoint
-    // This lets ElevenLabs handle the WebSocket connection
-    const twiml = new twilio.twiml.VoiceResponse();
-    const elevenLabsUrl = `https://api.elevenlabs.io/v1/convai/conversation/twilio?agent_id=${agentId}`;
+    // Try the signed URL approach - get a signed URL from ElevenLabs
+    try {
+      const https = require('https');
 
-    console.log('🔗 Redirecting to ElevenLabs:', elevenLabsUrl);
-    twiml.redirect({
-      method: 'POST'
-    }, elevenLabsUrl);
+      const signedUrlResponse = await new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.elevenlabs.io',
+          port: 443,
+          path: `/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+          method: 'GET',
+          headers: {
+            'xi-api-key': elevenLabsKey
+          }
+        };
 
-    const twimlString = twiml.toString();
-    console.log('📤 Sending TwiML response to Twilio');
-    console.log('📄 TwiML:', twimlString);
+        const req = https.request(options, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => {
+            try {
+              resolve(JSON.parse(data));
+            } catch (e) {
+              reject(e);
+            }
+          });
+        });
 
-    res.type('text/xml');
-    res.send(twimlString);
+        req.on('error', reject);
+        req.end();
+      });
+
+      console.log('✅ Got signed URL from ElevenLabs');
+      const signedUrl = signedUrlResponse.signed_url;
+
+      // Use the signed URL
+      const twiml = new twilio.twiml.VoiceResponse();
+      const connect = twiml.connect();
+      const stream = connect.stream({
+        url: signedUrl
+      });
+
+      const twimlString = twiml.toString();
+      console.log('📤 Sending TwiML with signed URL');
+      console.log('📄 TwiML:', twimlString);
+
+      res.type('text/xml');
+      res.send(twimlString);
+    } catch (signedUrlError) {
+      console.error('⚠️  Could not get signed URL, falling back to direct WebSocket:', signedUrlError.message);
+
+      // Fallback: use direct WebSocket connection
+      const twiml = new twilio.twiml.VoiceResponse();
+      const connect = twiml.connect();
+      const stream = connect.stream({
+        url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+      });
+
+      stream.parameter({
+        name: 'agent_id',
+        value: agentId
+      });
+      stream.parameter({
+        name: 'authorization',
+        value: `Bearer ${elevenLabsKey}`
+      });
+
+      const twimlString = twiml.toString();
+      console.log('📤 Sending TwiML with direct WebSocket');
+      console.log('📄 TwiML:', twimlString);
+
+      res.type('text/xml');
+      res.send(twimlString);
+    }
   } catch (error) {
     console.error('❌ Error in /api/twilio/voice:', error);
 
