@@ -385,10 +385,13 @@ server.on('upgrade', (request, socket, head) => {
 });
 
 async function handleMediaStreamConnection(twilioWs, request) {
-  const url = new URL(request.url, 'http://localhost');
+  // Parse the full URL including query parameters
+  const fullUrl = request.url.startsWith('http') ? request.url : `http://localhost${request.url}`;
+  const url = new URL(fullUrl);
   const callSid = url.searchParams.get('callSid');
 
   console.log(`📱 Twilio Media Stream connected: ${callSid}`);
+  console.log(`📍 Full URL: ${request.url}`);
 
   let elevenLabsWs = null;
   const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
@@ -441,8 +444,8 @@ async function handleMediaStreamConnection(twilioWs, request) {
       }
     });
 
-    elevenLabsWs.on('close', () => {
-      console.log(`🤖 ElevenLabs connection closed for ${callSid}`);
+    elevenLabsWs.on('close', (code, reason) => {
+      console.log(`🤖 ElevenLabs connection closed for ${callSid} - Code: ${code}, Reason: ${reason}`);
       if (twilioWs.readyState === WebSocket.OPEN) {
         twilioWs.close();
       }
@@ -450,6 +453,7 @@ async function handleMediaStreamConnection(twilioWs, request) {
 
     elevenLabsWs.on('error', (error) => {
       console.error(`🤖 ElevenLabs error for ${callSid}:`, error.message);
+      console.error(`🤖 Error details:`, error);
     });
 
     // Handle Twilio messages
