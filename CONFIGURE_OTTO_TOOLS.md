@@ -20,7 +20,7 @@ Configure **Custom Tools** in ElevenLabs that call your **n8n webhooks** and **O
 ### **Step 1: Open Your Otto Agent**
 
 1. Go to: https://elevenlabs.io/app/conversational-ai
-2. Find your agent: **Otto** (`agent_2201k8q07eheexe8j4vkt0b9vecb`)
+2. Find your agent: **Otto** (`agent_3701k70bz4gcfd6vq1bkh57d15bw`)
 3. Click **"Edit"** or **"Configure"**
 
 ### **Step 2: Navigate to Tools Section**
