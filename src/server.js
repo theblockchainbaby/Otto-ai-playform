@@ -336,23 +336,59 @@ app.post('/api/twilio/otto/incoming', async (req, res) => {
       }
     }
 
-    // Use ElevenLabs native Twilio integration
-    // The phone number is already configured in ElevenLabs to handle inbound calls
-    // We just need to redirect to ElevenLabs' SIP endpoint
-    const twilio = require('twilio');
-    const twiml = new twilio.twiml.VoiceResponse();
+    // Get signed WebSocket URL from ElevenLabs
+    const agentId = 'agent_2201k8q07eheexe8j4vkt0b9vecb';
+    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
 
-    // Use SIP trunk to connect to ElevenLabs
-    // This routes through ElevenLabs' native Twilio integration
-    const dial = twiml.dial();
-    dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5060;transport=tcp');
+    console.log('🤖 Agent ID:', agentId);
+    console.log('🔑 ElevenLabs API Key present:', elevenLabsKey ? 'YES' : 'NO');
 
-    const twimlString = twiml.toString();
-    console.log('📤 Sending TwiML with SIP trunk to ElevenLabs');
-    console.log('📄 TwiML:', twimlString);
+    try {
+      // Fetch signed URL from ElevenLabs
+      const signedUrlResponse = await fetch(
+        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+        {
+          method: 'GET',
+          headers: {
+            'xi-api-key': elevenLabsKey
+          }
+        }
+      );
 
-    res.type('text/xml');
-    res.send(twimlString);
+      if (!signedUrlResponse.ok) {
+        throw new Error(`Failed to get signed URL: ${signedUrlResponse.statusText}`);
+      }
+
+      const { signed_url } = await signedUrlResponse.json();
+      console.log('✅ Got signed WebSocket URL from ElevenLabs');
+
+      // Generate TwiML that connects to ElevenLabs using signed URL
+      const twilio = require('twilio');
+      const twiml = new twilio.twiml.VoiceResponse();
+      const connect = twiml.connect();
+      const stream = connect.stream({
+        url: signed_url
+      });
+
+      const twimlString = twiml.toString();
+      console.log('📤 Sending TwiML with signed WebSocket URL');
+      console.log('📄 TwiML:', twimlString);
+
+      res.type('text/xml');
+      res.send(twimlString);
+    } catch (elevenLabsError) {
+      console.error('❌ ElevenLabs error:', elevenLabsError.message);
+
+      // Fallback to SIP trunk if signed URL fails
+      const twilio = require('twilio');
+      const twiml = new twilio.twiml.VoiceResponse();
+      const dial = twiml.dial();
+      dial.sip('sip:+18884118568@sip.rtc.elevenlabs.io:5060;transport=tcp');
+
+      console.log('📤 Fallback: Sending TwiML with SIP trunk');
+      res.type('text/xml');
+      res.send(twiml.toString());
+    }
   } catch (error) {
     console.error('❌ Error in /api/twilio/otto/incoming:', error);
 
