@@ -602,6 +602,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`📞 Twilio webhook: https://ottoagent.net/api/twilio/otto/incoming`);
   console.log(`📡 WebSocket media stream: wss://ottoagent.net/api/twilio/media-stream`);
+  console.log(`✅ WebSocket server ready for media streaming`);
 });
 
 module.exports = app;
