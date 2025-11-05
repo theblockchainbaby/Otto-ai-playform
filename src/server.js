@@ -6,12 +6,21 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const path = require('path');
+const http = require('http');
+const expressWs = require('express-ws');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
+
+// Create HTTP server FIRST (required for express-ws)
+const server = http.createServer(app);
+
+// Enable WebSocket support on the app IMMEDIATELY
+const wsInstance = expressWs(app, server);
+console.log('✅ Express-WS initialized on main app');
 
 // Security middleware
 app.use(helmet({
@@ -299,15 +308,6 @@ app.post('/api/twilio/voice', async (req, res) => {
 
 // Media Stream Proxy - Bridge Twilio Media Streams to ElevenLabs WebSocket
 const WebSocket = require('ws');
-const http = require('http');
-const expressWs = require('express-ws');
-
-// Create HTTP server for WebSocket upgrade
-const server = http.createServer(app);
-
-// Enable express-ws on the main app (required for Render)
-expressWs(app, server);
-console.log('✅ Express-WS enabled on main app');
 
 // Import Twilio routes (new implementation with chunked audio)
 const twilioModule = require('./routes/twilio');
