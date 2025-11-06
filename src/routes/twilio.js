@@ -12,6 +12,46 @@ const TWILIO_SAMPLE_RATE = 8000; // 8kHz
 const TWILIO_CHUNK_SIZE = 160; // 20ms chunks at 8kHz mulaw = 160 bytes
 const CHUNK_INTERVAL_MS = 20; // Send chunk every 20ms
 
+// μ-law encoding lookup table (for PCM to μ-law conversion)
+const MULAW_BIAS = 0x84;
+const MULAW_MAX = 0x1FFF;
+const mulawCompressTable = [
+  0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+  5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+  5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+  6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+  6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+  6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+  6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7
+];
+
+// Convert 16-bit PCM sample to μ-law
+function pcmToMulaw(pcmSample) {
+  // Clamp to 16-bit signed range
+  let sample = Math.max(-32768, Math.min(32767, pcmSample));
+  
+  // Get sign and magnitude
+  const sign = (sample >> 8) & 0x80;
+  if (sign) sample = -sample;
+  if (sample > MULAW_MAX) sample = MULAW_MAX;
+  
+  sample = sample + MULAW_BIAS;
+  const exponent = mulawCompressTable[(sample >> 7) & 0xFF];
+  const mantissa = (sample >> (exponent + 3)) & 0x0F;
+  const mulawByte = ~(sign | (exponent << 4) | mantissa);
+  
+  return mulawByte & 0xFF;
+}
+
 // Twilio webhook endpoint - Otto incoming calls
 router.post('/otto/incoming', async (req, res) => {
   try {
@@ -109,28 +149,40 @@ function handleMediaStreamConnection(twilioWs, request) {
   console.log('🔑 Agent ID:', agentId);
   console.log('🔑 API Key present:', !!elevenLabsKey);
 
-  // Function to split base64 audio into chunks and send to Twilio
+  // Function to convert PCM to mulaw and send to Twilio in chunks
   function sendAudioInChunks(base64Audio) {
     try {
-      // Decode base64 to buffer
-      const audioBuffer = Buffer.from(base64Audio, 'base64');
-      const totalBytes = audioBuffer.length;
+      // Decode base64 to buffer (ElevenLabs sends 16-bit PCM)
+      const pcmBuffer = Buffer.from(base64Audio, 'base64');
+      const totalBytes = pcmBuffer.length;
       
-      console.log(`📦 Splitting ${totalBytes} bytes into ${TWILIO_CHUNK_SIZE}-byte chunks`);
+      console.log(`🎵 Converting ${totalBytes} bytes PCM to mulaw and chunking`);
+      
+      // Convert PCM (16-bit, little-endian) to mulaw (8-bit)
+      const mulawBuffer = Buffer.alloc(totalBytes / 2); // mulaw is half the size of 16-bit PCM
+      
+      for (let i = 0; i < totalBytes; i += 2) {
+        // Read 16-bit PCM sample (little-endian)
+        const pcmSample = pcmBuffer.readInt16LE(i);
+        // Convert to mulaw
+        mulawBuffer[i / 2] = pcmToMulaw(pcmSample);
+      }
+      
+      console.log(`📦 Split into ${mulawBuffer.length} mulaw bytes, sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
       let offset = 0;
       let chunkCount = 0;
 
       // Split into chunks and send with timing
       const sendNextChunk = () => {
-        if (offset >= totalBytes) {
-          console.log(`✅ Sent ${chunkCount} audio chunks to Twilio`);
+        if (offset >= mulawBuffer.length) {
+          console.log(`✅ Sent ${chunkCount} mulaw chunks to Twilio`);
           return;
         }
 
         // Extract chunk
-        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, totalBytes);
-        const chunk = audioBuffer.slice(offset, chunkEnd);
+        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, mulawBuffer.length);
+        const chunk = mulawBuffer.slice(offset, chunkEnd);
         const base64Chunk = chunk.toString('base64');
 
         // Send to Twilio
@@ -148,7 +200,7 @@ function handleMediaStreamConnection(twilioWs, request) {
         offset = chunkEnd;
 
         // Schedule next chunk (20ms intervals for real-time audio)
-        if (offset < totalBytes) {
+        if (offset < mulawBuffer.length) {
           setTimeout(sendNextChunk, CHUNK_INTERVAL_MS);
         }
       };
@@ -157,7 +209,7 @@ function handleMediaStreamConnection(twilioWs, request) {
       sendNextChunk();
 
     } catch (error) {
-      console.error('❌ Error splitting audio:', error);
+      console.error('❌ Error converting/splitting audio:', error);
     }
   }
 
