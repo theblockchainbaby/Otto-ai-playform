@@ -149,13 +149,13 @@ function handleMediaStreamConnection(twilioWs, request) {
   console.log('🔑 Agent ID:', agentId);
   console.log('🔑 API Key present:', !!elevenLabsKey);
 
-  // Function to convert PCM 16kHz to mulaw 8kHz and send to Twilio
+  // Function to send ulaw audio directly to Twilio (no conversion)
   function sendAudioInChunks(base64Audio) {
     try {
-      // Decode base64 to buffer (ElevenLabs sends 16-bit PCM at 16kHz)
-      const pcm16Buffer = Buffer.from(base64Audio, 'base64');
+      // Decode base64 to buffer (ElevenLabs sends ulaw @ 8kHz)
+      const ulawBuffer = Buffer.from(base64Audio, 'base64');
       
-      console.log(`🎵 Received ${pcm16Buffer.length} bytes ulaw @ 8kHz (ready for Twilio)`);
+      console.log(`🎵 Received ${ulawBuffer.length} bytes ulaw @ 8kHz (ready for Twilio)`);
       console.log(`📦 Sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
       let offset = 0;
@@ -163,22 +163,14 @@ function handleMediaStreamConnection(twilioWs, request) {
 
       // Split into chunks and send with timing - NO CONVERSION NEEDED
       const sendNextChunk = () => {
-        if (offset >= pcm16Buffer.length) {
+        if (offset >= ulawBuffer.length) {
           console.log(`✅ Sent ${chunkCount} ulaw chunks to Twilio`);
-      
-      let offset = 0;
-      let chunkCount = 0;
-
-      // Split into chunks and send with timing
-      const sendNextChunk = () => {
-        if (offset >= mulawBuffer.length) {
-          console.log(`✅ Sent ${chunkCount} mulaw chunks to Twilio`);
           return;
         }
 
         // Extract chunk
-        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, pcm16Buffer.length);
-        const chunk = pcm16Buffer.slice(offset, chunkEnd);
+        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, ulawBuffer.length);
+        const chunk = ulawBuffer.slice(offset, chunkEnd);
         const base64Chunk = chunk.toString('base64');
 
         // Send to Twilio
@@ -196,7 +188,7 @@ function handleMediaStreamConnection(twilioWs, request) {
         offset = chunkEnd;
 
         // Schedule next chunk (20ms intervals for real-time audio)
-        if (offset < pcm16Buffer.length) {
+        if (offset < ulawBuffer.length) {
           setTimeout(sendNextChunk, CHUNK_INTERVAL_MS);
         }
       };
@@ -205,7 +197,7 @@ function handleMediaStreamConnection(twilioWs, request) {
       sendNextChunk();
 
     } catch (error) {
-      console.error('❌ Error processing audio:', error);
+      console.error('❌ Error sending audio:', error);
       console.error(error.stack);
     }
   }
