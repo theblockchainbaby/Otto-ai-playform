@@ -218,24 +218,17 @@ function handleMediaStreamConnection(twilioWs, request) {
       }
       
       console.log(`🎚️  Converted to ${ulawBuffer.length} bytes ulaw @ 8kHz`);
-      console.log(`📦 Sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
+      // Send all chunks immediately - Twilio will buffer and pace them
       let offset = 0;
       let chunkCount = 0;
-
-      // Split into chunks and send with timing
-      const sendNextChunk = () => {
-        if (offset >= ulawBuffer.length) {
-          console.log(`✅ Sent ${chunkCount} ulaw chunks to Twilio`);
-          return;
-        }
-
-        // Extract chunk
+      
+      while (offset < ulawBuffer.length) {
         const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, ulawBuffer.length);
         const chunk = ulawBuffer.slice(offset, chunkEnd);
         const base64Chunk = chunk.toString('base64');
 
-        // Send to Twilio
+        // Send to Twilio immediately
         if (twilioWs.readyState === WebSocket.OPEN && streamSid) {
           twilioWs.send(JSON.stringify({
             event: 'media',
@@ -248,15 +241,9 @@ function handleMediaStreamConnection(twilioWs, request) {
         }
 
         offset = chunkEnd;
-
-        // Schedule next chunk (20ms intervals for real-time audio)
-        if (offset < ulawBuffer.length) {
-          setTimeout(sendNextChunk, CHUNK_INTERVAL_MS);
-        }
-      };
-
-      // Start sending chunks
-      sendNextChunk();
+      }
+      
+      console.log(`✅ Sent ${chunkCount} chunks (${ulawBuffer.length} bytes) to Twilio`);
 
     } catch (error) {
       console.error('❌ Error processing audio:', error);
