@@ -101,6 +101,72 @@ const appointmentsStore = [
     },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'apt_004',
+    title: 'Trade-in Appraisal - Honda Accord',
+    description: 'Customer wants to trade in current vehicle',
+    startTime: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days from now
+    endTime: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(), // 30 minutes later
+    duration: 30,
+    type: 'TRADE_IN_APPRAISAL',
+    status: 'SCHEDULED',
+    location: 'Main Showroom',
+    notes: 'Customer interested in upgrading to newer model',
+    customer: {
+      id: 'cust_004',
+      firstName: 'Lisa',
+      lastName: 'Anderson',
+      email: 'lisa.anderson@email.com',
+      phone: '(555) 456-7890'
+    },
+    vehicle: {
+      id: 'veh_004',
+      year: 2019,
+      make: 'Honda',
+      model: 'Accord',
+      vin: '1HGCV1F30KA123456'
+    },
+    assignedTo: {
+      id: 'user_001',
+      firstName: 'Sarah',
+      lastName: 'Johnson'
+    },
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'apt_005',
+    title: 'Financing Meeting - Audi A4',
+    description: 'Discuss financing options and loan terms',
+    startTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
+    endTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(), // 1 hour later
+    duration: 60,
+    type: 'FINANCING_MEETING',
+    status: 'CONFIRMED',
+    location: 'Office 1',
+    notes: 'Customer has excellent credit score',
+    customer: {
+      id: 'cust_005',
+      firstName: 'James',
+      lastName: 'Thompson',
+      email: 'james.thompson@email.com',
+      phone: '(555) 567-8901'
+    },
+    vehicle: {
+      id: 'veh_005',
+      year: 2024,
+      make: 'Audi',
+      model: 'A4',
+      vin: 'WAUZZZ8K5KA123456'
+    },
+    assignedTo: {
+      id: 'user_002',
+      firstName: 'Michael',
+      lastName: 'Chen'
+    },
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
