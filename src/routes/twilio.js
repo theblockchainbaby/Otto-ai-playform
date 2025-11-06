@@ -52,6 +52,47 @@ function pcmToMulaw(pcmSample) {
   return mulawByte & 0xFF;
 }
 
+// μ-law decode table for converting mulaw to PCM
+const mulawDecodeTable = [
+  -32124,-31100,-30076,-29052,-28028,-27004,-25980,-24956,
+  -23932,-22908,-21884,-20860,-19836,-18812,-17788,-16764,
+  -15996,-15484,-14972,-14460,-13948,-13436,-12924,-12412,
+  -11900,-11388,-10876,-10364,-9852,-9340,-8828,-8316,
+  -7932,-7676,-7420,-7164,-6908,-6652,-6396,-6140,
+  -5884,-5628,-5372,-5116,-4860,-4604,-4348,-4092,
+  -3900,-3772,-3644,-3516,-3388,-3260,-3132,-3004,
+  -2876,-2748,-2620,-2492,-2364,-2236,-2108,-1980,
+  -1884,-1820,-1756,-1692,-1628,-1564,-1500,-1436,
+  -1372,-1308,-1244,-1180,-1116,-1052,-988,-924,
+  -876,-844,-812,-780,-748,-716,-684,-652,
+  -620,-588,-556,-524,-492,-460,-428,-396,
+  -372,-356,-340,-324,-308,-292,-276,-260,
+  -244,-228,-212,-196,-180,-164,-148,-132,
+  -120,-112,-104,-96,-88,-80,-72,-64,
+  -56,-48,-40,-32,-24,-16,-8,0,
+  32124,31100,30076,29052,28028,27004,25980,24956,
+  23932,22908,21884,20860,19836,18812,17788,16764,
+  15996,15484,14972,14460,13948,13436,12924,12412,
+  11900,11388,10876,10364,9852,9340,8828,8316,
+  7932,7676,7420,7164,6908,6652,6396,6140,
+  5884,5628,5372,5116,4860,4604,4348,4092,
+  3900,3772,3644,3516,3388,3260,3132,3004,
+  2876,2748,2620,2492,2364,2236,2108,1980,
+  1884,1820,1756,1692,1628,1564,1500,1436,
+  1372,1308,1244,1180,1116,1052,988,924,
+  876,844,812,780,748,716,684,652,
+  620,588,556,524,492,460,428,396,
+  372,356,340,324,308,292,276,260,
+  244,228,212,196,180,164,148,132,
+  120,112,104,96,88,80,72,64,
+  56,48,40,32,24,16,8,0
+];
+
+// Convert μ-law to 16-bit PCM
+function mulawToPcm(mulawByte) {
+  return mulawDecodeTable[mulawByte];
+}
+
 // Twilio webhook endpoint - Otto incoming calls
 router.post('/otto/incoming', async (req, res) => {
   try {
@@ -341,11 +382,34 @@ function handleMediaStreamConnection(twilioWs, request) {
           break;
 
         case 'media':
-          // Forward caller audio to ElevenLabs (already in small chunks from Twilio)
+          // Convert caller audio from mulaw 8kHz to PCM 16kHz for ElevenLabs
           if (elevenLabsWs && elevenLabsWs.readyState === WebSocket.OPEN && msg.media && msg.media.payload) {
-            elevenLabsWs.send(JSON.stringify({
-              user_audio_chunk: msg.media.payload
-            }));
+            try {
+              // Decode base64 mulaw from Twilio
+              const mulawBuffer = Buffer.from(msg.media.payload, 'base64');
+              
+              // Convert mulaw to PCM 16-bit
+              const pcm8kBuffer = Buffer.alloc(mulawBuffer.length * 2);
+              for (let i = 0; i < mulawBuffer.length; i++) {
+                pcm8kBuffer.writeInt16LE(mulawToPcm(mulawBuffer[i]), i * 2);
+              }
+              
+              // Upsample from 8kHz to 16kHz (duplicate each sample)
+              const pcm16kBuffer = Buffer.alloc(pcm8kBuffer.length * 2);
+              for (let i = 0; i < pcm8kBuffer.length; i += 2) {
+                const sample = pcm8kBuffer.readInt16LE(i);
+                pcm16kBuffer.writeInt16LE(sample, i * 2);
+                pcm16kBuffer.writeInt16LE(sample, (i * 2) + 2);
+              }
+              
+              // Send PCM audio to ElevenLabs
+              const base64Pcm = pcm16kBuffer.toString('base64');
+              elevenLabsWs.send(JSON.stringify({
+                user_audio_chunk: base64Pcm
+              }));
+            } catch (error) {
+              console.error('❌ Error converting user audio:', error);
+            }
           }
           break;
 
