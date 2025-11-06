@@ -4399,7 +4399,8 @@
                     if (xhr.status === 200) {
                         const data = safeParseXHR(xhr);
                         if (!data || !data.pagination) return;
-                        document.getElementById('customersCount').textContent = data.pagination.total.toLocaleString();
+                        // Override with demo number for screen recording
+                        document.getElementById('customersCount').textContent = '1,450';
 
                         const customersHtml = `
                             <table class="data-table">
@@ -4493,7 +4494,8 @@
                     if (xhr.status === 200) {
                         const data = safeParseXHR(xhr);
                         if (!data || !data.pagination) return;
-                        document.getElementById('vehiclesCount').textContent = data.pagination.total.toLocaleString();
+                        // Override with demo number for screen recording
+                        document.getElementById('vehiclesCount').textContent = '165';
 
                         const vehiclesHtml = `
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
@@ -4594,7 +4596,8 @@
                     if (xhr.status === 200) {
                         const data = safeParseXHR(xhr);
                         if (!data || !data.pagination) return;
-                        document.getElementById('leadsCount').textContent = data.pagination.total.toLocaleString();
+                        // Override with demo number for screen recording
+                        document.getElementById('leadsCount').textContent = '42';
 
                         const leadsHtml = `
                             <table class="data-table">
@@ -4702,7 +4705,8 @@
                     if (xhr.status === 200) {
                         const data = safeParseXHR(xhr);
                         if (!data || !data.pagination) return;
-                        document.getElementById('callsCount').textContent = data.pagination.total.toLocaleString();
+                        // Override with demo number for screen recording
+                        document.getElementById('callsCount').textContent = '312';
 
                         const callsHtml = `
                             <div style="margin-bottom: 2rem;">
@@ -4855,7 +4859,8 @@
                     if (xhr.status === 200) {
                         const data = safeParseXHR(xhr);
                         if (!data || !data.pagination) return;
-                        document.getElementById('appointmentsCount').textContent = data.pagination.total.toLocaleString();
+                        // Override with demo number for screen recording
+                        document.getElementById('appointmentsCount').textContent = '37';
 
                         const appointmentsHtml = `
                             <table class="data-table">
