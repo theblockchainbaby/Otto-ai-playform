@@ -1372,6 +1372,13 @@
             }
         }
 
+        /* Responsive two-column layout for Otto and Recent Activity */
+        @media (max-width: 1200px) {
+            .ai-tools-section > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
         /* AI Assistant Styles */
         .ai-status {
             display: flex;
@@ -2661,68 +2668,78 @@
                                     </div>
                                 </div>
 
-                                <div class="ai-tool-card">
-                                    <div class="ai-tool-header">
-                                        <h4>🤖 Otto - AI Phone Agent</h4>
-                                        <p>Your custom ElevenLabs conversational AI agent for AutoLux</p>
-                                        <div style="background: linear-gradient(135deg, #8A2BE2 0%, #4A90B8 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; margin-top: 8px; display: inline-block;">
-                                            <span>🎯</span> Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw
+                                <!-- Two-column layout for Otto and Recent Activity -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                                    <!-- Otto - AI Phone Agent -->
+                                    <div class="ai-tool-card">
+                                        <div class="ai-tool-header">
+                                            <h4>🤖 Otto - AI Phone Agent</h4>
+                                            <p>Your custom ElevenLabs conversational AI agent for AutoLux</p>
+                                            <div style="background: linear-gradient(135deg, #8A2BE2 0%, #4A90B8 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; margin-top: 8px; display: inline-block;">
+                                                <span>🎯</span> Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="ai-tool-content">
-                                        <div class="voice-controls">
-                                            <div class="otto-status" style="background: rgba(0, 168, 107, 0.1); border: 1px solid rgba(0, 168, 107, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-                                                <div style="display: flex; align-items: center; gap: 12px;">
-                                                    <div style="width: 12px; height: 12px; background: #00A86B; border-radius: 50%; animation: pulse 2s infinite;"></div>
-                                                    <span style="font-weight: 600; color: #00A86B;">Otto is Active & Ready</span>
+                                        <div class="ai-tool-content">
+                                            <div class="voice-controls">
+                                                <div class="otto-status" style="background: rgba(0, 168, 107, 0.1); border: 1px solid rgba(0, 168, 107, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                                        <div style="width: 12px; height: 12px; background: #00A86B; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                                                        <span style="font-weight: 600; color: #00A86B;">Otto is Active & Ready</span>
+                                                    </div>
+                                                    <p style="margin: 8px 0 0 24px; font-size: 0.9rem; color: #666;">Handling calls with advanced conversational AI</p>
                                                 </div>
-                                                <p style="margin: 8px 0 0 24px; font-size: 0.9rem; color: #666;">Handling calls with advanced conversational AI</p>
-                                            </div>
 
-                                            <div class="voice-scenario-selector">
-                                                <label for="ottoScenarioSelect">Test Otto Scenario:</label>
-                                                <select id="ottoScenarioSelect">
-                                                    <option value="greeting">Customer Greeting</option>
-                                                    <option value="sales">Vehicle Purchase Inquiry</option>
-                                                    <option value="service">Service Appointment</option>
-                                                    <option value="emergency">Emergency Roadside Assistance</option>
-                                                    <option value="financing">Financing Questions</option>
-                                                    <option value="custom">Custom Conversation</option>
-                                                </select>
+                                                <div class="voice-scenario-selector">
+                                                    <label for="ottoScenarioSelect">Test Otto Scenario:</label>
+                                                    <select id="ottoScenarioSelect">
+                                                        <option value="greeting">Customer Greeting</option>
+                                                        <option value="sales">Vehicle Purchase Inquiry</option>
+                                                        <option value="service">Service Appointment</option>
+                                                        <option value="emergency">Emergency Roadside Assistance</option>
+                                                        <option value="financing">Financing Questions</option>
+                                                        <option value="custom">Custom Conversation</option>
+                                                    </select>
+                                                </div>
+                                                <div class="voice-input-section">
+                                                    <textarea id="ottoCustomText" placeholder="Enter custom message to test Otto's response..." rows="3" style="display: none;"></textarea>
+                                                    <input type="text" id="ottoCustomerName" placeholder="Customer name (optional)" style="margin-top: 8px;">
+                                                </div>
+                                                <div class="ai-tool-controls">
+                                                    <button class="btn-primary" onclick="testOttoConversation()">
+                                                        <span>🤖</span> Test Otto
+                                                    </button>
+                                                    <button class="btn-secondary" onclick="testOttoCallFlow()">
+                                                        <span>📞</span> Test Call Flow
+                                                    </button>
+                                                    <button class="btn-secondary" onclick="viewOttoAgent()" style="background: linear-gradient(135deg, #8A2BE2 0%, #4A90B8 100%);">
+                                                        <span>🔗</span> View Agent
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div class="voice-input-section">
-                                                <textarea id="ottoCustomText" placeholder="Enter custom message to test Otto's response..." rows="3" style="display: none;"></textarea>
-                                                <input type="text" id="ottoCustomerName" placeholder="Customer name (optional)" style="margin-top: 8px;">
+                                            <div id="ottoTestResult" class="ai-result hidden">
+                                                <div class="ai-result-header">
+                                                    <span class="ai-result-title">Otto Response</span>
+                                                </div>
+                                                <div id="ottoConversationDisplay"></div>
+                                                <div id="ottoTwiMLCode"></div>
                                             </div>
-                                            <div class="ai-tool-controls">
-                                                <button class="btn-primary" onclick="testOttoConversation()">
-                                                    <span>🤖</span> Test Otto
-                                                </button>
-                                                <button class="btn-secondary" onclick="testOttoCallFlow()">
-                                                    <span>📞</span> Test Call Flow
-                                                </button>
-                                                <button class="btn-secondary" onclick="viewOttoAgent()" style="background: linear-gradient(135deg, #8A2BE2 0%, #4A90B8 100%);">
-                                                    <span>🔗</span> View Agent
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div id="ottoTestResult" class="ai-result hidden">
-                                            <div class="ai-result-header">
-                                                <span class="ai-result-title">Otto Response</span>
-                                            </div>
-                                            <div id="ottoConversationDisplay"></div>
-                                            <div id="ottoTwiMLCode"></div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="ai-recent-activity">
-                                <h4>Recent AI Activity</h4>
-                                <div id="aiActivityList" class="ai-activity-list">
-                                    <div class="loading">
-                                        <div class="spinner"></div>
-                                        <p>Loading AI activity...</p>
+                                    <!-- Recent AI Activity -->
+                                    <div class="ai-tool-card">
+                                        <div class="ai-tool-header">
+                                            <h4>📊 Recent AI Activity</h4>
+                                            <p>Latest AI-powered interactions and automations</p>
+                                        </div>
+                                        <div class="ai-tool-content">
+                                            <div id="aiActivityList" class="ai-activity-list">
+                                                <div class="loading">
+                                                    <div class="spinner"></div>
+                                                    <p>Loading AI activity...</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
