@@ -149,40 +149,28 @@ function handleMediaStreamConnection(twilioWs, request) {
   console.log('🔑 Agent ID:', agentId);
   console.log('🔑 API Key present:', !!elevenLabsKey);
 
-  // Function to convert PCM to mulaw and send to Twilio in chunks
+  // Function to send mulaw audio to Twilio in chunks
   function sendAudioInChunks(base64Audio) {
     try {
-      // Decode base64 to buffer (ElevenLabs sends 16-bit PCM)
-      const pcmBuffer = Buffer.from(base64Audio, 'base64');
-      const totalBytes = pcmBuffer.length;
+      // Decode base64 to buffer (ElevenLabs now sends mulaw/8kHz directly)
+      const audioBuffer = Buffer.from(base64Audio, 'base64');
+      const totalBytes = audioBuffer.length;
       
-      console.log(`🎵 Converting ${totalBytes} bytes PCM to mulaw and chunking`);
-      
-      // Convert PCM (16-bit, little-endian) to mulaw (8-bit)
-      const mulawBuffer = Buffer.alloc(totalBytes / 2); // mulaw is half the size of 16-bit PCM
-      
-      for (let i = 0; i < totalBytes; i += 2) {
-        // Read 16-bit PCM sample (little-endian)
-        const pcmSample = pcmBuffer.readInt16LE(i);
-        // Convert to mulaw
-        mulawBuffer[i / 2] = pcmToMulaw(pcmSample);
-      }
-      
-      console.log(`📦 Split into ${mulawBuffer.length} mulaw bytes, sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
+      console.log(`📦 Received ${totalBytes} mulaw bytes, sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
       let offset = 0;
       let chunkCount = 0;
 
       // Split into chunks and send with timing
       const sendNextChunk = () => {
-        if (offset >= mulawBuffer.length) {
+        if (offset >= totalBytes) {
           console.log(`✅ Sent ${chunkCount} mulaw chunks to Twilio`);
           return;
         }
 
         // Extract chunk
-        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, mulawBuffer.length);
-        const chunk = mulawBuffer.slice(offset, chunkEnd);
+        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, totalBytes);
+        const chunk = audioBuffer.slice(offset, chunkEnd);
         const base64Chunk = chunk.toString('base64');
 
         // Send to Twilio
@@ -200,7 +188,7 @@ function handleMediaStreamConnection(twilioWs, request) {
         offset = chunkEnd;
 
         // Schedule next chunk (20ms intervals for real-time audio)
-        if (offset < mulawBuffer.length) {
+        if (offset < totalBytes) {
           setTimeout(sendNextChunk, CHUNK_INTERVAL_MS);
         }
       };
@@ -209,7 +197,7 @@ function handleMediaStreamConnection(twilioWs, request) {
       sendNextChunk();
 
     } catch (error) {
-      console.error('❌ Error converting/splitting audio:', error);
+      console.error('❌ Error sending audio:', error);
     }
   }
 
@@ -255,13 +243,22 @@ function handleMediaStreamConnection(twilioWs, request) {
 
             elevenLabsWs.on('open', () => {
               console.log('🤖 Connected to ElevenLabs for', callSid);
-              console.log('🎙️  Audio streaming ready - chunked delivery');
+              console.log('🎙️  Audio streaming ready - requesting mulaw format');
               
-              // Send initial handshake
+              // Send initial handshake with audio config for Twilio compatibility
               elevenLabsWs.send(JSON.stringify({
-                type: 'conversation_initiation_client_data'
+                type: 'conversation_initiation_client_data',
+                conversation_config_override: {
+                  agent: {
+                    audio: {
+                      encoding: 'mulaw',
+                      sample_rate: 8000,
+                      container: 'raw'
+                    }
+                  }
+                }
               }));
-              console.log('🤝 Sent handshake to ElevenLabs');
+              console.log('🤝 Sent handshake to ElevenLabs with mulaw/8kHz config');
             });
 
             elevenLabsWs.on('message', (data) => {
