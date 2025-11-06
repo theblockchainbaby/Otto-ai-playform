@@ -149,32 +149,49 @@ function handleMediaStreamConnection(twilioWs, request) {
   console.log('🔑 Agent ID:', agentId);
   console.log('🔑 API Key present:', !!elevenLabsKey);
 
-  // Function to send mulaw audio to Twilio in chunks
+  // Function to convert PCM 16kHz to mulaw 8kHz and send to Twilio
   function sendAudioInChunks(base64Audio) {
     try {
-      // Decode base64 to buffer (ElevenLabs now sends mulaw/8kHz directly)
-      const audioBuffer = Buffer.from(base64Audio, 'base64');
-      const totalBytes = audioBuffer.length;
+      // Decode base64 to buffer (ElevenLabs sends 16-bit PCM at 16kHz)
+      const pcm16Buffer = Buffer.from(base64Audio, 'base64');
       
-      console.log(`📦 Received ${totalBytes} mulaw bytes, sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
+      console.log(`🎵 Received ${pcm16Buffer.length} bytes PCM16 @ 16kHz`);
+      
+      // Downsample from 16kHz to 8kHz (take every other sample)
+      const pcm8Buffer = Buffer.alloc(pcm16Buffer.length / 2);
+      for (let i = 0; i < pcm16Buffer.length; i += 4) { // Skip every other 16-bit sample
+        pcm8Buffer.writeInt16LE(pcm16Buffer.readInt16LE(i), i / 2);
+      }
+      
+      console.log(`� Downsampled to ${pcm8Buffer.length} bytes PCM16 @ 8kHz`);
+      
+      // Convert PCM16 to mulaw (8-bit)
+      const mulawBuffer = Buffer.alloc(pcm8Buffer.length / 2);
+      for (let i = 0; i < pcm8Buffer.length; i += 2) {
+        const pcmSample = pcm8Buffer.readInt16LE(i);
+        mulawBuffer[i / 2] = pcmToMulaw(pcmSample);
+      }
+      
+      console.log(`🎚️  Converted to ${mulawBuffer.length} bytes mulaw @ 8kHz`);
+      console.log(`📦 Sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
       let offset = 0;
       let chunkCount = 0;
 
       // Split into chunks and send with timing
       const sendNextChunk = () => {
-        if (offset >= totalBytes) {
+        if (offset >= mulawBuffer.length) {
           console.log(`✅ Sent ${chunkCount} mulaw chunks to Twilio`);
           return;
         }
 
         // Extract chunk
-        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, totalBytes);
-        const chunk = audioBuffer.slice(offset, chunkEnd);
+        const chunkEnd = Math.min(offset + TWILIO_CHUNK_SIZE, mulawBuffer.length);
+        const chunk = mulawBuffer.slice(offset, chunkEnd);
         const base64Chunk = chunk.toString('base64');
 
         // Send to Twilio
-        if (twilioWs.readyState === WebSocket.OPEN) {
+        if (twilioWs.readyState === WebSocket.OPEN && streamSid) {
           twilioWs.send(JSON.stringify({
             event: 'media',
             streamSid: streamSid,
@@ -188,7 +205,7 @@ function handleMediaStreamConnection(twilioWs, request) {
         offset = chunkEnd;
 
         // Schedule next chunk (20ms intervals for real-time audio)
-        if (offset < totalBytes) {
+        if (offset < mulawBuffer.length) {
           setTimeout(sendNextChunk, CHUNK_INTERVAL_MS);
         }
       };
@@ -197,7 +214,8 @@ function handleMediaStreamConnection(twilioWs, request) {
       sendNextChunk();
 
     } catch (error) {
-      console.error('❌ Error sending audio:', error);
+      console.error('❌ Error processing audio:', error);
+      console.error(error.stack);
     }
   }
 
@@ -243,22 +261,21 @@ function handleMediaStreamConnection(twilioWs, request) {
 
             elevenLabsWs.on('open', () => {
               console.log('🤖 Connected to ElevenLabs for', callSid);
-              console.log('🎙️  Audio streaming ready - requesting mulaw format');
+              console.log('🎙️  Audio streaming ready - requesting PCM 16kHz');
               
-              // Send initial handshake with audio config for Twilio compatibility
+              // Send initial handshake - request PCM 16-bit at 16kHz (standard quality)
               elevenLabsWs.send(JSON.stringify({
                 type: 'conversation_initiation_client_data',
                 conversation_config_override: {
                   agent: {
                     audio: {
-                      encoding: 'mulaw',
-                      sample_rate: 8000,
-                      container: 'raw'
+                      encoding: 'pcm_16000',
+                      output_format: 'pcm_16000'
                     }
                   }
                 }
               }));
-              console.log('🤝 Sent handshake to ElevenLabs with mulaw/8kHz config');
+              console.log('🤝 Sent handshake to ElevenLabs requesting PCM 16kHz');
             });
 
             elevenLabsWs.on('message', (data) => {
