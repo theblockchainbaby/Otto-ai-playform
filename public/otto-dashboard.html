@@ -1461,10 +1461,62 @@
         }
 
         .ai-tool-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(138, 43, 226, 0.05) 100%);
+            border: 1px solid rgba(74, 144, 226, 0.2);
             border-radius: 12px;
             padding: 24px;
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+        }
+
+        .ai-activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .ai-activity-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--luxury-light-silver);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .ai-activity-item:hover {
+            background: rgba(74, 144, 226, 0.05);
+        }
+
+        .ai-activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .ai-activity-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .ai-activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ai-activity-action {
+            font-size: 0.9rem;
+            color: var(--luxury-black);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .ai-activity-meta {
+            font-size: 0.8rem;
+            color: var(--luxury-dark-silver);
+        }
+
+        .ai-activity-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
         .ai-tool-header h4 {
@@ -1492,18 +1544,38 @@
 
         .ai-tool-controls {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
             margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         .ai-tool-controls select {
             padding: 8px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             background: var(--card-bg);
             color: var(--text-primary);
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .ai-tool-controls .btn-primary,
+        .ai-tool-controls .btn-secondary {
+            width: auto !important;
+            padding: 9px 18px !important;
+            font-size: 13px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .ai-tool-controls .btn-primary {
+            min-width: 140px;
+        }
+
+        .ai-tool-controls .btn-secondary {
+            min-width: auto;
         }
 
         .ai-result {
@@ -2624,6 +2696,28 @@
 
                                 <div class="ai-tool-card">
                                     <div class="ai-tool-header">
+                                        <h4>📞 Agent Assistant</h4>
+                                        <p>Real-time call guidance and suggestions</p>
+                                    </div>
+                                    <div class="ai-tool-content">
+                                        <textarea id="callTranscriptInput" placeholder="Enter call transcript for real-time assistance..." rows="4"></textarea>
+                                        <div class="ai-tool-controls">
+                                            <select id="callObjectiveSelect">
+                                                <option value="GENERAL">General Support</option>
+                                                <option value="SALES">Sales Call</option>
+                                                <option value="SERVICE">Service Support</option>
+                                                <option value="EMERGENCY">Emergency</option>
+                                            </select>
+                                            <button class="btn-primary" onclick="getAgentAssistance()">
+                                                <span>🤝</span> Get Assistance
+                                            </button>
+                                        </div>
+                                        <div id="agentAssistanceResult" class="ai-result hidden"></div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-tool-card">
+                                    <div class="ai-tool-header">
                                         <h4>🎙️ Call Transcription</h4>
                                         <p>Real-time speech-to-text transcription</p>
                                     </div>
@@ -2646,38 +2740,11 @@
                                     </div>
                                 </div>
 
+                                <!-- Otto - AI Phone Agent -->
                                 <div class="ai-tool-card">
-                                    <div class="ai-tool-header">
-                                        <h4>📞 Agent Assistant</h4>
-                                        <p>Real-time call guidance and suggestions</p>
-                                    </div>
-                                    <div class="ai-tool-content">
-                                        <textarea id="callTranscriptInput" placeholder="Enter call transcript for real-time assistance..." rows="4"></textarea>
-                                        <div class="ai-tool-controls">
-                                            <select id="callObjectiveSelect">
-                                                <option value="GENERAL">General Support</option>
-                                                <option value="SALES">Sales Call</option>
-                                                <option value="SERVICE">Service Support</option>
-                                                <option value="EMERGENCY">Emergency</option>
-                                            </select>
-                                            <button class="btn-primary" onclick="getAgentAssistance()">
-                                                <span>🤝</span> Get Assistance
-                                            </button>
-                                        </div>
-                                        <div id="agentAssistanceResult" class="ai-result hidden"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Two-column layout for Otto and Recent Activity -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
-                                    <!-- Otto - AI Phone Agent -->
-                                    <div class="ai-tool-card">
                                         <div class="ai-tool-header">
                                             <h4>🤖 Otto - AI Phone Agent</h4>
                                             <p>Your custom ElevenLabs conversational AI agent for AutoLux</p>
-                                            <div style="background: linear-gradient(135deg, #8A2BE2 0%, #4A90B8 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; margin-top: 8px; display: inline-block;">
-                                                <span>🎯</span> Agent ID: agent_3701k70bz4gcfd6vq1bkh57d15bw
-                                            </div>
                                         </div>
                                         <div class="ai-tool-content">
                                             <div class="voice-controls">
@@ -2741,7 +2808,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -5552,23 +5618,19 @@
                 }[activity.type];
 
                 const sentimentColor = {
-                    'positive': 'var(--luxury-success)',
-                    'neutral': 'var(--luxury-warning)',
-                    'negative': 'var(--luxury-error)'
+                    'positive': '#00A86B',
+                    'neutral': '#FFA500',
+                    'negative': '#DC3545'
                 }[activity.sentiment];
 
                 return `
-                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--luxury-light-silver); display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="font-size: 1.5rem;">${icon}</div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 0.9rem; color: var(--luxury-black); margin-bottom: 0.25rem;">
-                                ${activity.action}
-                            </div>
-                            <div style="font-size: 0.8rem; color: var(--luxury-dark-silver);">
-                                ${activity.customer} • ${activity.time}
-                            </div>
+                    <div class="ai-activity-item">
+                        <div class="ai-activity-icon">${icon}</div>
+                        <div class="ai-activity-content">
+                            <div class="ai-activity-action">${activity.action}</div>
+                            <div class="ai-activity-meta">${activity.customer} • ${activity.time}</div>
                         </div>
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: ${sentimentColor};"></div>
+                        <div class="ai-activity-indicator" style="background: ${sentimentColor};"></div>
                     </div>
                 `;
             }).join('');

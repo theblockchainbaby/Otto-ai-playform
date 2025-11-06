@@ -1411,14 +1411,24 @@
                     Watch how Otto integrates with your existing systems and provides real-time insights.
                 </p>
 
-                <!-- Video Placeholder -->
-                <div style="background: rgba(0, 0, 0, 0.4); border: 2px dashed rgba(255, 210, 55, 0.3); border-radius: 12px; padding: 4rem 2rem; max-width: 800px; margin: 0 auto;">
-                    <i class="fas fa-play-circle" style="font-size: 5rem; color: var(--primary-yellow); opacity: 0.5; margin-bottom: 1.5rem;"></i>
-                    <p style="font-size: 1.1rem; color: var(--text-muted); margin: 0; font-style: italic;">
-                        Dashboard demo video coming soon
-                    </p>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 1rem;">
-                        In the meantime, <a href="#demo-form" style="color: var(--primary-yellow); text-decoration: underline;">book a live demo</a> to see it in action
+                <!-- Video Player -->
+                <div style="max-width: 900px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 210, 55, 0.2);">
+                    <video
+                        controls
+                        style="width: 100%; height: auto; display: block; background: #000;"
+                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%230B0F19' width='800' height='450'/%3E%3Ctext fill='%23FFD237' font-family='Arial' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3E▶ Click to Play Dashboard Demo%3C/text%3E%3C/svg%3E"
+                    >
+                        <source src="/videos/dashboard-demo.mov" type="video/quicktime">
+                        <source src="/videos/dashboard-demo.mp4" type="video/mp4">
+                        Your browser does not support the video tag. <a href="/videos/dashboard-demo.mov" style="color: var(--primary-yellow);">Download the video</a> instead.
+                    </video>
+                </div>
+
+                <!-- Video Description -->
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">
+                        <i class="fas fa-info-circle" style="color: var(--primary-yellow); margin-right: 0.5rem;"></i>
+                        See Otto's dashboard in action with real-time data and AI-powered insights
                     </p>
                 </div>
             </div>
