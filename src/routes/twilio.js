@@ -149,19 +149,40 @@ function handleMediaStreamConnection(twilioWs, request) {
   console.log('🔑 Agent ID:', agentId);
   console.log('🔑 API Key present:', !!elevenLabsKey);
 
-  // Function to send ulaw audio directly to Twilio (no conversion)
+  // Function to convert PCM to ulaw and send to Twilio
   function sendAudioInChunks(base64Audio) {
     try {
-      // Decode base64 to buffer (ElevenLabs sends ulaw @ 8kHz)
-      const ulawBuffer = Buffer.from(base64Audio, 'base64');
+      // Decode base64 to buffer (ElevenLabs sends PCM 16-bit @ 16kHz)
+      const pcmBuffer = Buffer.from(base64Audio, 'base64');
       
-      console.log(`🎵 Received ${ulawBuffer.length} bytes ulaw @ 8kHz (ready for Twilio)`);
+      console.log(`🎵 Processing ${pcmBuffer.length} bytes PCM`);
+      
+      // Downsample from 16kHz to 8kHz (simple decimation - take every other sample)
+      const samples16k = [];
+      for (let i = 0; i < pcmBuffer.length; i += 2) {
+        samples16k.push(pcmBuffer.readInt16LE(i));
+      }
+      
+      const samples8k = [];
+      for (let i = 0; i < samples16k.length; i += 2) {
+        samples8k.push(samples16k[i]);
+      }
+      
+      console.log(`🔽 Downsampled from ${samples16k.length} to ${samples8k.length} samples`);
+      
+      // Convert to ulaw
+      const ulawBuffer = Buffer.alloc(samples8k.length);
+      for (let i = 0; i < samples8k.length; i++) {
+        ulawBuffer[i] = pcmToMulaw(samples8k[i]);
+      }
+      
+      console.log(`🎚️  Converted to ${ulawBuffer.length} bytes ulaw @ 8kHz`);
       console.log(`📦 Sending in ${TWILIO_CHUNK_SIZE}-byte chunks`);
       
       let offset = 0;
       let chunkCount = 0;
 
-      // Split into chunks and send with timing - NO CONVERSION NEEDED
+      // Split into chunks and send with timing
       const sendNextChunk = () => {
         if (offset >= ulawBuffer.length) {
           console.log(`✅ Sent ${chunkCount} ulaw chunks to Twilio`);
@@ -197,7 +218,7 @@ function handleMediaStreamConnection(twilioWs, request) {
       sendNextChunk();
 
     } catch (error) {
-      console.error('❌ Error sending audio:', error);
+      console.error('❌ Error processing audio:', error);
       console.error(error.stack);
     }
   }
@@ -244,21 +265,21 @@ function handleMediaStreamConnection(twilioWs, request) {
 
             elevenLabsWs.on('open', () => {
               console.log('🤖 Connected to ElevenLabs for', callSid);
-              console.log('🎙️  Audio streaming ready - requesting ulaw 8kHz');
+              console.log('🎙️  Audio streaming ready - requesting PCM 8kHz');
               
-              // Send initial handshake - request ulaw at 8kHz (Twilio's exact format)
+              // Send initial handshake - request PCM at 8kHz (we'll convert to ulaw)
               elevenLabsWs.send(JSON.stringify({
                 type: 'conversation_initiation_client_data',
                 conversation_config_override: {
                   agent: {
                     audio: {
-                      encoding: 'ulaw_8000',
-                      output_format: 'ulaw_8000'
+                      encoding: 'pcm_16000',
+                      output_format: 'pcm_16000'
                     }
                   }
                 }
               }));
-              console.log('🤝 Sent handshake to ElevenLabs requesting ulaw 8kHz');
+              console.log('🤝 Sent handshake to ElevenLabs requesting PCM 16kHz');
             });
 
             elevenLabsWs.on('message', (data) => {
@@ -279,10 +300,16 @@ function handleMediaStreamConnection(twilioWs, request) {
                 
                 // Handle audio events
                 if (elevenLabsMsg.type === 'audio' && elevenLabsMsg.audio_event && elevenLabsMsg.audio_event.audio_base_64) {
-                  console.log('📨 ElevenLabs audio received:', elevenLabsMsg.audio_event.audio_base_64.length, 'bytes');
+                  const audioData = elevenLabsMsg.audio_event.audio_base_64;
+                  console.log('📨 ElevenLabs audio received:', audioData.length, 'bytes base64');
+                  
+                  // Decode to see actual binary size
+                  const decoded = Buffer.from(audioData, 'base64');
+                  console.log('📊 Decoded size:', decoded.length, 'bytes');
+                  console.log('📊 First 10 bytes:', Array.from(decoded.slice(0, 10)).map(b => b.toString(16).padStart(2, '0')).join(' '));
                   
                   // Split and send in chunks with timing
-                  sendAudioInChunks(elevenLabsMsg.audio_event.audio_base_64);
+                  sendAudioInChunks(audioData);
                 }
 
                 // Log transcripts
