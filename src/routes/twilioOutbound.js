@@ -34,13 +34,22 @@ router.all('/twiml', (req, res) => {
     return res.status(500).send('Server configuration error - ELEVENLABS_OUTBOUND_AGENT_ID missing');
   }
 
-  // Connect directly to ElevenLabs WebSocket
+  // Connect directly to ElevenLabs WebSocket with API key
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  
+  if (!apiKey) {
+    console.error('❌ ELEVENLABS_API_KEY not configured');
+    return res.status(500).send('Server configuration error - ELEVENLABS_API_KEY missing');
+  }
+  
+  // ElevenLabs WebSocket URL with authentication via xi-api-key header
   const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`;
 
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Connect>
         <Stream url="${wsUrl}">
+            <Parameter name="xi-api-key" value="${apiKey}" />
             <Parameter name="customer_name" value="${customerName || 'Customer'}" />
             <Parameter name="customer_id" value="${customerId || ''}" />
             <Parameter name="campaign_type" value="${campaignType || 'GENERAL'}" />
