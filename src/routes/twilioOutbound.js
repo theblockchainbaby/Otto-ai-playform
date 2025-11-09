@@ -26,9 +26,12 @@ router.all('/twiml', (req, res) => {
 
   const agentId = process.env.ELEVENLABS_OUTBOUND_AGENT_ID;
   
+  console.log(`🔍 Debug: ELEVENLABS_OUTBOUND_AGENT_ID = "${agentId}"`);
+  console.log(`🔍 Debug: All env keys starting with ELEVEN:`, Object.keys(process.env).filter(k => k.startsWith('ELEVEN')));
+  
   if (!agentId) {
     console.error('❌ ELEVENLABS_OUTBOUND_AGENT_ID not configured');
-    return res.status(500).send('Server configuration error');
+    return res.status(500).send('Server configuration error - ELEVENLABS_OUTBOUND_AGENT_ID missing');
   }
 
   // Connect directly to ElevenLabs WebSocket
