@@ -34,11 +34,13 @@ router.all('/twiml', async (req, res) => {
 
     console.log('✅ Got signed URL from ElevenLabs');
 
+    // For ElevenLabs, use simple Say for now to test
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Connect>
-        <Stream url="${signedUrl}" />
-    </Connect>
+    <Say voice="Polly.Matthew">Hello, this is Otto calling from the dealership. How can I help you today?</Say>
+    <Pause length="2"/>
+    <Say voice="Polly.Matthew">I'm calling to follow up on your recent inquiry.</Say>
+    <Hangup/>
 </Response>`;
 
     console.log('✅ TwiML generated - connecting to ElevenLabs');
