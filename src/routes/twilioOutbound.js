@@ -18,32 +18,33 @@ const activeOutboundCalls = new Map();
  * Accepts both GET and POST from Twilio
  */
 router.all('/twiml', async (req, res) => {
-  const { customerId, customerName, campaignType } = req.query;
+  const { customerId, customerName, campaignType, CallSid } = req.query;
   
   console.log(`📞 Generating TwiML for outbound call`);
   console.log(`   Customer: ${customerName}`);
   console.log(`   Campaign: ${campaignType}`);
+  console.log(`   Call SID: ${CallSid}`);
 
   try {
-    // Get signed URL from ElevenLabs (includes authentication)
-    const signedUrl = await elevenLabsService.getOutboundSignedUrl({
-      customer_name: customerName || 'Customer',
-      customer_id: customerId || '',
-      campaign_type: campaignType || 'GENERAL'
-    });
+    // Connect to our WebSocket proxy which will bridge to ElevenLabs
+    const baseUrl = process.env.BASE_URL || 'https://ottoagent.net';
+    const wsProtocol = baseUrl.includes('https') ? 'wss' : 'ws';
+    const wsHost = baseUrl.replace('https://', '').replace('http://', '');
+    const wsUrl = `${wsProtocol}://${wsHost}/api/twilio/outbound/media-stream`;
 
-    console.log('✅ Got signed URL from ElevenLabs');
-
-    // For ElevenLabs, use simple Say for now to test
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say voice="Polly.Matthew">Hello, this is Otto calling from the dealership. How can I help you today?</Say>
-    <Pause length="2"/>
-    <Say voice="Polly.Matthew">I'm calling to follow up on your recent inquiry.</Say>
-    <Hangup/>
+    <Connect>
+        <Stream url="${wsUrl}">
+            <Parameter name="customerName" value="${customerName || 'Customer'}" />
+            <Parameter name="customerId" value="${customerId || ''}" />
+            <Parameter name="campaignType" value="${campaignType || 'GENERAL'}" />
+            <Parameter name="callSid" value="${CallSid || ''}" />
+        </Stream>
+    </Connect>
 </Response>`;
 
-    console.log('✅ TwiML generated - connecting to ElevenLabs');
+    console.log('✅ TwiML generated - connecting to WebSocket proxy');
     
     res.type('text/xml');
     res.send(twiml);
