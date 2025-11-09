@@ -75,13 +75,22 @@ router.ws('/media-stream', async (ws, req) => {
         case 'start':
           callSid = msg.start.callSid;
           streamSid = msg.start.streamSid;
-          customerPhone = msg.start.customParameters?.customerPhone;
-          customVariables = JSON.parse(msg.start.customParameters?.customVariables || '{}');
-
-          console.log(`📞 Outbound call started: ${callSid} to ${customerPhone}`);
+          
+          // Extract custom parameters from TwiML
+          const customerName = msg.start.customParameters?.customerName || 'Customer';
+          const customerId = msg.start.customParameters?.customerId || '';
+          const campaignType = msg.start.customParameters?.campaignType || 'GENERAL';
+          
+          console.log(`📞 Outbound call started: ${callSid}`);
+          console.log(`   Customer: ${customerName}`);
+          console.log(`   Campaign: ${campaignType}`);
 
           // Get signed URL from ElevenLabs with custom variables
-          const signedUrl = await elevenLabsService.getOutboundSignedUrl(customVariables);
+          const signedUrl = await elevenLabsService.getOutboundSignedUrl({
+            customer_name: customerName,
+            customer_id: customerId,
+            campaign_type: campaignType
+          });
 
           // Connect to ElevenLabs
           elevenLabsWs = new WebSocket(signedUrl);
