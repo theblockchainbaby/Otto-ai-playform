@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "const campaignId = $json[\"campaignId\"];\n\n// Logic to initiate outbound calls for the specified campaign\n// This could involve fetching campaign details from a database or an API\n\nreturn { campaignId };"
+      },
+      "name": "Initiate Outbound Campaign",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const campaignId = $json[\"campaignId\"];\n\n// Logic to process responses from outbound calls\n// This could involve updating call logs or campaign status\n\nreturn { campaignId };"
+      },
+      "name": "Process Call Responses",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "webhookId": "outbound-campaign-trigger",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        50,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Initiate Outbound Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initiate Outbound Campaign": {
+      "main": [
+        [
+          {
+            "node": "Process Call Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

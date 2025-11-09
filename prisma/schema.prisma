@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,175 +8,458 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  role      UserRole @default(SALES_REP)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  customers Customer[]
-  leads     Lead[]
-  calls     Call[]
-  appointments Appointment[]
-  sentMessages Message[] @relation("MessageSender")
-  receivedMessages Message[] @relation("MessageReceiver")
-  tasks Task[] @relation("TaskAssignee")
-  createdTasks Task[] @relation("TaskCreator")
-  campaigns Campaign[]
-  campaignExecutions CampaignExecution[]
-  emergencyCalls EmergencyCall[] @relation("EmergencyCallHandler")
-  serviceRequests ServiceRequest[] @relation("ServiceRequestAssignee")
-  dispatchedServices ServiceRequest[] @relation("ServiceRequestDispatcher")
+  id                   String                @id @default(cuid())
+  email                String                @unique
+  password             String
+  firstName            String
+  lastName             String
+  role                 UserRole              @default(SALES_REP)
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  appointments         Appointment[]
+  calls                Call[]
+  campaignExecutions   CampaignExecution[]
+  campaigns            Campaign[]
+  customers            Customer[]
+  emergencyCalls       EmergencyCall[]       @relation("EmergencyCallHandler")
+  leads                Lead[]
+  receivedMessages     Message[]             @relation("MessageReceiver")
+  sentMessages         Message[]             @relation("MessageSender")
+  serviceRequests      ServiceRequest[]      @relation("ServiceRequestAssignee")
+  dispatchedServices   ServiceRequest[]      @relation("ServiceRequestDispatcher")
   serviceStatusUpdates ServiceStatusUpdate[]
+  tasks                Task[]                @relation("TaskAssignee")
+  createdTasks         Task[]                @relation("TaskCreator")
 
   @@map("users")
 }
 
 model Customer {
-  id          String   @id @default(cuid())
-  firstName   String
-  lastName    String
-  email       String?  @unique
-  phone       String?
-  address     String?
-  city        String?
-  state       String?
-  zipCode     String?
-  dateOfBirth DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  assignedTo   User?     @relation(fields: [assignedToId], references: [id])
-  assignedToId String?
-  vehicles     Vehicle[]
-  leads        Lead[]
-  calls        Call[]
-  appointments Appointment[]
-  messages     Message[]
-  tasks        Task[]
+  id                 String              @id @default(cuid())
+  firstName          String
+  lastName           String
+  email              String?             @unique
+  phone              String?
+  address            String?
+  city               String?
+  state              String?
+  zipCode            String?
+  dateOfBirth        DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  assignedToId       String?
+  appointments       Appointment[]
+  calls              Call[]
   campaignExecutions CampaignExecution[]
-  emergencyCalls EmergencyCall[]
-  serviceRequests ServiceRequest[]
-  serviceReviews ServiceReview[]
+  assignedTo         User?               @relation(fields: [assignedToId], references: [id])
+  emergencyCalls     EmergencyCall[]
+  leads              Lead[]
+  messages           Message[]
+  serviceRequests    ServiceRequest[]
+  serviceReviews     ServiceReview[]
+  tasks              Task[]
+  vehicles           Vehicle[]
 
   @@map("customers")
 }
 
 model Vehicle {
-  id           String      @id @default(cuid())
-  vin          String      @unique
-  make         String
-  model        String
-  year         Int
-  color        String?
-  mileage      Int?
-  price        Decimal?
-  status       VehicleStatus @default(AVAILABLE)
-  description  String?
-  features     String[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-
-  // Relations
-  customer   Customer? @relation(fields: [customerId], references: [id])
-  customerId String?
-  leads      Lead[]
-  appointments Appointment[]
-  emergencyCalls EmergencyCall[]
+  id              String           @id @default(cuid())
+  vin             String           @unique
+  make            String
+  model           String
+  year            Int
+  color           String?
+  mileage         Int?
+  price           Decimal?
+  status          VehicleStatus    @default(AVAILABLE)
+  description     String?
+  features        String[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  customerId      String?
+  appointments    Appointment[]
+  emergencyCalls  EmergencyCall[]
+  leads           Lead[]
   serviceRequests ServiceRequest[]
+  customer        Customer?        @relation(fields: [customerId], references: [id])
 
   @@map("vehicles")
 }
 
 model Lead {
-  id          String     @id @default(cuid())
-  source      LeadSource
-  status      LeadStatus @default(NEW)
-  priority    Priority   @default(MEDIUM)
-  notes       String?
-  followUpDate DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  // Relations
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-  assignedTo  User?    @relation(fields: [assignedToId], references: [id])
-  assignedToId String?
-  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
-  vehicleId   String?
-  calls       Call[]
-  messages    Message[]
-  tasks       Task[]
+  id                 String              @id @default(cuid())
+  source             LeadSource
+  status             LeadStatus          @default(NEW)
+  priority           Priority            @default(MEDIUM)
+  notes              String?
+  followUpDate       DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  customerId         String
+  assignedToId       String?
+  vehicleId          String?
+  calls              Call[]
   campaignExecutions CampaignExecution[]
+  assignedTo         User?               @relation(fields: [assignedToId], references: [id])
+  customer           Customer            @relation(fields: [customerId], references: [id])
+  vehicle            Vehicle?            @relation(fields: [vehicleId], references: [id])
+  messages           Message[]
+  tasks              Task[]
 
   @@map("leads")
 }
 
 model Call {
-  id          String     @id @default(cuid())
+  id          String        @id @default(cuid())
   direction   CallDirection
-  status      CallStatus @default(INITIATED)
-  duration    Int?       // in seconds
-  recording   String?    // URL to call recording
-  transcript  String?    // AI-generated transcript
-  summary     String?    // AI-generated summary
-  sentiment   String?    // AI-analyzed sentiment
+  status      CallStatus    @default(INITIATED)
+  duration    Int?
+  recording   String?
+  transcript  String?
+  summary     String?
+  sentiment   String?
   outcome     String?
   notes       String?
   scheduledAt DateTime?
   startedAt   DateTime?
   endedAt     DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  // Relations
-  customer   Customer @relation(fields: [customerId], references: [id])
-  customerId String
-  agent      User?    @relation(fields: [agentId], references: [id])
-  agentId    String?
-  lead       Lead?    @relation(fields: [leadId], references: [id])
-  leadId     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  customerId  String
+  agentId     String?
+  leadId      String?
+  agent       User?         @relation(fields: [agentId], references: [id])
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  lead        Lead?         @relation(fields: [leadId], references: [id])
 
   @@map("calls")
 }
 
 model Appointment {
-  id          String            @id @default(cuid())
-  title       String
-  description String?
-  type        AppointmentType
-  status      AppointmentStatus @default(SCHEDULED)
-  startTime   DateTime
-  endTime     DateTime
-  duration    Int               // in minutes
-  location    String?
-  notes       String?
-  reminderSent Boolean          @default(false)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-
-  // Relations
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-  assignedTo  User?    @relation(fields: [assignedToId], references: [id])
-  assignedToId String?
-  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
-  vehicleId   String?
-  messages    Message[]
-  tasks       Task[]
+  id                 String              @id @default(cuid())
+  title              String
+  description        String?
+  type               AppointmentType
+  status             AppointmentStatus   @default(SCHEDULED)
+  startTime          DateTime
+  endTime            DateTime
+  duration           Int
+  location           String?
+  notes              String?
+  reminderSent       Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  customerId         String
+  assignedToId       String?
+  vehicleId          String?
+  assignedTo         User?               @relation(fields: [assignedToId], references: [id])
+  customer           Customer            @relation(fields: [customerId], references: [id])
+  vehicle            Vehicle?            @relation(fields: [vehicleId], references: [id])
   campaignExecutions CampaignExecution[]
+  messages           Message[]
+  tasks              Task[]
 
   @@map("appointments")
 }
 
-// Enums
+model Message {
+  id               String           @id @default(cuid())
+  type             MessageType
+  channel          MessageChannel
+  subject          String?
+  content          String
+  status           MessageStatus    @default(PENDING)
+  direction        MessageDirection
+  externalId       String?
+  metadata         Json?
+  readAt           DateTime?
+  deliveredAt      DateTime?
+  failedAt         DateTime?
+  errorMessage     String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  senderId         String?
+  receiverId       String?
+  customerId       String
+  leadId           String?
+  appointmentId    String?
+  taskId           String?
+  serviceRequestId String?
+  appointment      Appointment?     @relation(fields: [appointmentId], references: [id])
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  lead             Lead?            @relation(fields: [leadId], references: [id])
+  receiver         User?            @relation("MessageReceiver", fields: [receiverId], references: [id])
+  sender           User?            @relation("MessageSender", fields: [senderId], references: [id])
+  serviceRequest   ServiceRequest?  @relation(fields: [serviceRequestId], references: [id])
+  task             Task?            @relation(fields: [taskId], references: [id])
+
+  @@map("messages")
+}
+
+model Task {
+  id               String          @id @default(cuid())
+  title            String
+  description      String?
+  type             TaskType
+  priority         TaskPriority    @default(MEDIUM)
+  status           TaskStatus      @default(PENDING)
+  dueDate          DateTime?
+  completedAt      DateTime?
+  isAutomated      Boolean         @default(false)
+  triggerType      String?
+  triggerData      Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  assigneeId       String?
+  creatorId        String
+  customerId       String
+  leadId           String?
+  appointmentId    String?
+  parentTaskId     String?
+  serviceRequestId String?
+  messages         Message[]
+  appointment      Appointment?    @relation(fields: [appointmentId], references: [id])
+  assignee         User?           @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  creator          User            @relation("TaskCreator", fields: [creatorId], references: [id])
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  lead             Lead?           @relation(fields: [leadId], references: [id])
+  parentTask       Task?           @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
+  subtasks         Task[]          @relation("TaskHierarchy")
+  serviceRequest   ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
+
+  @@map("tasks")
+}
+
+model Campaign {
+  id                String              @id @default(cuid())
+  name              String
+  description       String?
+  type              CampaignType
+  status            CampaignStatus      @default(DRAFT)
+  triggerEvent      String
+  triggerConditions Json?
+  isActive          Boolean             @default(false)
+  startDate         DateTime?
+  endDate           DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  creatorId         String
+  executions        CampaignExecution[]
+  steps             CampaignStep[]
+  creator           User                @relation(fields: [creatorId], references: [id])
+
+  @@map("campaigns")
+}
+
+model CampaignStep {
+  id         String                  @id @default(cuid())
+  order      Int
+  name       String
+  type       CampaignStepType
+  delayDays  Int                     @default(0)
+  delayHours Int                     @default(0)
+  subject    String?
+  content    String
+  channel    MessageChannel
+  conditions Json?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  campaignId String
+  executions CampaignStepExecution[]
+  campaign   Campaign                @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("campaign_steps")
+}
+
+model CampaignExecution {
+  id             String                  @id @default(cuid())
+  status         CampaignExecutionStatus @default(ACTIVE)
+  startedAt      DateTime                @default(now())
+  completedAt    DateTime?
+  pausedAt       DateTime?
+  triggerData    Json?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  campaignId     String
+  customerId     String
+  executorId     String
+  leadId         String?
+  appointmentId  String?
+  appointment    Appointment?            @relation(fields: [appointmentId], references: [id])
+  campaign       Campaign                @relation(fields: [campaignId], references: [id])
+  customer       Customer                @relation(fields: [customerId], references: [id])
+  executor       User                    @relation(fields: [executorId], references: [id])
+  lead           Lead?                   @relation(fields: [leadId], references: [id])
+  stepExecutions CampaignStepExecution[]
+
+  @@map("campaign_executions")
+}
+
+model CampaignStepExecution {
+  id           String                      @id @default(cuid())
+  status       CampaignStepExecutionStatus @default(PENDING)
+  scheduledAt  DateTime
+  executedAt   DateTime?
+  failedAt     DateTime?
+  errorMessage String?
+  messageId    String?
+  taskId       String?
+  createdAt    DateTime                    @default(now())
+  updatedAt    DateTime                    @updatedAt
+  executionId  String
+  stepId       String
+  execution    CampaignExecution           @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  step         CampaignStep                @relation(fields: [stepId], references: [id])
+
+  @@map("campaign_step_executions")
+}
+
+model EmergencyCall {
+  id               String              @id @default(cuid())
+  callType         EmergencyCallType
+  priority         EmergencyPriority   @default(MEDIUM)
+  status           EmergencyCallStatus @default(RECEIVED)
+  latitude         Float?
+  longitude        Float?
+  address          String?
+  landmark         String?
+  description      String
+  symptoms         String?
+  vehicleInfo      String?
+  receivedAt       DateTime            @default(now())
+  dispatchedAt     DateTime?
+  arrivedAt        DateTime?
+  completedAt      DateTime?
+  estimatedArrival DateTime?
+  actualArrival    DateTime?
+  notes            String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  customerId       String
+  vehicleId        String?
+  handlerId        String?
+  customer         Customer            @relation(fields: [customerId], references: [id])
+  handler          User?               @relation("EmergencyCallHandler", fields: [handlerId], references: [id])
+  vehicle          Vehicle?            @relation(fields: [vehicleId], references: [id])
+  serviceRequest   ServiceRequest?
+
+  @@map("emergency_calls")
+}
+
+model ServiceProvider {
+  id               String              @id @default(cuid())
+  name             String
+  type             ServiceProviderType
+  phone            String
+  email            String?
+  address          String
+  city             String
+  state            String
+  zipCode          String
+  serviceRadius    Float
+  latitude         Float
+  longitude        Float
+  services         ServiceType[]
+  isActive         Boolean             @default(true)
+  isAvailable      Boolean             @default(true)
+  hoursOfOperation Json?
+  averageRating    Float?
+  totalJobs        Int                 @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  serviceRequests  ServiceRequest[]
+  reviews          ServiceReview[]
+
+  @@map("service_providers")
+}
+
+model ServiceRequest {
+  id                String                @id @default(cuid())
+  requestNumber     String                @unique
+  type              ServiceType
+  priority          ServicePriority       @default(MEDIUM)
+  status            ServiceRequestStatus  @default(PENDING)
+  latitude          Float
+  longitude         Float
+  address           String
+  description       String
+  symptoms          String?
+  vehicleInfo       String?
+  requestedAt       DateTime              @default(now())
+  scheduledAt       DateTime?
+  dispatchedAt      DateTime?
+  arrivedAt         DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  estimatedCost     Float?
+  actualCost        Float?
+  billableHours     Float?
+  workPerformed     String?
+  partsUsed         String?
+  notes             String?
+  customerRating    Int?
+  customerFeedback  String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  customerId        String
+  vehicleId         String?
+  emergencyCallId   String?               @unique
+  serviceProviderId String?
+  assignedToId      String?
+  dispatcherId      String?
+  messages          Message[]
+  assignedTo        User?                 @relation("ServiceRequestAssignee", fields: [assignedToId], references: [id])
+  customer          Customer              @relation(fields: [customerId], references: [id])
+  dispatcher        User?                 @relation("ServiceRequestDispatcher", fields: [dispatcherId], references: [id])
+  emergencyCall     EmergencyCall?        @relation(fields: [emergencyCallId], references: [id])
+  serviceProvider   ServiceProvider?      @relation(fields: [serviceProviderId], references: [id])
+  vehicle           Vehicle?              @relation(fields: [vehicleId], references: [id])
+  reviews           ServiceReview[]
+  statusUpdates     ServiceStatusUpdate[]
+  tasks             Task[]
+
+  @@map("service_requests")
+}
+
+model ServiceStatusUpdate {
+  id               String               @id @default(cuid())
+  status           ServiceRequestStatus
+  message          String
+  location         String?
+  latitude         Float?
+  longitude        Float?
+  estimatedArrival DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  serviceRequestId String
+  updatedById      String?
+  serviceRequest   ServiceRequest       @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  updatedBy        User?                @relation(fields: [updatedById], references: [id])
+
+  @@map("service_status_updates")
+}
+
+model ServiceReview {
+  id                String          @id @default(cuid())
+  rating            Int
+  comment           String?
+  timeliness        Int?
+  quality           Int?
+  professionalism   Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  serviceProviderId String
+  customerId        String
+  serviceRequestId  String?
+  customer          Customer        @relation(fields: [customerId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceRequest    ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
+
+  @@map("service_reviews")
+}
+
 enum UserRole {
   ADMIN
   MANAGER
@@ -257,210 +537,6 @@ enum AppointmentStatus {
   RESCHEDULED
 }
 
-// Communication Models
-model Message {
-  id          String      @id @default(cuid())
-  type        MessageType
-  channel     MessageChannel
-  subject     String?     // For emails
-  content     String
-  status      MessageStatus @default(PENDING)
-  direction   MessageDirection
-
-  // Metadata
-  externalId  String?     // Twilio SID, email ID, etc.
-  metadata    Json?       // Channel-specific data
-  readAt      DateTime?
-  deliveredAt DateTime?
-  failedAt    DateTime?
-  errorMessage String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  sender      User?    @relation("MessageSender", fields: [senderId], references: [id])
-  senderId    String?
-  receiver    User?    @relation("MessageReceiver", fields: [receiverId], references: [id])
-  receiverId  String?
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-
-  // Optional relations
-  lead        Lead?    @relation(fields: [leadId], references: [id])
-  leadId      String?
-  appointment Appointment? @relation(fields: [appointmentId], references: [id])
-  appointmentId String?
-  task        Task?    @relation(fields: [taskId], references: [id])
-  taskId      String?
-  serviceRequest ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
-  serviceRequestId String?
-
-  @@map("messages")
-}
-
-// Task Management
-model Task {
-  id          String     @id @default(cuid())
-  title       String
-  description String?
-  type        TaskType
-  priority    TaskPriority @default(MEDIUM)
-  status      TaskStatus @default(PENDING)
-
-  dueDate     DateTime?
-  completedAt DateTime?
-
-  // Automation fields
-  isAutomated Boolean @default(false)
-  triggerType String? // "lead_created", "appointment_completed", etc.
-  triggerData Json?   // Additional trigger context
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  assignee    User?    @relation("TaskAssignee", fields: [assigneeId], references: [id])
-  assigneeId  String?
-  creator     User     @relation("TaskCreator", fields: [creatorId], references: [id])
-  creatorId   String
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-
-  // Optional relations
-  lead        Lead?    @relation(fields: [leadId], references: [id])
-  leadId      String?
-  appointment Appointment? @relation(fields: [appointmentId], references: [id])
-  appointmentId String?
-  serviceRequest ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
-  serviceRequestId String?
-
-  // Related messages and subtasks
-  messages    Message[]
-  parentTask  Task?    @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
-  parentTaskId String?
-  subtasks    Task[]   @relation("TaskHierarchy")
-
-  @@map("tasks")
-}
-
-// Campaign Management
-model Campaign {
-  id          String        @id @default(cuid())
-  name        String
-  description String?
-  type        CampaignType
-  status      CampaignStatus @default(DRAFT)
-
-  // Trigger conditions
-  triggerEvent String       // "lead_created", "appointment_no_show", etc.
-  triggerConditions Json?   // Additional conditions
-
-  // Campaign settings
-  isActive    Boolean @default(false)
-  startDate   DateTime?
-  endDate     DateTime?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  creator     User     @relation(fields: [creatorId], references: [id])
-  creatorId   String
-  steps       CampaignStep[]
-  executions  CampaignExecution[]
-
-  @@map("campaigns")
-}
-
-model CampaignStep {
-  id          String   @id @default(cuid())
-  order       Int
-  name        String
-  type        CampaignStepType
-
-  // Timing
-  delayDays   Int      @default(0)
-  delayHours  Int      @default(0)
-
-  // Content
-  subject     String?  // For emails
-  content     String
-  channel     MessageChannel
-
-  // Conditions
-  conditions  Json?    // When to execute this step
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  campaignId  String
-  executions  CampaignStepExecution[]
-
-  @@map("campaign_steps")
-}
-
-model CampaignExecution {
-  id          String   @id @default(cuid())
-  status      CampaignExecutionStatus @default(ACTIVE)
-
-  startedAt   DateTime @default(now())
-  completedAt DateTime?
-  pausedAt    DateTime?
-
-  // Context
-  triggerData Json?    // Data that triggered this execution
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  campaignId  String
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-  executor    User     @relation(fields: [executorId], references: [id])
-  executorId  String
-
-  // Optional relations
-  lead        Lead?    @relation(fields: [leadId], references: [id])
-  leadId      String?
-  appointment Appointment? @relation(fields: [appointmentId], references: [id])
-  appointmentId String?
-
-  stepExecutions CampaignStepExecution[]
-
-  @@map("campaign_executions")
-}
-
-model CampaignStepExecution {
-  id          String   @id @default(cuid())
-  status      CampaignStepExecutionStatus @default(PENDING)
-
-  scheduledAt DateTime
-  executedAt  DateTime?
-  failedAt    DateTime?
-  errorMessage String?
-
-  // Results
-  messageId   String?  // If this step sent a message
-  taskId      String?  // If this step created a task
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  execution   CampaignExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
-  executionId String
-  step        CampaignStep @relation(fields: [stepId], references: [id])
-  stepId      String
-
-  @@map("campaign_step_executions")
-}
-
-// Communication Enums
 enum MessageType {
   EMAIL
   SMS
@@ -491,7 +567,6 @@ enum MessageDirection {
   OUTBOUND
 }
 
-// Task Management Enums
 enum TaskType {
   FOLLOW_UP_CALL
   SEND_EMAIL
@@ -519,7 +594,6 @@ enum TaskStatus {
   OVERDUE
 }
 
-// Campaign Management Enums
 enum CampaignType {
   LEAD_NURTURING
   FOLLOW_UP_SEQUENCE
@@ -561,208 +635,6 @@ enum CampaignStepExecutionStatus {
   SKIPPED
 }
 
-// Roadside Assistance Models
-model EmergencyCall {
-  id          String   @id @default(cuid())
-  callType    EmergencyCallType
-  priority    EmergencyPriority @default(MEDIUM)
-  status      EmergencyCallStatus @default(RECEIVED)
-
-  // Location information
-  latitude    Float?
-  longitude   Float?
-  address     String?
-  landmark    String?
-
-  // Call details
-  description String
-  symptoms    String?
-  vehicleInfo String?
-
-  // Timing
-  receivedAt  DateTime @default(now())
-  dispatchedAt DateTime?
-  arrivedAt   DateTime?
-  completedAt DateTime?
-
-  // Metadata
-  estimatedArrival DateTime?
-  actualArrival   DateTime?
-  notes       String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  customer    Customer @relation(fields: [customerId], references: [id])
-  customerId  String
-  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
-  vehicleId   String?
-  handler     User?    @relation("EmergencyCallHandler", fields: [handlerId], references: [id])
-  handlerId   String?
-
-  // Service request created from this emergency call
-  serviceRequest ServiceRequest?
-
-  @@map("emergency_calls")
-}
-
-model ServiceProvider {
-  id          String   @id @default(cuid())
-  name        String
-  type        ServiceProviderType
-
-  // Contact information
-  phone       String
-  email       String?
-  address     String
-  city        String
-  state       String
-  zipCode     String
-
-  // Service area
-  serviceRadius Float  // in miles
-  latitude    Float
-  longitude   Float
-
-  // Capabilities
-  services    ServiceType[]
-
-  // Availability
-  isActive    Boolean @default(true)
-  isAvailable Boolean @default(true)
-
-  // Business hours
-  hoursOfOperation Json? // Store business hours as JSON
-
-  // Performance metrics
-  averageRating Float?
-  totalJobs   Int    @default(0)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  serviceRequests ServiceRequest[]
-  reviews        ServiceReview[]
-
-  @@map("service_providers")
-}
-
-model ServiceRequest {
-  id          String   @id @default(cuid())
-  requestNumber String @unique // Human-readable request number
-
-  type        ServiceType
-  priority    ServicePriority @default(MEDIUM)
-  status      ServiceRequestStatus @default(PENDING)
-
-  // Location
-  latitude    Float
-  longitude   Float
-  address     String
-
-  // Service details
-  description String
-  symptoms    String?
-  vehicleInfo String?
-
-  // Timing
-  requestedAt DateTime @default(now())
-  scheduledAt DateTime?
-  dispatchedAt DateTime?
-  arrivedAt   DateTime?
-  startedAt   DateTime?
-  completedAt DateTime?
-
-  // Cost and billing
-  estimatedCost Float?
-  actualCost    Float?
-  billableHours Float?
-
-  // Service details
-  workPerformed String?
-  partsUsed     String?
-  notes         String?
-
-  // Customer satisfaction
-  customerRating Int?
-  customerFeedback String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  customer      Customer @relation(fields: [customerId], references: [id])
-  customerId    String
-  vehicle       Vehicle? @relation(fields: [vehicleId], references: [id])
-  vehicleId     String?
-  emergencyCall EmergencyCall? @relation(fields: [emergencyCallId], references: [id])
-  emergencyCallId String? @unique
-
-  serviceProvider ServiceProvider? @relation(fields: [serviceProviderId], references: [id])
-  serviceProviderId String?
-
-  assignedTo    User?    @relation("ServiceRequestAssignee", fields: [assignedToId], references: [id])
-  assignedToId  String?
-  dispatcher    User?    @relation("ServiceRequestDispatcher", fields: [dispatcherId], references: [id])
-  dispatcherId  String?
-
-  // Related records
-  messages      Message[]
-  tasks         Task[]
-  statusUpdates ServiceStatusUpdate[]
-  reviews       ServiceReview[]
-
-  @@map("service_requests")
-}
-
-model ServiceStatusUpdate {
-  id          String   @id @default(cuid())
-  status      ServiceRequestStatus
-  message     String
-  location    String?
-  latitude    Float?
-  longitude   Float?
-  estimatedArrival DateTime?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  serviceRequest ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
-  serviceRequestId String
-  updatedBy     User?    @relation(fields: [updatedById], references: [id])
-  updatedById   String?
-
-  @@map("service_status_updates")
-}
-
-model ServiceReview {
-  id          String   @id @default(cuid())
-  rating      Int      // 1-5 stars
-  comment     String?
-
-  // Review categories
-  timeliness  Int?     // 1-5 rating
-  quality     Int?     // 1-5 rating
-  professionalism Int? // 1-5 rating
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  serviceProvider ServiceProvider @relation(fields: [serviceProviderId], references: [id])
-  serviceProviderId String
-  customer        Customer @relation(fields: [customerId], references: [id])
-  customerId      String
-  serviceRequest  ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
-  serviceRequestId String?
-
-  @@map("service_reviews")
-}
-
-// Roadside Assistance Enums
 enum EmergencyCallType {
   BREAKDOWN
   ACCIDENT
@@ -838,4 +710,140 @@ enum ServiceRequestStatus {
   CANCELLED
   FAILED
   REQUIRES_FOLLOWUP
+}
+
+// Outbound Calling Enums
+enum OutboundCampaignType {
+  APPOINTMENT_REMINDER
+  SERVICE_FOLLOWUP
+  SALES_OUTREACH
+  CUSTOMER_SATISFACTION
+  PAYMENT_REMINDER
+  GENERAL
+  LEAD_QUALIFICATION
+  EVENT_INVITATION
+  SURVEY
+  RECALL_NOTIFICATION
+}
+
+enum OutboundCampaignStatus {
+  PENDING
+  RUNNING
+  PAUSED
+  COMPLETED
+  STOPPED
+  FAILED
+}
+
+enum OutboundCallStatus {
+  INITIATED
+  RINGING
+  ANSWERED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  NO_ANSWER
+  BUSY
+  VOICEMAIL
+  CANCELLED
+}
+
+enum OutboundCallOutcome {
+  HUMAN_ANSWERED
+  VOICEMAIL_LEFT
+  VOICEMAIL_FULL
+  NO_ANSWER
+  BUSY
+  FAILED
+  WRONG_NUMBER
+  DO_NOT_CALL
+  APPOINTMENT_SCHEDULED
+  CALLBACK_REQUESTED
+  INFORMATION_PROVIDED
+  NOT_INTERESTED
+}
+
+
+// ============================================
+// OUTBOUND CALLING MODELS
+// ============================================
+
+model OutboundCampaign {
+  id          String   @id @default(cuid())
+  name        String
+  type        OutboundCampaignType
+  dealershipId String?
+  googleSheetId String?
+  status      OutboundCampaignStatus @default(PENDING)
+
+  // Campaign metrics
+  totalContacts    Int @default(0)
+  contactsCalled   Int @default(0)
+  contactsCompleted Int @default(0)
+  contactsFailed   Int @default(0)
+
+  // Timing
+  startedAt    DateTime?
+  completedAt  DateTime?
+  scheduledTime DateTime?
+
+  // Settings stored as JSON
+  // { delayBetweenCalls, callDuringHours, maxAttemptsPerContact, recordCalls }
+  settings     Json?
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  calls OutboundCall[]
+
+  @@map("outbound_campaigns")
+}
+
+model OutboundCall {
+  id          String   @id @default(cuid())
+  callSid     String   @unique
+
+  // Customer information
+  customerName  String
+  customerPhone String
+  customerEmail String?
+
+  // Call status
+  status      OutboundCallStatus @default(INITIATED)
+  direction   String   @default("OUTBOUND")
+
+  // Timing
+  initiatedAt DateTime @default(now())
+  answeredAt  DateTime?
+  completedAt DateTime?
+
+  // Call details
+  duration    Int?     // in seconds
+  answeredBy  String?  // human, machine_start, machine_end_beep, machine_end_silence, machine_end_other, fax, unknown
+
+  // Recording
+  recordingUrl String?
+  recordingSid String?
+  recordingDuration Int?
+
+  // AI conversation
+  transcript  String?  @db.Text
+  outcome     OutboundCallOutcome?
+  notes       String?  @db.Text
+
+  // Campaign relation
+  campaign    OutboundCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  campaignId  String?
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("outbound_calls")
+  @@index([campaignId])
+  @@index([customerPhone])
+  @@index([status])
+  @@index([initiatedAt])
 }

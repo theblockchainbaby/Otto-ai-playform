@@ -345,5 +345,135 @@ router.get('/health', async (req, res) => {
     }
 });
 
+// ==================== OUTBOUND CAMPAIGN WEBHOOKS ====================
+
+const OutboundCampaignService = require('../services/outboundCampaignService');
+const campaignService = new OutboundCampaignService();
+
+/**
+ * Webhook to trigger outbound campaign from n8n
+ * POST /api/n8n/trigger-outbound-campaign
+ */
+router.post('/trigger-outbound-campaign', async (req, res) => {
+  try {
+    const {
+      campaignName,
+      campaignType,
+      dealershipId,
+      sheetName,
+      delayBetweenCalls,
+      callDuringHours,
+      maxAttempts,
+      recordCalls
+    } = req.body;
+
+    console.log('📨 n8n trigger: Starting outbound campaign:', campaignName);
+
+    const result = await campaignService.startCampaign({
+      name: campaignName || 'n8n Triggered Campaign',
+      type: campaignType || 'GENERAL',
+      dealershipId: dealershipId,
+      sheetName: sheetName || 'Outbound Campaigns',
+      delayBetweenCalls: delayBetweenCalls || 30,
+      callDuringHours: callDuringHours || { start: '09:00', end: '18:00' },
+      maxAttempts: maxAttempts || 3,
+      recordCalls: recordCalls !== false
+    });
+
+    res.json({
+      success: true,
+      message: 'Campaign started successfully',
+      data: result
+    });
+
+  } catch (error) {
+    console.error('❌ Error triggering campaign:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Send campaign results back to n8n
+ * GET /api/n8n/campaign-results/:campaignId
+ */
+router.get('/campaign-results/:campaignId', async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+
+    const campaignStatus = campaignService.getCampaignStatus(campaignId);
+
+    if (!campaignStatus) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        campaignId: campaignId,
+        status: campaignStatus.status,
+        startedAt: campaignStatus.startedAt,
+        completedAt: campaignStatus.completedAt,
+        totalContacts: campaignStatus.totalContacts,
+        contactsCalled: campaignStatus.contactsCalled,
+        contactsCompleted: campaignStatus.contactsCompleted,
+        contactsFailed: campaignStatus.contactsFailed,
+        completionRate: ((campaignStatus.contactsCompleted / campaignStatus.totalContacts) * 100).toFixed(2) + '%'
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error getting campaign results:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Stop a running campaign (can be triggered from n8n)
+ * POST /api/n8n/stop-campaign/:campaignId
+ */
+router.post('/stop-campaign/:campaignId', async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+
+    const result = await campaignService.stopCampaign(campaignId);
+
+    res.json(result);
+
+  } catch (error) {
+    console.error('❌ Error stopping campaign:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Webhook for n8n to check if Otto is ready for outbound calls
+ * GET /api/n8n/otto-status
+ */
+router.get('/otto-status', (req, res) => {
+  res.json({
+    success: true,
+    status: 'operational',
+    services: {
+      elevenlabs: !!process.env.ELEVENLABS_OUTBOUND_AGENT_ID,
+      twilio: !!process.env.TWILIO_OUTBOUND_NUMBER,
+      googleSheets: !!process.env.GOOGLE_SHEETS_CREDENTIALS,
+      database: true
+    },
+    message: 'Otto outbound calling system is ready'
+  });
+});
+
 module.exports = router;
 

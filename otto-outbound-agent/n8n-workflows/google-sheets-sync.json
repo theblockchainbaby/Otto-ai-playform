@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "sheetId": "your_google_sheet_id",
+        "range": "CampaignData!A1:E",
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+          {
+            "range": "CampaignData!A1",
+            "values": [
+              [
+                "Campaign Name",
+                "Start Date",
+                "End Date",
+                "Status",
+                "Call Count"
+              ]
+            ]
+          }
+        ]
+      },
+      "name": "Google Sheets - Write Campaign Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sheetId": "your_google_sheet_id",
+        "range": "CampaignData!A2:E",
+        "valueRenderOption": "FORMATTED_VALUE"
+      },
+      "name": "Google Sheets - Read Campaign Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        300,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const campaignData = items[0].json;\n\n// Process campaign data here\n\nreturn [{ json: campaignData }];"
+      },
+      "name": "Process Campaign Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        500,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Google Sheets - Read Campaign Data": {
+      "main": [
+        [
+          {
+            "node": "Process Campaign Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Campaign Data": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Write Campaign Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

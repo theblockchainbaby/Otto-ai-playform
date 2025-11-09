@@ -318,6 +318,11 @@ app.use('/api/twilio', twilioRoutes);
 app.locals.prisma = prisma; // Make prisma available to routes
 console.log('✅ Twilio routes loaded');
 
+// Import Twilio Outbound routes
+const twilioOutboundRoutes = require('./routes/twilioOutbound');
+app.use('/api/twilio/outbound', twilioOutboundRoutes);
+console.log('✅ Twilio Outbound routes loaded');
+
 // Note: WebSocket upgrade is handled automatically by express-ws
 // No manual 'upgrade' event handler needed - express-ws handles it
 

@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "const callResult = $input.item.json;\n\n// Log the call result to the database or external service\nawait this.helpers.db.insert('CallResults', callResult);\n\n// Update the campaign status based on the call result\nconst campaignId = callResult.campaignId;\nawait this.helpers.db.update('Campaigns', campaignId, { status: callResult.status });\n\nreturn { success: true };",
+        "name": "Process Call Result"
+      },
+      "name": "Process Call Result",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "webhookId": "call-result",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Call Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
