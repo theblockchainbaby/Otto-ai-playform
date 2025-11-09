@@ -15,8 +15,9 @@ const activeOutboundCalls = new Map();
 
 /**
  * Generate TwiML for outbound call - connects directly to ElevenLabs
+ * Accepts both GET and POST from Twilio
  */
-router.post('/twiml', (req, res) => {
+router.all('/twiml', (req, res) => {
   const { customerId, customerName, campaignType } = req.query;
   
   console.log(`📞 Generating TwiML for outbound call`);
