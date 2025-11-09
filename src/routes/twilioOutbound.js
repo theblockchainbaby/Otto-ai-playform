@@ -17,50 +17,39 @@ const activeOutboundCalls = new Map();
  * Generate TwiML for outbound call - connects directly to ElevenLabs
  * Accepts both GET and POST from Twilio
  */
-router.all('/twiml', (req, res) => {
+router.all('/twiml', async (req, res) => {
   const { customerId, customerName, campaignType } = req.query;
   
   console.log(`📞 Generating TwiML for outbound call`);
   console.log(`   Customer: ${customerName}`);
   console.log(`   Campaign: ${campaignType}`);
 
-  const agentId = process.env.ELEVENLABS_OUTBOUND_AGENT_ID;
-  
-  console.log(`🔍 Debug: ELEVENLABS_OUTBOUND_AGENT_ID = "${agentId}"`);
-  console.log(`🔍 Debug: All env keys starting with ELEVEN:`, Object.keys(process.env).filter(k => k.startsWith('ELEVEN')));
-  
-  if (!agentId) {
-    console.error('❌ ELEVENLABS_OUTBOUND_AGENT_ID not configured');
-    return res.status(500).send('Server configuration error - ELEVENLABS_OUTBOUND_AGENT_ID missing');
-  }
+  try {
+    // Get signed URL from ElevenLabs (includes authentication)
+    const signedUrl = await elevenLabsService.getOutboundSignedUrl({
+      customer_name: customerName || 'Customer',
+      customer_id: customerId || '',
+      campaign_type: campaignType || 'GENERAL'
+    });
 
-  // Connect directly to ElevenLabs WebSocket with API key
-  const apiKey = process.env.ELEVENLABS_API_KEY;
-  
-  if (!apiKey) {
-    console.error('❌ ELEVENLABS_API_KEY not configured');
-    return res.status(500).send('Server configuration error - ELEVENLABS_API_KEY missing');
-  }
-  
-  // ElevenLabs WebSocket URL with authentication via xi-api-key header
-  const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`;
+    console.log('✅ Got signed URL from ElevenLabs');
 
-  const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Connect>
-        <Stream url="${wsUrl}">
-            <Parameter name="xi-api-key" value="${apiKey}" />
-            <Parameter name="customer_name" value="${customerName || 'Customer'}" />
-            <Parameter name="customer_id" value="${customerId || ''}" />
-            <Parameter name="campaign_type" value="${campaignType || 'GENERAL'}" />
-        </Stream>
+        <Stream url="${signedUrl}" />
     </Connect>
 </Response>`;
 
-  console.log('✅ TwiML generated - connecting to ElevenLabs');
-  
-  res.type('text/xml');
-  res.send(twiml);
+    console.log('✅ TwiML generated - connecting to ElevenLabs');
+    
+    res.type('text/xml');
+    res.send(twiml);
+    
+  } catch (error) {
+    console.error('❌ Error generating TwiML:', error);
+    res.status(500).send('Error generating TwiML');
+  }
 });
 
 /**
