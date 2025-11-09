@@ -102,23 +102,7 @@ router.ws('/media-stream', async (ws, req) => {
           elevenLabsWs.on('open', () => {
             console.log('✅ Connected to ElevenLabs outbound agent');
             console.log(`👤 Customer name for this call: "${customerName}"`);
-            
-            // Try sending client data with conversation override
-            const initMessage = {
-              type: 'conversation_initiation_client_data',
-              conversation_config_override: {
-                agent: {
-                  first_message: `Hi ${customerName}, this is Otto with Vacaville Mitsubishi. I'm reaching out to help schedule your next service appointment. Do you have a quick minute?`,
-                  prompt: {
-                    prompt: `You are Otto, a helpful AI assistant for Vacaville Mitsubishi dealership. You are currently speaking with ${customerName}. Be conversational and use their name naturally.`
-                  }
-                }
-              }
-            };
-            
-            console.log(`📤 Attempting to override first message for: ${customerName}`);
-            console.log('📤 Init message:', JSON.stringify(initMessage, null, 2));
-            elevenLabsWs.send(JSON.stringify(initMessage));
+            // Don't send init message - let ElevenLabs start naturally
           });
 
           // Handle audio from ElevenLabs (AI speaking) → send to Twilio
