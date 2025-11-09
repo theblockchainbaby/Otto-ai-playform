@@ -101,6 +101,22 @@ router.ws('/media-stream', async (ws, req) => {
 
           elevenLabsWs.on('open', () => {
             console.log('✅ Connected to ElevenLabs outbound agent');
+            
+            // Send initialization with custom variables
+            const initMessage = {
+              type: 'conversation_initiation_client_data',
+              conversation_config_override: {
+                agent: {
+                  prompt: {
+                    prompt: `You are Otto, an AI assistant for Vacaville Mitsubishi dealership. You are calling ${customerName}. Use their name naturally in conversation.`
+                  },
+                  first_message: `Hi ${customerName}, this is Otto with Vacaville Mitsubishi. I'm reaching out to help schedule your next service appointment. Do you have a quick minute?`
+                }
+              }
+            };
+            
+            console.log(`📤 Sending custom first message with name: ${customerName}`);
+            elevenLabsWs.send(JSON.stringify(initMessage));
           });
 
           // Handle audio from ElevenLabs (AI speaking) → send to Twilio
