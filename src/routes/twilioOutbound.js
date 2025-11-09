@@ -86,11 +86,15 @@ router.ws('/media-stream', async (ws, req) => {
           console.log(`   Campaign: ${campaignType}`);
 
           // Get signed URL from ElevenLabs with custom variables
+          // Note: Variable names must match exactly what's in the ElevenLabs agent configuration
           const signedUrl = await elevenLabsService.getOutboundSignedUrl({
-            customer_name: customerName,
+            'Customer Name': customerName,
+            'Dealership Name': 'Vacaville Mitsubishi',
             customer_id: customerId,
             campaign_type: campaignType
           });
+          
+          console.log(`✅ Got signed URL with variables: Customer Name="${customerName}"`);
 
           // Connect to ElevenLabs
           elevenLabsWs = new WebSocket(signedUrl);
