@@ -49,19 +49,32 @@ class ElevenLabsOutboundService {
    */
   async getOutboundSignedUrl(customVariables = {}) {
     try {
+      // ElevenLabs expects variables in a specific format
+      const params = {
+        agent_id: this.outboundAgentId
+      };
+      
+      // Add custom variables with exact key names
+      if (customVariables['Customer Name']) {
+        params['Customer Name'] = customVariables['Customer Name'];
+      }
+      if (customVariables['Dealership Name']) {
+        params['Dealership Name'] = customVariables['Dealership Name'];
+      }
+      
+      console.log('🔧 Requesting signed URL with params:', params);
+      
       const response = await axios.get(
         `${this.apiBase}/convai/conversation/get_signed_url`,
         {
-          params: {
-            agent_id: this.outboundAgentId,
-            ...customVariables
-          },
+          params,
           headers: {
             'xi-api-key': this.apiKey
           }
         }
       );
 
+      console.log('✅ Got signed URL with variables embedded');
       return response.data.signed_url;
     } catch (error) {
       console.error('❌ Error getting signed URL:', error.response?.data || error.message);
