@@ -748,13 +748,19 @@ router.post('/outbound/call-now', async (req, res) => {
     }
 
     console.log(`📞 Making immediate call to ${customerName} at ${phone}`);
+    console.log(`🔑 Using Twilio SID: ${process.env.TWILIO_ACCOUNT_SID?.substring(0, 10)}...`);
+    console.log(`🔑 Auth Token present: ${!!process.env.TWILIO_AUTH_TOKEN}`);
+    console.log(`📱 From number: ${process.env.TWILIO_OUTBOUND_NUMBER || process.env.TWILIO_PHONE_NUMBER}`);
 
     // Use Twilio directly for immediate call
     const twilio = require('twilio');
+    console.log('📦 Twilio SDK loaded');
+    
     const client = twilio(
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN
     );
+    console.log('✅ Twilio client created');
 
     const call = await client.calls.create({
       to: phone,
@@ -777,9 +783,16 @@ router.post('/outbound/call-now', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error making call:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      moreInfo: error.moreInfo
+    });
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message || 'Failed to initiate call',
+      details: error.code || error.status
     });
   }
 });
