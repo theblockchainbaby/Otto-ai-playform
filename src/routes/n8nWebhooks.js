@@ -481,6 +481,31 @@ router.get('/otto-status', (req, res) => {
   });
 });
 
+/**
+ * Debug endpoint to check environment variables
+ * GET /api/n8n/debug-env
+ */
+router.get('/debug-env', (req, res) => {
+  res.json({
+    success: true,
+    environment: process.env.NODE_ENV,
+    envVars: {
+      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID ? `${process.env.TWILIO_ACCOUNT_SID.substring(0, 10)}...` : 'MISSING',
+      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN ? 'SET (hidden)' : 'MISSING',
+      TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER || 'MISSING',
+      TWILIO_OUTBOUND_NUMBER: process.env.TWILIO_OUTBOUND_NUMBER || 'MISSING',
+      ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY ? 'SET (hidden)' : 'MISSING',
+      ELEVENLABS_OUTBOUND_AGENT_ID: process.env.ELEVENLABS_OUTBOUND_AGENT_ID || 'MISSING',
+      GOOGLE_SHEETS_CAMPAIGN_ID: process.env.GOOGLE_SHEETS_CAMPAIGN_ID || 'MISSING',
+      BASE_URL: process.env.BASE_URL || 'MISSING'
+    },
+    twilioServiceStatus: {
+      canInitialize: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN),
+      hasOutboundNumber: !!process.env.TWILIO_OUTBOUND_NUMBER
+    }
+  });
+});
+
 // ==================== NEW n8n WORKFLOW ENDPOINTS ====================
 
 /**
