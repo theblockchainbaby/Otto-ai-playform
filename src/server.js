@@ -218,6 +218,15 @@ try {
   console.log('⚠️  Could not load service providers routes:', error.message);
 }
 
+// n8n webhook integration routes
+try {
+  const n8nWebhooksRoutes = require('./routes/n8nWebhooks');
+  app.use('/api/n8n', n8nWebhooksRoutes);
+  console.log('✅ n8n webhook routes loaded');
+} catch (error) {
+  console.log('⚠️  Could not load n8n webhook routes:', error.message);
+}
+
 // API routes
 app.get('/api/status', (req, res) => {
   res.json({
