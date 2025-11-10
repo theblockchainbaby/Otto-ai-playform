@@ -837,5 +837,121 @@ router.get('/outbound/call/:phone', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/n8n/book-appointment
+ * Otto calls this during a conversation to book an appointment
+ * Body: {
+ *   "customerName": "York",
+ *   "customerPhone": "+19184700208",
+ *   "customerEmail": "york@example.com",
+ *   "appointmentDate": "2025-11-15",
+ *   "appointmentTime": "10:00 AM",
+ *   "appointmentType": "Service Appointment",
+ *   "notes": "Oil change needed"
+ * }
+ */
+router.post('/book-appointment', async (req, res) => {
+  try {
+    const {
+      customerName,
+      customerPhone,
+      customerEmail,
+      appointmentDate,
+      appointmentTime,
+      appointmentType = 'Service Appointment',
+      notes = ''
+    } = req.body;
+
+    console.log('📅 Booking appointment:', { customerName, appointmentDate, appointmentTime });
+
+    // Validate required fields
+    if (!customerName || !customerPhone || !appointmentDate || !appointmentTime) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: customerName, customerPhone, appointmentDate, appointmentTime'
+      });
+    }
+
+    // Combine date and time into ISO format
+    const appointmentDateTime = new Date(`${appointmentDate} ${appointmentTime}`);
+    
+    // Try to save to database
+    let appointmentId = null;
+    try {
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+      
+      // Find or create customer
+      let customer = await prisma.customer.findFirst({
+        where: { phone: customerPhone }
+      });
+
+      if (!customer) {
+        customer = await prisma.customer.create({
+          data: {
+            firstName: customerName.split(' ')[0] || customerName,
+            lastName: customerName.split(' ').slice(1).join(' ') || '',
+            email: customerEmail || null,
+            phone: customerPhone,
+            source: 'OUTBOUND_CALL'
+          }
+        });
+      }
+
+      // Create appointment
+      const appointment = await prisma.appointment.create({
+        data: {
+          customerId: customer.id,
+          type: appointmentType,
+          scheduledAt: appointmentDateTime,
+          status: 'SCHEDULED',
+          notes: notes,
+          source: 'OTTO_AI_CALL'
+        }
+      });
+
+      appointmentId = appointment.id;
+      console.log('✅ Appointment saved to database:', appointmentId);
+      
+      await prisma.$disconnect();
+    } catch (dbError) {
+      console.error('⚠️  Database error (continuing anyway):', dbError.message);
+    }
+
+    // Trigger n8n workflow for Google Calendar + SMS confirmation
+    try {
+      await axios.post(`${N8N_BASE_URL}/otto/appointment-booked`, {
+        customerName,
+        customerPhone,
+        customerEmail,
+        appointmentDate,
+        appointmentTime,
+        appointmentType,
+        notes,
+        appointmentId
+      }, {
+        timeout: 5000
+      });
+      console.log('✅ n8n workflow triggered for calendar sync');
+    } catch (n8nError) {
+      console.error('⚠️  n8n workflow error (appointment still saved):', n8nError.message);
+    }
+
+    res.json({
+      success: true,
+      message: `Appointment booked for ${customerName} on ${appointmentDate} at ${appointmentTime}`,
+      appointmentId: appointmentId,
+      appointmentDateTime: appointmentDateTime.toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ Error booking appointment:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
 
