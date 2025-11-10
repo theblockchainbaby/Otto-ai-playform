@@ -784,5 +784,58 @@ router.post('/outbound/call-now', async (req, res) => {
   }
 });
 
+/**
+ * n8n Webhook: Make Single Call (GET with query params - easier for n8n)
+ * GET /api/n8n/outbound/call/:phone?customerName=York&campaignType=SALES_OUTREACH
+ */
+router.get('/outbound/call/:phone', async (req, res) => {
+  try {
+    const { phone } = req.params;
+    const { customerName = 'Customer', campaignType = 'SALES_OUTREACH' } = req.query;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Phone number required'
+      });
+    }
+
+    console.log(`📞 Making immediate call to ${customerName} at ${phone}`);
+
+    // Use Twilio directly for immediate call
+    const twilio = require('twilio');
+    const client = twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN
+    );
+
+    const call = await client.calls.create({
+      to: phone,
+      from: process.env.TWILIO_OUTBOUND_NUMBER || process.env.TWILIO_PHONE_NUMBER,
+      url: `${process.env.BASE_URL}/api/twilio/outbound/twiml?customerName=${encodeURIComponent(customerName)}&campaignType=${campaignType}`,
+      statusCallback: `${process.env.BASE_URL}/api/twilio/outbound/status-callback`,
+      statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
+      timeout: 30
+    });
+
+    console.log(`✅ Call initiated: ${call.sid}`);
+
+    res.json({
+      success: true,
+      callSid: call.sid,
+      to: phone,
+      customerName: customerName,
+      message: 'Call initiated successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error making call:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
 
