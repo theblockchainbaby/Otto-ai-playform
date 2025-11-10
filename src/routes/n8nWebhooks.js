@@ -800,29 +800,28 @@ router.get('/outbound/call/:phone', async (req, res) => {
       });
     }
 
-    console.log(`📞 Making immediate call to ${customerName} at ${phone}`);
-
-    // Use Twilio directly for immediate call
-    const twilio = require('twilio');
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
-
-    const call = await client.calls.create({
-      to: phone,
-      from: process.env.TWILIO_OUTBOUND_NUMBER || process.env.TWILIO_PHONE_NUMBER,
-      url: `${process.env.BASE_URL}/api/twilio/outbound/twiml?customerName=${encodeURIComponent(customerName)}&campaignType=${campaignType}`,
-      statusCallback: `${process.env.BASE_URL}/api/twilio/outbound/status-callback`,
-      statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
-      timeout: 30
+    console.log(`📞 n8n GET request: Making call to ${customerName} at ${phone}`);
+    console.log(`📋 Environment check:`, {
+      hasTwilioSid: !!process.env.TWILIO_ACCOUNT_SID,
+      hasTwilioToken: !!process.env.TWILIO_AUTH_TOKEN,
+      hasOutboundNumber: !!process.env.TWILIO_OUTBOUND_NUMBER,
+      baseUrl: process.env.BASE_URL
     });
 
-    console.log(`✅ Call initiated: ${call.sid}`);
+    // Use the existing Twilio service
+    const result = await twilioService.makeOutboundCall({
+      toNumber: phone,
+      customerName: customerName,
+      customerId: `n8n-${Date.now()}`,
+      campaignType: campaignType,
+      recordCall: true
+    });
+
+    console.log(`✅ Call initiated via service: ${result.callSid}`);
 
     res.json({
       success: true,
-      callSid: call.sid,
+      callSid: result.callSid,
       to: phone,
       customerName: customerName,
       message: 'Call initiated successfully'
@@ -830,9 +829,11 @@ router.get('/outbound/call/:phone', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error making call:', error);
+    console.error('❌ Error stack:', error.stack);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
+      details: error.stack
     });
   }
 });
