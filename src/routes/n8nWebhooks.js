@@ -348,7 +348,12 @@ router.get('/health', async (req, res) => {
 // ==================== OUTBOUND CAMPAIGN WEBHOOKS ====================
 
 const OutboundCampaignService = require('../services/outboundCampaignService');
+const GoogleSheetsService = require('../services/googleSheetsService');
+const TwilioOutboundService = require('../services/twilioOutboundService');
+
 const campaignService = new OutboundCampaignService();
+const googleSheetsService = new GoogleSheetsService();
+const twilioService = new TwilioOutboundService();
 
 /**
  * Webhook to trigger outbound campaign from n8n
@@ -473,6 +478,231 @@ router.get('/otto-status', (req, res) => {
     },
     message: 'Otto outbound calling system is ready'
   });
+});
+
+// ==================== NEW n8n WORKFLOW ENDPOINTS ====================
+
+/**
+ * n8n Webhook: Get Contacts from Google Sheets
+ * GET /api/n8n/outbound/contacts
+ */
+router.get('/outbound/contacts', async (req, res) => {
+  try {
+    const { sheetName = 'Sheet1' } = req.query;
+
+    console.log(`📊 n8n requesting contacts from sheet: ${sheetName}`);
+    
+    const contacts = await googleSheetsService.getCampaignContacts(sheetName);
+
+    res.json({
+      success: true,
+      count: contacts.length,
+      contacts: contacts.map(c => ({
+        name: c.name,
+        phone: c.phone,
+        email: c.email || '',
+        status: c.status || 'PENDING'
+      }))
+    });
+
+  } catch (error) {
+    console.error('❌ Error loading contacts:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * n8n Webhook: Start Outbound Campaign
+ * POST /api/n8n/outbound/start-campaign
+ * 
+ * Expected payload:
+ * {
+ *   "campaignName": "Daily Sales Outreach",
+ *   "campaignType": "SALES_OUTREACH",
+ *   "sheetName": "Sheet1",
+ *   "delayBetweenCalls": 30,
+ *   "dealershipName": "Sacramento CDJR"
+ * }
+ */
+router.post('/outbound/start-campaign', async (req, res) => {
+  try {
+    const {
+      campaignName,
+      campaignType = 'SALES_OUTREACH',
+      sheetName = 'Sheet1',
+      delayBetweenCalls = 30,
+      dealershipName = 'Vacaville Mitsubishi'
+    } = req.body;
+
+    console.log('📞 n8n triggered outbound campaign:', campaignName);
+    console.log('📊 Loading contacts from Google Sheets...');
+
+    // Load contacts from Google Sheets
+    const contacts = await googleSheetsService.getCampaignContacts(sheetName);
+
+    if (!contacts || contacts.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No contacts found in Google Sheet'
+      });
+    }
+
+    console.log(`✅ Loaded ${contacts.length} contacts from Google Sheets`);
+
+    // Create campaign in database
+    const campaign = await campaignService.createCampaign({
+      name: campaignName,
+      type: campaignType,
+      contactCount: contacts.length,
+      status: 'RUNNING'
+    });
+
+    console.log(`✅ Created campaign: ${campaign.id}`);
+
+    // Start calling contacts asynchronously (don't block response)
+    setImmediate(async () => {
+      try {
+        let successCount = 0;
+        let failCount = 0;
+
+        for (let i = 0; i < contacts.length; i++) {
+          const contact = contacts[i];
+          
+          console.log(`\n[${i + 1}/${contacts.length}] Calling ${contact.name} at ${contact.phone}...`);
+          
+          try {
+            const result = await twilioService.makeOutboundCall({
+              toNumber: contact.phone,
+              customerName: contact.name,
+              customerId: `campaign-${campaign.id}-${i}`,
+              campaignType: campaignType,
+              recordCall: true
+            });
+            
+            console.log(`   ✅ Call initiated: ${result.callSid}`);
+            successCount++;
+            
+            // Wait before next call (except for last contact)
+            if (i < contacts.length - 1) {
+              console.log(`   ⏳ Waiting ${delayBetweenCalls} seconds before next call...`);
+              await new Promise(resolve => setTimeout(resolve, delayBetweenCalls * 1000));
+            }
+            
+          } catch (error) {
+            console.error(`   ❌ Failed: ${error.message}`);
+            failCount++;
+          }
+        }
+
+        // Update campaign status
+        await campaignService.updateCampaignStatus(campaign.id, {
+          status: 'COMPLETED',
+          successfulCalls: successCount,
+          failedCalls: failCount,
+          completedAt: new Date()
+        });
+
+        console.log('\n📊 Campaign Complete!');
+        console.log(`✅ Successful: ${successCount}`);
+        console.log(`❌ Failed: ${failCount}`);
+        
+      } catch (error) {
+        console.error('❌ Campaign execution error:', error);
+        await campaignService.updateCampaignStatus(campaign.id, {
+          status: 'FAILED'
+        });
+      }
+    });
+
+    // Return immediately with campaign ID
+    res.json({
+      success: true,
+      campaignId: campaign.id,
+      campaignName: campaign.name,
+      contactCount: contacts.length,
+      status: 'STARTED',
+      message: `Campaign started with ${contacts.length} contacts`
+    });
+
+  } catch (error) {
+    console.error('❌ Error starting campaign:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * n8n Webhook: Get Campaign Status
+ * GET /api/n8n/outbound/campaign-status/:campaignId
+ */
+router.get('/outbound/campaign-status/:campaignId', async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+
+    const campaign = await campaignService.getCampaignStatus(campaignId);
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      campaign: {
+        id: campaign.id,
+        name: campaign.name,
+        type: campaign.type,
+        status: campaign.status,
+        totalCalls: campaign.contactCount || 0,
+        completedCalls: (campaign.successfulCalls || 0) + (campaign.failedCalls || 0),
+        successfulCalls: campaign.successfulCalls || 0,
+        failedCalls: campaign.failedCalls || 0,
+        startedAt: campaign.createdAt,
+        completedAt: campaign.completedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error getting campaign status:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * n8n Webhook: Stop Campaign
+ * POST /api/n8n/outbound/stop-campaign/:campaignId
+ */
+router.post('/outbound/stop-campaign/:campaignId', async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+
+    await campaignService.updateCampaignStatus(campaignId, {
+      status: 'STOPPED'
+    });
+
+    res.json({
+      success: true,
+      message: 'Campaign stopped',
+      campaignId
+    });
+
+  } catch (error) {
+    console.error('❌ Error stopping campaign:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 module.exports = router;

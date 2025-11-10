@@ -1,0 +1,266 @@
+{
+  "name": "Otto Outbound - Daily Sales Campaign",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily-9am",
+      "name": "Schedule: Every Weekday 9 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ottoagent.net/api/n8n/outbound/contacts",
+        "options": {}
+      },
+      "id": "load-contacts",
+      "name": "Load Google Sheets Contacts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.count }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "check-has-contacts",
+      "name": "Has Contacts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ottoagent.net/api/n8n/outbound/start-campaign",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"campaignName\": \"Daily Sales Outreach - {{ $now.format('YYYY-MM-DD') }}\",\n  \"campaignType\": \"SALES_OUTREACH\",\n  \"sheetName\": \"Sheet1\",\n  \"delayBetweenCalls\": 30,\n  \"dealershipName\": \"Sacramento CDJR\"\n}",
+        "options": {}
+      },
+      "id": "start-campaign",
+      "name": "Start Otto Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "id": "wait-60-seconds",
+      "name": "Wait 60 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1130, 200],
+      "webhookId": "wait-campaign-progress"
+    },
+    {
+      "parameters": {
+        "url": "=https://ottoagent.net/api/n8n/outbound/campaign-status/{{ $json.campaignId }}",
+        "options": {}
+      },
+      "id": "check-status",
+      "name": "Check Campaign Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.campaign.status }}",
+              "value2": "COMPLETED"
+            }
+          ]
+        }
+      },
+      "id": "is-completed",
+      "name": "Campaign Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1570, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract campaign results\nconst campaign = $input.first().json.campaign;\n\nreturn {\n  json: {\n    campaignName: campaign.name,\n    date: new Date().toISOString().split('T')[0],\n    totalCalls: campaign.totalCalls,\n    successful: campaign.successfulCalls,\n    failed: campaign.failedCalls,\n    successRate: ((campaign.successfulCalls / campaign.totalCalls) * 100).toFixed(1) + '%',\n    status: campaign.status\n  }\n};"
+      },
+      "id": "format-results",
+      "name": "Format Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1790, 100]
+    },
+    {
+      "parameters": {
+        "content": "=## 📞 Otto Campaign Complete\n\n**Campaign:** {{ $json.campaignName }}\n**Date:** {{ $json.date }}\n**Status:** ✅ {{ $json.status }}\n\n### Results\n- Total Calls: {{ $json.totalCalls }}\n- Successful: {{ $json.successful }}\n- Failed: {{ $json.failed }}\n- Success Rate: {{ $json.successRate }}\n\n---\nView details at https://ottoagent.net/dashboard",
+        "options": {}
+      },
+      "id": "send-notification",
+      "name": "Send Notification",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [2010, 100]
+    },
+    {
+      "parameters": {},
+      "id": "no-contacts",
+      "name": "No Contacts - Skip",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [910, 400]
+    }
+  ],
+  "connections": {
+    "Schedule: Every Weekday 9 AM": {
+      "main": [
+        [
+          {
+            "node": "Load Google Sheets Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Google Sheets Contacts": {
+      "main": [
+        [
+          {
+            "node": "Has Contacts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Contacts?": {
+      "main": [
+        [
+          {
+            "node": "Start Otto Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Contacts - Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Otto Campaign": {
+      "main": [
+        [
+          {
+            "node": "Wait 60 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Check Campaign Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Campaign Status": {
+      "main": [
+        [
+          {
+            "node": "Campaign Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Campaign Complete?": {
+      "main": [
+        [
+          {
+            "node": "Format Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Results": {
+      "main": [
+        [
+          {
+            "node": "Send Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "otto",
+      "id": "otto-outbound"
+    },
+    {
+      "name": "sales",
+      "id": "sales-campaign"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-09T00:00:00.000Z",
+  "versionId": "1"
+}
