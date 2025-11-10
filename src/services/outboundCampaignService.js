@@ -71,8 +71,12 @@ class OutboundCampaignService {
         contactsFailed: 0
       });
 
-      // Start calling contacts
-      this.runCampaign(campaign.id, contacts, campaignConfig);
+      // Start calling contacts immediately (synchronous execution)
+      // This ensures calls happen even on serverless platforms like Render
+      console.log('📞 Starting immediate call execution for campaign:', campaign.id);
+      this.runCampaign(campaign.id, contacts, campaignConfig).catch(err => {
+        console.error('❌ Campaign execution error:', err);
+      });
 
       return {
         success: true,
