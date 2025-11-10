@@ -36,17 +36,30 @@ class OutboundCampaignService {
         throw new Error('No callable contacts found in Google Sheets');
       }
 
-      // Create campaign in database
-      const campaign = await this.sheetsService.createCampaignInDatabase({
-        name: campaignConfig.name,
-        type: campaignConfig.type || 'APPOINTMENT_REMINDER',
-        dealershipId: campaignConfig.dealershipId,
-        totalContacts: contacts.length,
-        delaySeconds: campaignConfig.delayBetweenCalls || 30,
-        callDuringHours: campaignConfig.callDuringHours,
-        maxAttempts: campaignConfig.maxAttempts || 3,
-        recordCalls: campaignConfig.recordCalls
-      });
+      // Create campaign in database (or use in-memory if DB unavailable)
+      let campaign;
+      try {
+        campaign = await this.sheetsService.createCampaignInDatabase({
+          name: campaignConfig.name,
+          type: campaignConfig.type || 'APPOINTMENT_REMINDER',
+          dealershipId: campaignConfig.dealershipId,
+          totalContacts: contacts.length,
+          delaySeconds: campaignConfig.delayBetweenCalls || 30,
+          callDuringHours: campaignConfig.callDuringHours,
+          maxAttempts: campaignConfig.maxAttempts || 3,
+          recordCalls: campaignConfig.recordCalls
+        });
+      } catch (dbError) {
+        console.warn('⚠️ Database unavailable, using in-memory campaign:', dbError.message);
+        // Create in-memory campaign if database fails
+        campaign = {
+          id: `campaign-${Date.now()}`,
+          name: campaignConfig.name,
+          type: campaignConfig.type || 'APPOINTMENT_REMINDER',
+          status: 'RUNNING',
+          createdAt: new Date()
+        };
+      }
 
       // Store active campaign
       this.activeCampaigns.set(campaign.id, {
@@ -158,16 +171,20 @@ class OutboundCampaignService {
     campaignState.status = 'COMPLETED';
     campaignState.completedAt = new Date();
 
-    await prisma.outboundCampaign.update({
-      where: { id: campaignId },
-      data: {
-        status: 'COMPLETED',
-        completedAt: new Date(),
-        contactsCalled: campaignState.contactsCalled,
-        contactsCompleted: campaignState.contactsCompleted,
-        contactsFailed: campaignState.contactsFailed
-      }
-    });
+    try {
+      await prisma.outboundCampaign.update({
+        where: { id: campaignId },
+        data: {
+          status: 'COMPLETED',
+          completedAt: new Date(),
+          contactsCalled: campaignState.contactsCalled,
+          contactsCompleted: campaignState.contactsCompleted,
+          contactsFailed: campaignState.contactsFailed
+        }
+      });
+    } catch (dbError) {
+      console.warn('⚠️ Could not update campaign in database:', dbError.message);
+    }
 
     console.log('✅ Campaign completed:', campaignId);
   }
@@ -180,10 +197,14 @@ class OutboundCampaignService {
     if (campaign) {
       campaign.status = 'STOPPED';
       
-      await prisma.outboundCampaign.update({
-        where: { id: campaignId },
-        data: { status: 'STOPPED' }
-      });
+      try {
+        await prisma.outboundCampaign.update({
+          where: { id: campaignId },
+          data: { status: 'STOPPED' }
+        });
+      } catch (dbError) {
+        console.warn('⚠️ Could not update campaign stop status in database:', dbError.message);
+      }
 
       return { success: true, message: 'Campaign stopped' };
     }
