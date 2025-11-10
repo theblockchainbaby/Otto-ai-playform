@@ -30,3 +30,13 @@ services:
         value: https://ottoagent.net
       - key: BASE_URL
         value: https://ottoagent.net
+      - key: N8N_WEBHOOK_URL
+        sync: false
+      - key: ELEVENLABS_OUTBOUND_AGENT_ID
+        sync: false
+      - key: TWILIO_OUTBOUND_NUMBER
+        sync: false
+      - key: GOOGLE_SHEETS_CAMPAIGN_ID
+        sync: false
+      - key: GOOGLE_SHEETS_CREDENTIALS
+        sync: false
