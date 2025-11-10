@@ -6,7 +6,8 @@ const axios = require('axios');
  * n8n Webhook Integration Routes
  * 
  * These endpoints trigger n8n workflows for automation tasks that Otto AI
- * cannot perform directly (appointment booking, follow-ups, etc.)
+ * cannot perform directly (appointment booking, follow-ups, outbound campaigns, etc.)
+ * Last updated: November 9, 2025
  */
 
 // n8n instance URL (configure in environment variables)
