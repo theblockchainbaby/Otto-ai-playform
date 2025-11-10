@@ -490,14 +490,20 @@ router.get('/debug-env', (req, res) => {
     success: true,
     environment: process.env.NODE_ENV,
     envVars: {
-      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID ? `${process.env.TWILIO_ACCOUNT_SID.substring(0, 10)}...` : 'MISSING',
-      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN ? 'SET (hidden)' : 'MISSING',
+      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID ? `${process.env.TWILIO_ACCOUNT_SID.substring(0, 10)}... (length: ${process.env.TWILIO_ACCOUNT_SID.length})` : 'MISSING',
+      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN ? `SET (length: ${process.env.TWILIO_AUTH_TOKEN.length})` : 'MISSING',
       TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER || 'MISSING',
       TWILIO_OUTBOUND_NUMBER: process.env.TWILIO_OUTBOUND_NUMBER || 'MISSING',
       ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY ? 'SET (hidden)' : 'MISSING',
       ELEVENLABS_OUTBOUND_AGENT_ID: process.env.ELEVENLABS_OUTBOUND_AGENT_ID || 'MISSING',
       GOOGLE_SHEETS_CAMPAIGN_ID: process.env.GOOGLE_SHEETS_CAMPAIGN_ID || 'MISSING',
       BASE_URL: process.env.BASE_URL || 'MISSING'
+    },
+    credentialLengths: {
+      sidLength: process.env.TWILIO_ACCOUNT_SID?.length || 0,
+      tokenLength: process.env.TWILIO_AUTH_TOKEN?.length || 0,
+      sidValid: process.env.TWILIO_ACCOUNT_SID?.startsWith('AC') && process.env.TWILIO_ACCOUNT_SID?.length === 34,
+      tokenValid: process.env.TWILIO_AUTH_TOKEN?.length === 32
     },
     twilioServiceStatus: {
       canInitialize: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN),
