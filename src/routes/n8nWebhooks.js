@@ -839,7 +839,14 @@ router.get('/outbound/call/:phone', async (req, res) => {
 
 /**
  * POST /api/n8n/book-appointment
- * Otto calls this during a conversation to book an appointment
+ * Otto AI calls this during a live conversation to book an appointment
+ *
+ * Flow:
+ * 1. Otto AI (during call) → POST /api/n8n/book-appointment
+ * 2. This endpoint saves to database
+ * 3. This endpoint triggers n8n Flow 2 webhook
+ * 4. n8n creates Google Calendar event + sends SMS confirmation
+ *
  * Body: {
  *   "customerName": "York",
  *   "customerPhone": "+19184700208",
@@ -875,7 +882,29 @@ router.post('/book-appointment', async (req, res) => {
     // Combine date and time into ISO format
     const appointmentDateTime = new Date(`${appointmentDate} ${appointmentTime}`);
     
-    // Try to save to database
+    // ALWAYS trigger n8n workflow FIRST (before database)
+    // This ensures Google Calendar + SMS work even if database is down
+    let n8nSuccess = false;
+    try {
+      await axios.post('https://dualpay.app.n8n.cloud/webhook/book-appointment', {
+        customerName,
+        customerPhone,
+        customerEmail,
+        appointmentDate,
+        appointmentTime,
+        appointmentType,
+        notes,
+        appointmentDateTime: appointmentDateTime.toISOString()
+      }, {
+        timeout: 5000
+      });
+      console.log('✅ n8n workflow triggered for calendar sync');
+      n8nSuccess = true;
+    } catch (n8nError) {
+      console.error('⚠️  n8n workflow error:', n8nError.message);
+    }
+    
+    // Try to save to database (optional, non-blocking)
     let appointmentId = null;
     try {
       const { PrismaClient } = require('@prisma/client');
@@ -915,33 +944,16 @@ router.post('/book-appointment', async (req, res) => {
       
       await prisma.$disconnect();
     } catch (dbError) {
-      console.error('⚠️  Database error (continuing anyway):', dbError.message);
-    }
-
-    // Trigger n8n workflow for Google Calendar + SMS confirmation
-    try {
-      await axios.post(`${N8N_BASE_URL}/otto/appointment-booked`, {
-        customerName,
-        customerPhone,
-        customerEmail,
-        appointmentDate,
-        appointmentTime,
-        appointmentType,
-        notes,
-        appointmentId
-      }, {
-        timeout: 5000
-      });
-      console.log('✅ n8n workflow triggered for calendar sync');
-    } catch (n8nError) {
-      console.error('⚠️  n8n workflow error (appointment still saved):', n8nError.message);
+      console.error('⚠️  Database error (n8n already triggered, continuing anyway):', dbError.message);
     }
 
     res.json({
       success: true,
       message: `Appointment booked for ${customerName} on ${appointmentDate} at ${appointmentTime}`,
       appointmentId: appointmentId,
-      appointmentDateTime: appointmentDateTime.toISOString()
+      appointmentDateTime: appointmentDateTime.toISOString(),
+      n8nTriggered: n8nSuccess,
+      databaseSaved: appointmentId !== null
     });
 
   } catch (error) {
