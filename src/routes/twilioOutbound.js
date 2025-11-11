@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
 const OutboundCampaignService = require('../services/outboundCampaignService');
 const ElevenLabsOutboundService = require('../services/elevenLabsOutboundService');
 const WebSocket = require('ws');
+
+const prisma = new PrismaClient();
 
 const campaignService = new OutboundCampaignService();
 const elevenLabsService = new ElevenLabsOutboundService(
@@ -126,11 +129,11 @@ router.ws('/media-stream', async (ws, req) => {
                 ws.send(JSON.stringify(twilioMessage));
               }
 
-              if (message.type === 'user_transcript') {
+              if (message.type === 'user_transcript' && message.user_transcript?.transcript) {
                 console.log(`👤 Customer: ${message.user_transcript.transcript}`);
               }
 
-              if (message.type === 'agent_response') {
+              if (message.type === 'agent_response' && message.agent_response?.response) {
                 console.log(`🤖 Otto: ${message.agent_response.response}`);
               }
 
