@@ -36,6 +36,44 @@ const integrationPartners = [
 
 export default function OttoLandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([
+    { role: 'assistant', content: "Hi, I'm Otto! Ask me anything about pricing, features, or how we can help your business." },
+  ]);
+
+  async function handleSend(e: React.FormEvent) {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMsg = { role: 'user' as const, content: chatInput.trim() };
+    setChatMessages(prev => [...prev, userMsg]);
+    setChatInput('');
+    setIsChatLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...chatMessages, userMsg] }),
+      });
+
+      if (!res.ok) throw new Error('Chat request failed');
+
+      const data = await res.json();
+      const reply = data.reply || data.message || 'Sorry, I could not generate a response.';
+      setChatMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+    } catch (err) {
+      console.error(err);
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, something went wrong. Please try again or call us at (888) 411-8568.' },
+      ]);
+    } finally {
+      setIsChatLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900">
@@ -559,6 +597,75 @@ export default function OttoLandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Chatbot Widget */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          type="button"
+          onClick={() => setIsChatOpen(prev => !prev)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all hover:shadow-xl"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span className="font-semibold">Chat with Otto</span>
+          <ChevronDownIcon
+            className={`w-4 h-4 transition-transform ${isChatOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        {isChatOpen && (
+          <div className="mt-3 w-80 h-96 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col animate-in slide-in-from-bottom-4 duration-300">
+            <div className="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-2xl">
+              <p className="text-sm font-semibold text-white">Otto AI Assistant</p>
+              <p className="text-xs text-blue-100">Ask anything about Otto or book a demo</p>
+            </div>
+            <div className="flex-1 px-4 py-3 space-y-3 overflow-y-auto text-sm">
+              {chatMessages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`max-w-[80%] px-3 py-2 rounded-lg ${
+                    m.role === 'assistant'
+                      ? 'bg-slate-100 text-slate-800'
+                      : 'ml-auto bg-blue-600 text-white'
+                  }`}
+                >
+                  {m.content}
+                </div>
+              ))}
+              {isChatLoading && (
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span>Otto is thinking...</span>
+                </div>
+              )}
+            </div>
+            <form
+              onSubmit={handleSend}
+              className="px-4 py-3 border-t border-slate-200 flex gap-2"
+            >
+              <input
+                className="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Ask a question…"
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                disabled={isChatLoading}
+              />
+              <button
+                type="submit"
+                disabled={isChatLoading || !chatInput.trim()}
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+              >
+                Send
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
