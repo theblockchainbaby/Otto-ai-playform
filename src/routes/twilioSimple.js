@@ -1,74 +1,71 @@
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const express = require("express");
+const { PrismaClient } = require("@prisma/client");
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 // POST /api/twilio/voice - Simple endpoint that connects directly to ElevenLabs Otto
-router.post('/voice', async (req, res) => {
+router.post("/voice", async (req, res) => {
   try {
     const { From, To, CallSid } = req.body;
-    console.log('Incoming call to Otto:', { From, To, CallSid });
+    console.log("Incoming call to Otto:", { From, To, CallSid });
 
     // Log call to database (simple version)
     try {
       // Look up customer by phone number
       const customer = await prisma.customer.findFirst({
-        where: { phone: From }
+        where: { phone: From },
       });
 
       // Create call record
       if (customer) {
         await prisma.call.create({
           data: {
-            direction: 'INBOUND',
-            status: 'RINGING',
-            outcome: 'Otto AI Agent',
+            direction: "INBOUND",
+            status: "RINGING",
+            outcome: "Otto AI Agent",
             startedAt: new Date(),
             customerId: customer.id,
-            notes: `Twilio CallSid: ${CallSid}`
-          }
+            notes: `Twilio CallSid: ${CallSid}`,
+          },
         });
       }
     } catch (dbError) {
-      console.error('Database error (non-fatal):', dbError);
+      console.error("Database error (non-fatal):", dbError);
       // Continue even if database fails
     }
 
-    // Generate TwiML that connects directly to ElevenLabs Otto agent
-    const twilio = require('twilio');
+    // Generate TwiML that connects to backend media stream (which handles ElevenLabs)
+    const twilio = require("twilio");
     const twiml = new twilio.twiml.VoiceResponse();
 
-    // Connect to ElevenLabs Conversational AI
+    // Get the host from environment or request
+    const host =
+      process.env.BASE_URL?.replace("https://", "").replace("http://", "") ||
+      req.get("host");
+    const wsProtocol = process.env.NODE_ENV === "production" ? "wss" : "ws";
+
+    // Connect to local media stream handler (bidirectional)
     const connect = twiml.connect();
     const stream = connect.stream({
-      url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+      url: `${wsProtocol}://${host}/api/twilio/media-stream`,
     });
 
-    // Configure Otto agent
-    stream.parameter({
-      name: 'agent_id',
-      value: 'agent_2201k8q07eheexe8j4vkt0b9vecb'
-    });
-    stream.parameter({
-      name: 'authorization',
-      value: `Bearer ${process.env.ELEVENLABS_API_KEY}`
-    });
-
-    res.type('text/xml');
+    res.type("text/xml");
     res.send(twiml.toString());
   } catch (error) {
-    console.error('Error connecting to Otto:', error);
+    console.error("Error connecting to Otto:", error);
 
     // Fallback
-    const twilio = require('twilio');
+    const twilio = require("twilio");
     const twiml = new twilio.twiml.VoiceResponse();
-    twiml.say('Hello, this is Otto from AutoLux. We are experiencing technical difficulties. Please call back shortly.');
+    twiml.say(
+      "Hello, this is Caipher. We are experiencing technical difficulties. Please call back shortly."
+    );
 
-    res.type('text/xml');
+    res.type("text/xml");
     res.send(twiml.toString());
   }
 });
 
 module.exports = router;
-

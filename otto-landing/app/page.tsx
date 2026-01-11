@@ -186,9 +186,9 @@ export default function OttoLandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-950 font-sans text-white">
       {/* Sticky Navbar */}
-      <nav className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200">
+      <nav className="sticky top-0 z-50 w-full bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex-shrink-0 flex items-center">
@@ -200,8 +200,8 @@ export default function OttoLandingPage() {
                   mixBlendMode: "darken",
                 }}
               />
-              <span className="text-3xl font-bold text-slate-900 tracking-tight -ml-2">
-                OttoAI
+              <span className="text-3xl font-bold text-white tracking-tight -ml-2">
+                Otto AI
               </span>
             </div>
 
@@ -209,31 +209,31 @@ export default function OttoLandingPage() {
             <div className="hidden md:flex space-x-8 items-center">
               <a
                 href="#solutions"
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                className="text-slate-300 hover:text-white font-medium transition-colors"
               >
                 Solutions
               </a>
               <a
                 href="#how-it-works"
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                className="text-slate-300 hover:text-white font-medium transition-colors"
               >
                 How it Works
               </a>
               <a
                 href="#industries"
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                className="text-slate-300 hover:text-white font-medium transition-colors"
               >
                 Industries
               </a>
               <a
                 href="#pricing"
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                className="text-slate-300 hover:text-white font-medium transition-colors"
               >
                 Pricing
               </a>
               <a
                 href="#faq"
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                className="text-slate-300 hover:text-white font-medium transition-colors"
               >
                 FAQs
               </a>
@@ -244,7 +244,7 @@ export default function OttoLandingPage() {
                 href="https://calendly.com/yorksims/30min"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow-md"
+                className="bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md"
               >
                 Book a Demo
               </a>
@@ -254,7 +254,7 @@ export default function OttoLandingPage() {
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-slate-600 hover:text-slate-900"
+                className="text-slate-300 hover:text-white"
               >
                 <MenuIcon className="w-6 h-6" />
               </button>
@@ -264,27 +264,27 @@ export default function OttoLandingPage() {
 
         {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3">
-            <a href="#solutions" className="block text-slate-600 font-medium">
+          <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-3">
+            <a href="#solutions" className="block text-slate-300 font-medium">
               Solutions
             </a>
             <a
               href="#how-it-works"
-              className="block text-slate-600 font-medium"
+              className="block text-slate-300 font-medium"
             >
               How it Works
             </a>
-            <a href="#industries" className="block text-slate-600 font-medium">
+            <a href="#industries" className="block text-slate-300 font-medium">
               Industries
             </a>
-            <a href="#pricing" className="block text-slate-600 font-medium">
+            <a href="#pricing" className="block text-slate-300 font-medium">
               Pricing
             </a>
             <a
               href="https://calendly.com/yorksims/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold text-center"
+              className="block w-full bg-yellow-500 text-slate-900 px-5 py-3 rounded-lg font-bold text-center"
             >
               Book a Demo
             </a>
@@ -293,34 +293,32 @@ export default function OttoLandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-24 lg:pt-32 lg:pb-40 overflow-hidden">
+      <section className="relative pt-20 pb-24 lg:pt-32 lg:pb-40 overflow-hidden bg-gradient-to-b from-slate-950 via-indigo-950/30 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="max-w-2xl">
-              <h1 className="text-4xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-6">
-                Never Miss Another <span className="text-blue-600">Call</span>{" "}
-                or <span className="text-blue-600">Lead</span> Again.
+              <div className="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-4">REPLACE YOUR CALL CENTER WITH AI</div>
+              <h1 className="text-4xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] mb-6">
+                Answers Every Call. Books Appointments. <span className="text-yellow-500">Automatically.</span>
               </h1>
-              <p className="text-lg lg:text-xl text-slate-600 mb-8 leading-relaxed">
-                OttoAI answers every call, qualifies every lead, and books
-                appointments directly to your calendar—24/7, without adding
-                staff.
+              <p className="text-lg lg:text-xl text-slate-300 mb-8 leading-relaxed">
+                Stop missing calls. Stop losing leads. Otto handles every customer interaction 24/7—no human required.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <a
                   href="https://calendly.com/yorksims/30min"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-500/25 flex items-center justify-center"
+                  className="bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-yellow-500/25 flex items-center justify-center"
                 >
                   Book a Demo
                 </a>
-                <button className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2">
-                  <PlayIcon className="w-5 h-5 fill-slate-700" />
-                  2-Minute Overview
+                <button className="bg-transparent hover:bg-slate-800 text-white border-2 border-slate-700 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2">
+                  <PlayIcon className="w-5 h-5" />
+                  Start Free Trial
                 </button>
               </div>
-              <div className="text-sm text-slate-500 font-medium flex items-center gap-2">
+              <div className="text-sm text-slate-400 font-medium flex items-center gap-2">
                 <span className="flex -space-x-2">
                   <div className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white"></div>
                   <div className="w-6 h-6 rounded-full bg-slate-300 border-2 border-white"></div>
@@ -466,7 +464,7 @@ export default function OttoLandingPage() {
                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-4">
                   <feature.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                <h3 className="text-xl font-bold text-slate-900 mb-2 whitespace-nowrap">
                   {feature.title}
                 </h3>
                 <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
@@ -749,9 +747,8 @@ export default function OttoLandingPage() {
             {/* Starter */}
             <div className="border border-slate-200 rounded-2xl p-8">
               <h3 className="text-xl font-bold text-slate-900 mb-2">Starter</h3>
-              <div className="text-4xl font-extrabold text-slate-900 mb-6">
-                $1,499
-                <span className="text-lg font-normal text-slate-500">/mo</span>
+              <div className="text-2xl font-bold text-slate-900 mb-6">
+                Custom Pricing
               </div>
               <ul className="space-y-4 mb-8">
                 {[
@@ -785,9 +782,8 @@ export default function OttoLandingPage() {
                 Most Popular
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">Growth</h3>
-              <div className="text-4xl font-extrabold text-slate-900 mb-6">
-                $2,499
-                <span className="text-lg font-normal text-slate-500">/mo</span>
+              <div className="text-2xl font-bold text-slate-900 mb-6">
+                Custom Pricing
               </div>
               <ul className="space-y-4 mb-8">
                 {[
@@ -1143,8 +1139,7 @@ export default function OttoLandingPage() {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
+            className="w-8 h-8"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

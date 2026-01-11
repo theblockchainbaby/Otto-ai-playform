@@ -1108,7 +1108,7 @@
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#otto">Otto AI</a></li>
-                <li><a href="#pricing">Pricing</a></li>
+                <!-- <li><a href="#pricing">Pricing</a></li> -->
                 <li><a href="/contact.html">Contact</a></li>
             </ul>
             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -1122,7 +1122,7 @@
             <div class="mobile-menu" id="mobileMenu">
                 <a href="#features" onclick="closeMobileMenu()">Features</a>
                 <a href="#otto" onclick="closeMobileMenu()">Otto AI</a>
-                <a href="#pricing" onclick="closeMobileMenu()">Pricing</a>
+                <!-- <a href="#pricing" onclick="closeMobileMenu()">Pricing</a> -->
                 <a href="/contact.html" onclick="closeMobileMenu()">Contact</a>
                 <a href="#demo-form" onclick="closeMobileMenu()">Book a Demo</a>
             </div>
@@ -1171,11 +1171,13 @@
                     <p>Call Coverage</p>
                     <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; display: block; margin-top: 0.5rem;">Zero missed opportunities</span>
                 </div>
+                <!--
                 <div class="stat-item">
                     <h3>$299</h3>
                     <p>Per Month</p>
                     <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; display: block; margin-top: 0.5rem;">vs. $3,500+ for receptionist</span>
                 </div>
+                -->
             </div>
             <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--card-border);">
                 <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic;">
@@ -1443,7 +1445,8 @@
         </div>
     </section>
 
-    <!-- ROI Section -->
+    <!-- ROI Section (Hidden) -->
+    <!--
     <section class="roi-section" style="background: linear-gradient(135deg, rgba(255, 210, 55, 0.1) 0%, rgba(255, 210, 55, 0.05) 100%); padding: 4rem 0; margin: 4rem 0;">
         <div class="container">
             <div style="max-width: 900px; margin: 0 auto; text-align: center;">
@@ -1479,8 +1482,10 @@
             </div>
         </div>
     </section>
+    -->
 
-    <!-- Pricing Section -->
+    <!-- Pricing Section (Hidden) -->
+    <!--
     <section id="pricing" class="pricing-section">
         <div class="container">
             <div class="section-header">
@@ -1488,7 +1493,6 @@
                 <p>Start with a 14-day free trial. No credit card required.</p>
             </div>
 
-            <!-- Setup Fee Notice -->
             <div class="setup-fee-notice">
                 <div style="display: inline-flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
                     <i class="fas fa-info-circle" style="color: var(--primary-yellow); font-size: 1.5rem;"></i>
@@ -1518,7 +1522,6 @@
             </div>
 
             <div class="pricing-grid">
-                <!-- Starter Plan -->
                 <div class="pricing-card">
                     <div class="plan-header">
                         <h3>Starter</h3>
@@ -1544,7 +1547,6 @@
                     </div>
                 </div>
 
-                <!-- Professional Plan -->
                 <div class="pricing-card featured">
                     <div class="popular-badge">Most Popular</div>
                     <div class="plan-header">
@@ -1573,7 +1575,6 @@
                     </div>
                 </div>
 
-                <!-- Enterprise Plan -->
                 <div class="pricing-card">
                     <div class="plan-header">
                         <h3>Enterprise</h3>
@@ -1600,14 +1601,12 @@
                 </div>
             </div>
 
-            <!-- Pricing Footer with Regional Pricing -->
             <div class="pricing-footer">
                 <div style="margin-bottom: 1.5rem;">
                     <p style="font-size: 1.1rem; margin-bottom: 0.5rem;"><strong>Payment options:</strong> Monthly or annual billing (save 15% with annual)</p>
                     <p style="font-size: 0.95rem; color: var(--text-muted);">All plans include 14-day free trial • Cancel anytime • No long-term contracts</p>
                 </div>
 
-                <!-- Regional Pricing Notice -->
                 <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; justify-content: center;">
                         <i class="fas fa-globe" style="color: var(--primary-yellow);"></i>
@@ -1633,6 +1632,7 @@
             </div>
         </div>
     </section>
+    -->
 
     <!-- Compliance & Security Section -->
     <section class="compliance-section" style="background: rgba(255, 255, 255, 0.02); padding: 4rem 0; border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
@@ -1857,6 +1857,7 @@
                             <input type="text" id="trial-company" name="company" required placeholder="ABC Motors">
                         </div>
 
+                        <!--
                         <div class="form-group">
                             <label for="trial-plan">Select Plan</label>
                             <select id="trial-plan" name="plan">
@@ -1865,6 +1866,8 @@
                                 <option value="enterprise">Enterprise - Custom</option>
                             </select>
                         </div>
+                        -->
+                        <input type="hidden" name="plan" value="professional">
 
                         <button type="submit" class="form-submit">
                             <i class="fas fa-rocket"></i> Start Free Trial
@@ -1898,7 +1901,7 @@
                     <a href="/otto-dashboard.html#customers">Customer Management</a>
                     <a href="/otto-dashboard.html#vehicles">Vehicle Inventory</a>
                     <a href="/otto-dashboard.html#ai-assistant">Otto AI Agent</a>
-                    <a href="#pricing">Pricing Plans</a>
+                    <!-- <a href="#pricing">Pricing Plans</a> -->
                 </div>
                 <div class="footer-section">
                     <h4>AI Features</h4>
@@ -1912,6 +1915,11 @@
                     <a href="https://github.com/theblockchainbaby/otto-ai-platform" target="_blank">GitHub Repository</a>
                     <a href="/api-docs.html">API Documentation</a>
                     <a href="/demo.html">Try Demo</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -2097,7 +2105,7 @@
 
     <!-- Floating CTA Button -->
     <a href="#demo-form" class="floating-cta" title="Book a Demo">
-        <i class="fas fa-calendar-check"></i>
+        <img src="images/chatbot-icon.PNG" alt="Chat" style="width: 100%; height: 100%; object-fit: contain;">
     </a>
 
     <style>
@@ -2105,30 +2113,39 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 60px;
-            height: 60px;
-            background: var(--primary-yellow);
+            width: 70px;
+            height: 70px;
+            background: transparent;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: var(--dark-bg);
-            box-shadow: 0 8px 24px rgba(255, 210, 55, 0.4);
             transition: all 0.3s ease;
             z-index: 999;
             text-decoration: none;
-            animation: float-bounce 3s ease-in-out infinite;
+            overflow: visible;
+            animation: pulse-purple-glow 2s infinite;
         }
 
         .floating-cta:hover {
+            animation: none;
             transform: scale(1.1);
-            box-shadow: 0 12px 32px rgba(255, 210, 55, 0.6);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
         }
 
-        @keyframes float-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes pulse-purple-glow {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+                transform: scale(1);
+            }
+            70% { 
+                box-shadow: 0 0 0 20px rgba(168, 85, 247, 0);
+                transform: scale(1.05);
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+                transform: scale(1);
+            }
         }
 
         @media (max-width: 768px) {

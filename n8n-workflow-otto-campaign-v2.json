@@ -1,0 +1,434 @@
+{
+  "name": "Otto Campaign & Callback Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyDay",
+              "hour": 9
+            }
+          ]
+        }
+      },
+      "id": "cron",
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getSheet",
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "google-sheets-fetch",
+      "name": "Google Sheets - Fetch Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [450, 300],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "google-sheets-credential-id",
+          "name": "Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-in-batches",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "processing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "edit-fields",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare call data\nreturn {\n  phone: $json.phone,\n  name: $json.name,\n  rowNumber: $json.rowNumber\n};"
+      },
+      "id": "code-js-1",
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [250, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ottoagent.net/api/make-call",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "make-call",
+      "name": "Make Call HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-call-success",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "update-sheet-row",
+      "name": "Update row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [850, 500],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "google-sheets-credential-id",
+          "name": "Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://dualpay.app.n8n.cloud/webhook/log",
+        "options": {}
+      },
+      "id": "http-request-log",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 500]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook1",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process webhook data\nreturn $json.body || $json;"
+      },
+      "id": "code-js-2",
+      "name": "Code in JavaScript1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 700]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !!$json.data?.analysis }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-analysis",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 700]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "operation": "createEvent",
+        "calendarId": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ DateTime.fromFormat(($json.appointmentDate || $json.body?.appointmentDate || $json.data?.conversation_initiation_client_data?.dynamic_variables?.appointmentDate) + ' ' + ($json.appointmentTime || $json.body?.appointmentTime || $json.data?.conversation_initiation_client_data?.dynamic_variables?.appointmentTime), 'yyyy-MM-dd HH:mm').toISO() }}",
+        "end": "={{ DateTime.fromFormat(($json.appointmentDate || $json.body?.appointmentDate || $json.data?.conversation_initiation_client_data?.dynamic_variables?.appointmentDate) + ' ' + ($json.appointmentTime || $json.body?.appointmentTime || $json.data?.conversation_initiation_client_data?.dynamic_variables?.appointmentTime), 'yyyy-MM-dd HH:mm').plus({ minutes: 60 }).toISO() }}",
+        "summary": "={{ ($json.appointmentService || $json.body?.appointmentService || 'Service') + ' - ' + ($json.customerName || $json.body?.customerName || $json.data?.conversation_initiation_client_data?.dynamic_variables?.customerName) }}",
+        "description": "={{ 'Customer: ' + ($json.customerName || $json.body?.customerName) + '\\nPhone: ' + ($json.customerPhone || $json.body?.customerPhone) + '\\nNotes: ' + ($json.notes || $json.body?.notes || '') }}"
+      },
+      "id": "update-calendar-event",
+      "name": "Create an event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [850, 600],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Google Calendar account 2",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "append-update-sheet",
+      "name": "Append or update row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [850, 800],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "google-sheets-credential-id",
+          "name": "Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromNumber": "+19257226886",
+        "toNumber": "={{ $json.customerPhone || $json.body?.customerPhone || $json.data?.conversation_initiation_client_data?.dynamic_variables?.customerPhone }}",
+        "message": "={{ 'Hi ' + ($json.customerName || $json.body?.customerName) + '! Your ' + ($json.appointmentService || $json.body?.appointmentService || 'appointment') + ' is confirmed for ' + ($json.appointmentDate || $json.body?.appointmentDate) + ' at ' + ($json.appointmentTime || $json.body?.appointmentTime) + '. We look forward to seeing you!' }}",
+        "options": {}
+      },
+      "id": "send-sms",
+      "name": "Send an SMS/MMS/WhatsApp",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1050, 800],
+      "credentials": {
+        "twilioApi": {
+          "id": "twilio-credential-id",
+          "name": "Twilio Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Fetch Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Fetch Leads": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Make Call HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Call HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update an event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update an event": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

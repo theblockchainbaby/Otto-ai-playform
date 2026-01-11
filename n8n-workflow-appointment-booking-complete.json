@@ -1,0 +1,136 @@
+{
+  "name": "Otto Appointment Booking - Complete",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "otto/appointment-booked",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "otto-appointment-booked"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "operation": "createEvent",
+        "calendarId": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ $json.appointmentDate + ' ' + $json.appointmentTime }}",
+        "end": "={{ $json.appointmentDate + ' ' + $json.appointmentTime }}",
+        "useDefaultReminders": false,
+        "summary": "={{ $json.appointmentType + ' - ' + $json.customerName }}",
+        "description": "={{ 'Customer: ' + $json.customerName + '\\nPhone: ' + $json.customerPhone + (($json.customerEmail) ? ('\\nEmail: ' + $json.customerEmail) : '') + '\\n\\nNotes: ' + $json.notes }}",
+        "location": "Your Dealership Address",
+        "sendUpdates": "all",
+        "attendees": "={{ $json.customerEmail ? [$json.customerEmail] : [] }}",
+        "reminders": {
+          "useDefault": false,
+          "overrides": [
+            {
+              "method": "email",
+              "minutes": 1440
+            },
+            {
+              "method": "popup",
+              "minutes": 60
+            }
+          ]
+        }
+      },
+      "id": "google-calendar",
+      "name": "Create Google Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_GOOGLE_CALENDAR_CREDENTIAL_ID",
+          "name": "Google Calendar OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromNumber": "={{ $env.TWILIO_OUTBOUND_NUMBER }}",
+        "toNumber": "={{ $json.customerPhone }}",
+        "message": "={{ 'Hi ' + $json.customerName + '! Your ' + $json.appointmentType + ' is confirmed for ' + $json.appointmentDate + ' at ' + $json.appointmentTime + '. We look forward to seeing you!' }}",
+        "options": {}
+      },
+      "id": "twilio-sms",
+      "name": "Send SMS Confirmation",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "twilioApi": {
+          "id": "YOUR_TWILIO_CREDENTIAL_ID",
+          "name": "Twilio API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Appointment booked and calendar event created\", \"eventId\": $('Create Google Calendar Event').item.json.id } }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create Google Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Send SMS Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SMS Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-10T00:00:00.000Z",
+  "versionId": "1"
+}

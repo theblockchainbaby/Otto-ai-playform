@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Simple Intent Detection - No AI needed\nconst request = ($json.body?.request || $json.request || '').toLowerCase();\n\n// Handle data from ElevenLabs send_confirmation tool\nconst customerPhone = $json.body?.phone_number || $json.phone_number || $json.body?.customerPhone || $json.customerPhone;\nconst customerName = $json.body?.customer_name || $json.customer_name || $json.body?.customerName || $json.customerName;\nconst appointmentDetails = $json.body?.appointment_details || $json.appointment_details;\n\n// If this is a send_confirmation request from ElevenLabs\nif (customerPhone && appointmentDetails) {\n  return {\n    intent: 'send_confirmation',\n    confidence: 1.0,\n    extractedData: {\n      customerPhone: customerPhone,\n      customerName: customerName || 'Valued Customer',\n      appointmentDetails: appointmentDetails\n    },\n    originalRequest: $json\n  };\n}\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show'))) {\n  intent = 'get_appointments';\n} else if (request.includes('book') || request.includes('schedule') || request.includes('make appointment')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName\n  },\n  originalRequest: $json\n};"
+        "jsCode": "// Simple Intent Detection - No AI needed\nconst request = ($json.body?.request || $json.request || '').toLowerCase();\n\n// Handle ElevenLabs Call Analysis (Post-call)\nif ($json.body?.data?.analysis) {\n  return {\n    intent: 'call_analysis',\n    confidence: 1.0,\n    analysis: $json.body.data.analysis,\n    clientData: $json.body.data.conversation_initiation_client_data || {},\n    originalRequest: $json\n  };\n}\n\n// Handle data from ElevenLabs send_confirmation tool\nconst customerPhone = $json.body?.phone_number || $json.phone_number || $json.body?.customerPhone || $json.customerPhone;\nconst customerName = $json.body?.customer_name || $json.customer_name || $json.body?.customerName || $json.customerName;\nconst appointmentDetails = $json.body?.appointment_details || $json.appointment_details;\n\n// If this is a send_confirmation request from ElevenLabs\nif (customerPhone && appointmentDetails) {\n  return {\n    intent: 'send_confirmation',\n    confidence: 1.0,\n    extractedData: {\n      customerPhone: customerPhone,\n      customerName: customerName || 'Valued Customer',\n      appointmentDetails: appointmentDetails\n    },\n    originalRequest: $json\n  };\n}\n\nlet intent = 'general_inquiry';\n\n// Detect intent based on keywords\nif (request.includes('appointment') && (request.includes('what') || request.includes('my') || request.includes('have') || request.includes('show'))) {\n  intent = 'get_appointments';\n} else if (request.includes('book') || request.includes('schedule') || request.includes('make appointment')) {\n  intent = 'book_appointment';\n} else if (request.includes('available') || request.includes('availability') || request.includes('what times') || request.includes('open slots')) {\n  intent = 'check_availability';\n} else if (request.includes('status') || request.includes('ready') || request.includes('done') || request.includes('service')) {\n  intent = 'service_status';\n}\n\nreturn {\n  intent: intent,\n  confidence: 0.9,\n  extractedData: {\n    customerPhone: customerPhone,\n    customerName: customerName\n  },\n  originalRequest: $json\n};"
       },
       "id": "simple-intent-router",
       "name": "Simple Intent Router",
@@ -464,6 +464,56 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2050, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "call_analysis",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-call-analysis",
+      "name": "Call Analysis?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [850, 950]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "york@eliteeighth.com",
+          "mode": "list"
+        },
+        "start": "={{ DateTime.fromFormat($json.clientData.dynamic_variables.appointmentDate + ' ' + $json.clientData.dynamic_variables.appointmentTime, 'yyyy-MM-dd HH:mm') }}",
+        "end": "={{ DateTime.fromFormat($json.clientData.dynamic_variables.appointmentDate + ' ' + $json.clientData.dynamic_variables.appointmentTime, 'yyyy-MM-dd HH:mm').plus({ hours: 1 }) }}",
+        "summary": "={{ \"Service Appointment - \" + $json.clientData.dynamic_variables.customerName }}",
+        "description": "={{ $json.analysis.transcript_summary }}"
+      },
+      "id": "update-calendar-event",
+      "name": "Update an event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [1050, 950],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Google Calendar account 2",
+          "name": "Google Calendar account 2"
+        }
+      }
     }
   ],
   "connections": {
@@ -503,6 +553,11 @@
           },
           {
             "node": "Send Confirmation?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Analysis?",
             "type": "main",
             "index": 0
           }
@@ -593,6 +648,35 @@
         [
           {
             "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Analysis?": {
+      "main": [
+        [
+          {
+            "node": "Update an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update an event": {
+      "main": [
+        [
+          {
+            "node": "Respond to Otto",
             "type": "main",
             "index": 0
           }

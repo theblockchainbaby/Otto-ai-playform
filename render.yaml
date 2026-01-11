@@ -27,9 +27,9 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: CORS_ORIGIN
-        value: https://ottoagent.net
+        value: https://ottoaiagent.com
       - key: BASE_URL
-        value: https://ottoagent.net
+        value: https://ottoaiagent.com
       - key: N8N_WEBHOOK_URL
         sync: false
       - key: ELEVENLABS_OUTBOUND_AGENT_ID

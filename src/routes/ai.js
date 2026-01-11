@@ -107,5 +107,54 @@ router.post('/analyze-call', (req, res) => {
   }
 });
 
+// POST /api/ai/chat - ChatGPT proxy for website widget
+router.post('/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: `You are OttoAI's helpful website assistant. OttoAI is an AI-powered receptionist platform that:
+- Answers calls 24/7
+- Qualifies leads automatically
+- Books appointments directly to Google Calendar
+- Integrates with Twilio, Salesforce, CRMs, and more
+- Is HIPAA-ready for healthcare
+- Costs $1,499/month for Starter, $2,499/month for Professional
+
+Keep responses concise, friendly, and helpful. Guide users to book a demo at calendly.com/yorksims/30min or call (888) 411-8568.`
+          },
+          { role: 'user', content: message }
+        ],
+        max_tokens: 300
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.choices && data.choices[0]) {
+      res.json({ reply: data.choices[0].message.content });
+    } else {
+      res.status(500).json({ error: 'Failed to get response from AI' });
+    }
+  } catch (error) {
+    console.error('Error in chat proxy:', error);
+    res.status(500).json({ error: 'Failed to process chat request' });
+  }
+});
+
 module.exports = router;
 

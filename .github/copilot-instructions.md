@@ -2,183 +2,223 @@
 
 ## Project Overview
 
-Otto AI is an **enterprise-grade automotive dealership management platform** powered by ElevenLabs conversational AI for intelligent phone call handling, appointment scheduling, and complete business automation. The platform combines a Node.js/Express backend with a vanilla JavaScript frontend, integrated with n8n workflows for automation.
+Otto AI is an **enterprise-grade automotive dealership management platform** powered by ElevenLabs conversational AI. The system handles phone calls, appointment scheduling, and complete business automation through a Node.js/Express backend with vanilla JavaScript frontend, orchestrated by n8n workflows.
 
 **Live Production:** https://ottoagent.net | **Phone:** +1 (888) 411-8568
 
-## Architecture & Core Components
+## Architecture & Critical Patterns
 
-### 1. Backend Stack
-- **Node.js + Express + TypeScript** - REST API server (`src/server.ts`)
-- **Prisma ORM** - Database management with PostgreSQL
-- **AI Integration Layer** - ElevenLabs (Otto agent), OpenAI GPT-4, Twilio
-- **Authentication** - JWT-based with role-based access control
+### The Otto AI Agent Flow
+Otto (`agent_2201k8q07eheexe8j4vkt0b9vecb`) is an ElevenLabs conversational AI connected via WebSocket:
 
-### 2. Otto AI Agent Architecture
-Otto is a **custom ElevenLabs conversational AI agent** (ID: `agent_3701k70bz4gcfd6vq1bkh57d15bw`) that:
-- Handles inbound customer calls via Twilio
-- Uses **ONE intelligent webhook** (`/api/twilio/otto/ai-router`) that routes ALL requests through GPT-4 intent analysis
-- Automatically triggers n8n workflows for appointment booking, SMS/email confirmations, calendar events
-- Extracts and decodes VINs from customer conversations for vehicle data enrichment
+1. **Twilio receives call** → Sends to `/api/twilio/voice` (NO auth middleware)
+2. **TwiML response** → Streams audio to `wss://api.elevenlabs.io/v1/convai/conversation/ws`
+3. **Otto converses** → Extracts intent, calls ONE webhook: `/otto/ai-router`
+4. **GPT-4 analyzes** → Routes to correct n8n workflow (appointments, service, etc.)
+5. **Actions execute** → Google Calendar, SMS/Email confirmations, database updates
 
-**Key Pattern:** Instead of multiple webhooks, Otto uses a **single AI router** that analyzes intent and dynamically routes to appropriate workflows (see `OTTO_AI_ROUTER_SETUP.md`).
+**Critical:** Never add `authMiddleware` to `/api/twilio/*` routes - Twilio can't authenticate.
 
-### 3. n8n Workflow Integration
-Critical workflows in project root (`n8n-workflow-*.json`):
-- `otto-ai-router.json` - Main routing hub with GPT-4 intent analysis
-- `appointment-booking.json` - Creates calendar events, sends SMS/email confirmations
-- `complete-followups.json` - 24-hour wait → reminder SMS → follow-up call with Otto's voice
+### Dual Runtime Environment
+The codebase runs **both TypeScript and JavaScript**:
+- **Entry point:** `src/server.js` (JavaScript) loaded by `npm run dev`
+- **Type definitions:** `src/server.ts` exists but isn't the runtime file
+- **Routes:** Mixed `.ts` (type-safe) and `.js` (legacy) - both work
+- **No build step:** Code runs directly via node, no hot reload
 
-**n8n Instance:** https://dualpay.app.n8n.cloud
+**Pattern:** When editing routes, check if `.js` or `.ts` version is actually loaded in `src/server.js`.
 
-### 4. Database Architecture
-Complex Prisma schema (`prisma/schema.prisma`) with 20+ models including:
-- **Customer/Vehicle/Lead/Call/Appointment** - Core CRM entities
-- **Message/Task/Campaign** - Communication and workflow automation
-- **EmergencyCall/ServiceRequest/ServiceProvider** - Roadside assistance system
-- **Enums:** 30+ enums for statuses, types, priorities (e.g., `AppointmentStatus`, `CallDirection`)
+### Database Access Pattern
+**Always run Prisma commands before code changes involving the database:**
+```bash
+npm run db:generate  # MUST run after schema.prisma changes
+npm run db:migrate   # Create migration (dev)
+npm run db:push      # Quick schema sync (dev only, no migration history)
+```
+
+The Prisma schema has **30+ enums** - grep them before adding new status fields. Common gotcha: Using wrong enum value (e.g., `CallStatus.ACTIVE` doesn't exist, use `CallStatus.ANSWERED`).
 
 ## Critical Developer Workflows
 
 ### Starting Development
 ```bash
-# ALWAYS use Prisma commands for database:
-npm run db:generate    # Generate Prisma client after schema changes
-npm run db:migrate     # Create and apply migrations
-npm run db:push        # Push schema changes (dev only)
+# NEVER skip this after pulling schema changes:
+npm run db:generate
 
-# Start server (NO hot reload - restart manually)
-npm run dev            # Runs src/server.js via node directly
+# Start server - NO hot reload, restart manually:
+npm run dev
+
+# Test Otto voice integration:
+./make-otto-call.sh
 ```
 
-### Working with Routes
-Routes are in `src/routes/` with **dual file structure**:
-- `.ts` files - TypeScript implementations (primary)
-- `.js` files - Some legacy JavaScript routes (e.g., `customers.js`, `auth.js`)
+### Working with Twilio Webhooks
+**TwiML responses must be valid XML.** Use the `twilio` SDK's VoiceResponse builder:
 
-**Convention:** All routes use Express Router pattern. Protected routes require `authMiddleware` from `src/middleware/auth.ts`.
+```javascript
+const twilio = require('twilio');
+const twiml = new twilio.twiml.VoiceResponse();
 
-Example route structure:
-```typescript
-import express from 'express';
-const router = express.Router();
+// Connect to Otto via WebSocket
+const connect = twiml.connect();
+const stream = connect.stream({
+  url: 'wss://api.elevenlabs.io/v1/convai/conversation/ws'
+});
+stream.parameter({ name: 'agent_id', value: 'agent_2201k8q07eheexe8j4vkt0b9vecb' });
+stream.parameter({ name: 'authorization', value: `Bearer ${process.env.ELEVENLABS_API_KEY}` });
 
-// GET /api/appointments
-router.get('/', authMiddleware, async (req, res) => { /* ... */ });
-
-export default router;
+res.type('text/xml');
+res.send(twiml.toString());
 ```
 
-### Twilio Webhooks (NO AUTH)
-`src/routes/twilioWebhooks.ts` - **Critical:** These routes must NOT use `authMiddleware` as Twilio calls them directly. Endpoints:
-- `POST /api/twilio/otto/incoming` - Receives inbound calls
-- `POST /api/twilio/reminder-call` - Automated reminder calls from n8n
-- Responses MUST be TwiML XML format
+**Never** wrap TwiML routes with `authMiddleware` - stored in `src/routes/twilioSimple.js` and `src/routes/twilioWebhooks.ts`.
+
+### n8n Workflow Pattern
+Otto uses **one intelligent webhook** instead of multiple endpoints:
+- **Single entry:** `https://dualpay.app.n8n.cloud/webhook/otto/ai-router`
+- **GPT-4 intent analysis:** Determines customer intent from conversation
+- **Dynamic routing:** Branches to booking, availability, status check, etc.
+- **Automated actions:** Calendar events, SMS, email all triggered automatically
+
+To add new Otto capabilities: Update the n8n workflow, NOT ElevenLabs tools config.
 
 ### VIN Decoding Integration
-New feature (`vinDecodingService.js`) - Automatically extracts VINs from text and decodes via:
-1. NHTSA API (free, primary)
-2. VinAudit API (commercial fallback)
-3. RapidAPI (secondary fallback)
+Service auto-extracts VINs from text and decodes via cascading APIs:
+```javascript
+// vinDecodingService.js usage
+const vinService = require('./services/vinDecodingService');
 
-**Endpoints:** `POST /api/vin/decode`, `POST /api/vin/extract`, `GET /api/vin/validate/:vin`
+// Extract VIN from customer message
+const result = await vinService.extractAndDecode("My VIN is 1HGCV41JXMN109186");
+// Returns: { vin, decoded: { make, model, year, ... }, formatted: {...} }
+```
+
+**API cascade:** NHTSA (free) → VinAudit (paid) → RapidAPI (paid). Never hardcode vehicle data when VIN available.
 
 ## Project-Specific Conventions
 
-### Frontend Patterns
-- **Pure vanilla JavaScript** - NO frameworks (React, Vue, etc.)
-- **Mercedes-Benz inspired design** - Luxury automotive aesthetic
-- Files: `public/autolux-dashboard.html`, `public/js/`, `public/css/`
-- Static file serving from `public/` directory
+### Frontend: Pure Vanilla JavaScript
+**Zero frameworks** - all client-side code is vanilla JS in `public/js/`. Mercedes-Benz inspired design in `public/css/`. Static files served directly from Express.
 
-### Service Layer Pattern
-Services in `src/services/`:
-- `elevenLabsService.ts` - ElevenLabs SDK wrapper for Otto agent interactions
-- `twilioService.ts` - Twilio client for calls/SMS
-- `aiService.ts` - OpenAI GPT-4 integration for message analysis
-- `vinDecodingService.js` - VIN extraction and decoding
-- `crmIntegrationService.js` - CRM data formatting (Salesforce, HubSpot, etc.)
+### Service Singletons
+Services in `src/services/` are **exported instances**, not classes:
+```javascript
+// CORRECT usage:
+const elevenLabsService = require('./services/elevenLabsService');
+await elevenLabsService.generateSpeech({...});
 
-**Pattern:** Services are singleton classes or exported functions. Import and use directly.
+// WRONG - don't instantiate:
+const service = new ElevenLabsService(); // ❌
+```
 
-### Environment Variables
-Critical env vars (see `.env`):
-- `ELEVENLABS_API_KEY` - Otto AI agent access
-- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`
-- `OPENAI_API_KEY` - GPT-4 for intent analysis
-- `POSTGRES_URL` - Database connection string
-- `JWT_SECRET` - Authentication
+### Authentication Flow
+JWT-based with `authMiddleware` from `src/middleware/auth.ts`:
+- **User object injected:** `req.user = { id, email, role }`
+- **Role checking:** Use `requireRole(['ADMIN', 'MANAGER'])` middleware
+- **Exception:** Twilio/n8n webhooks skip auth entirely
 
-### Error Handling
-- Use `errorHandler` middleware from `src/middleware/errorHandler.ts`
-- Always wrap async routes in try/catch
-- Return JSON errors: `{ success: false, error: 'message' }`
+### Environment Variables (Critical)
+```bash
+# Otto AI Integration
+ELEVENLABS_API_KEY=sk_...           # Otto voice agent
+ELEVENLABS_OUTBOUND_AGENT_ID=agent_...  # For outbound campaigns
+
+# Twilio Phone System
+TWILIO_ACCOUNT_SID=AC...
+TWILIO_AUTH_TOKEN=...
+TWILIO_PHONE_NUMBER=+18884118568
+TWILIO_OUTBOUND_NUMBER=+19257226886  # Separate number for campaigns
+
+# AI Analysis
+OPENAI_API_KEY=sk-...                # GPT-4 for intent routing
+
+# Database
+POSTGRES_URL=postgresql://...        # Prisma connection
+
+# Security
+JWT_SECRET=...                        # Token signing
+BASE_URL=https://ottoagent.net       # For webhook callbacks
+```
 
 ## Testing & Debugging
 
-### Manual Testing Otto
+### Manual Testing
 ```bash
-# Test Otto's voice call:
+# Test Otto call handling:
 ./make-otto-call.sh
 
-# Test ElevenLabs integration:
-./elevenlabs-ready.sh
+# Test outbound campaigns:
+npm run test:outbound +19165551234
 
-# Test n8n workflow:
-curl -X POST https://ottoagent.net/api/n8n/trigger/appointment-booking \
+# Test Google Sheets integration:
+npm run test:sheets-read
+
+# Test VIN decoding:
+curl -X POST http://localhost:3000/api/vin/decode \
   -H "Content-Type: application/json" \
-  -d '{"customerName": "Test User", ...}'
+  -d '{"vin": "1HGCV41JXMN109186"}'
 ```
 
-### Debugging n8n Workflows
-1. Check executions at https://dualpay.app.n8n.cloud/executions
-2. Verify webhook URLs match environment config
-3. Test workflows independently before Otto integration
+### Debugging Otto Issues
+1. **Check Twilio logs:** https://console.twilio.com/us1/monitor/logs/calls
+2. **Check n8n executions:** https://dualpay.app.n8n.cloud/executions
+3. **Verify webhook URLs** match deployed domain in ElevenLabs config
+4. **Test TwiML directly:** POST to `/api/twilio/voice` with Twilio body format
 
-## Common Pitfalls & Solutions
+### Common Gotchas
 
-1. **Prisma Client Not Found** → Run `npm run db:generate` after schema changes
-2. **Twilio Webhooks Failing** → NEVER add `authMiddleware` to Twilio routes
-3. **Otto Not Responding** → Verify `ELEVENLABS_API_KEY` and agent ID match production
-4. **n8n Workflows Not Triggering** → Check webhook URLs in n8n match deployed domain (ottoagent.net)
-5. **Database Migrations** → Always use `npx prisma migrate dev` - never manual SQL
-6. **Server Not Reloading** → NO hot reload configured - manually restart after code changes
+1. **"Prisma Client not found"** → Run `npm run db:generate` after any schema change
+2. **Twilio 401 errors** → Route has `authMiddleware` - remove it
+3. **Otto not calling webhook** → Check ElevenLabs tool URL matches `BASE_URL` env var
+4. **Database enum errors** → Check `prisma/schema.prisma` for valid enum values (30+ enums defined)
+5. **Server changes not applying** → No hot reload - manually restart `npm run dev`
 
 ## Deployment Context
 
-**Platform:** Railway (production) | **Domain:** ottoagent.net (GoDaddy DNS)
-- See `DEPLOYMENT.md` for full deployment guide
-- Database: PostgreSQL on Railway
-- Auto-deploys from GitHub main branch
-- SSL/TLS automatically configured
+**Platform:** Railway | **Domain:** ottoagent.net (GoDaddy DNS)
+- Auto-deploys from GitHub `main` branch
+- Database: PostgreSQL on Railway (auto-provisioned)
+- SSL/TLS: Automatic via Railway
+- **Required env vars:** Set in Railway dashboard (see `DEPLOYMENT.md`)
 
-## Integration Endpoints
+**Pre-deploy checklist:**
+1. Run `npm run db:generate` locally
+2. Test Twilio webhooks with ngrok if changed
+3. Verify `BASE_URL` env var matches production domain
+4. Check n8n webhook URLs point to production, not localhost
 
-Key external integrations:
-- **ElevenLabs:** https://elevenlabs.io/app/conversational-ai (Otto agent config)
-- **Twilio Console:** https://console.twilio.com (phone number config)
-- **n8n Workflows:** https://dualpay.app.n8n.cloud/workflows
-- **OpenAI:** GPT-4 for message/intent analysis
+## Integration External Services
 
-## Documentation Map
+| Service | Purpose | Config Location |
+|---------|---------|----------------|
+| **ElevenLabs** | Otto voice agent | https://elevenlabs.io/app/conversational-ai |
+| **Twilio** | Phone system | https://console.twilio.com/us1/develop/phone-numbers/manage/active |
+| **n8n** | Workflow automation | https://dualpay.app.n8n.cloud/workflows |
+| **OpenAI** | Intent analysis | GPT-4 API, configured in n8n workflows |
+| **Google Sheets** | Outbound campaign data | Service account JSON in env var |
 
-When extending functionality, reference:
-- `N8N_COMPLETE_SETUP_GUIDE.md` - Workflow automation patterns
-- `CONFIGURE_OTTO_TOOLS.md` - Adding new tools to ElevenLabs
-- `VIN_INTEGRATION_SUMMARY.md` - VIN decoding implementation
-- `CRM_INTEGRATION_GUIDE.md` - CRM data formatting patterns
-- `ELEVENLABS_SETUP.md` - ElevenLabs agent configuration
+## Key Files & Their Roles
 
-## Key Files to Understand
+| File | Critical Knowledge |
+|------|-------------------|
+| `src/server.js` | **Runtime entry point** - loads routes, not server.ts |
+| `src/routes/twilioSimple.js` | **Main Twilio webhook** - NO auth, TwiML responses only |
+| `src/services/elevenLabsService.ts` | Otto WebSocket config, TwiML generation |
+| `prisma/schema.prisma` | 20+ models, 30+ enums - check before adding fields |
+| `n8n-workflow-otto-ai-router.json` | GPT-4 intent router - edit here for new Otto features |
+| `src/services/vinDecodingService.js` | VIN extraction/decoding with API cascade |
 
-| File | Purpose |
-|------|---------|
-| `src/server.ts` | Main Express app with route registration |
-| `prisma/schema.prisma` | Complete database schema (20+ models) |
-| `src/routes/twilioWebhooks.ts` | Twilio call handling and TwiML generation |
-| `n8n-workflow-otto-ai-router.json` | AI-powered request routing workflow |
-| `src/services/elevenLabsService.ts` | Otto AI agent interaction layer |
+## Documentation Navigation
+
+| Task | Reference |
+|------|-----------|
+| Add Otto capabilities | `OTTO_AI_ROUTER_SETUP.md` |
+| Setup outbound campaigns | `OUTBOUND_CALLING_SETUP.md` |
+| Configure n8n workflows | `N8N_COMPLETE_SETUP_GUIDE.md` |
+| Integrate CRM data | `CRM_INTEGRATION_GUIDE.md` |
+| Deploy to production | `DEPLOYMENT.md` |
+| VIN decoding features | `VIN_INTEGRATION_SUMMARY.md` |
 
 ---
 
-**Remember:** Otto uses intelligent AI routing through a single webhook - avoid adding multiple tool-specific webhooks. Always test with live Otto calls after changes to phone-related features.
+**Remember:** Otto routes ALL requests through ONE intelligent webhook using GPT-4 analysis. Never add multiple tool-specific webhooks to ElevenLabs. Always test live calls after phone-related changes.
