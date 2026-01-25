@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- No background circle, just the icon content -->
+  <!-- Scaled up and centered path to fill more of the viewbox -->
+  <g transform="translate(4,4) scale(0.94)">
+    <path d="M44 42 h40 a14,14 0 0 1 14,14 v28 a14,14 0 0 1 -14,14 h-24 l-14 14 v-14 h-2 a14,14 0 0 1 -14,-14 v-28 a14,14 0 0 1 14,-14 z" 
+          fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M56 56 c-8 0 -12 6 -12 12 s4 12 12 12 c6 0 10 -4 11 -8 M80 56 v24 M80 50 v1" 
+          stroke="white" stroke-width="8" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

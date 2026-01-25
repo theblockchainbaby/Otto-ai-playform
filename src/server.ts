@@ -57,8 +57,21 @@ app.use(helmet({
 app.use(compression()); // Compress responses
 app.use(morgan('combined')); // Logging
 app.use(limiter); // Rate limiting
+// CORS configuration - supports multiple origins from environment
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'https://caipherai.com',
+  'https://www.caipherai.com',
+  'https://ottoaiagent.com',
+  'https://www.ottoaiagent.com',
+  'https://ottoagent.net',
+  'https://www.ottoagent.net',
+  process.env.CORS_ORIGIN,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

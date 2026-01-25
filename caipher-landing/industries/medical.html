@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caipher for Medical Clinics</title>
+    <meta name="description" content="AI receptionists designed specifically for medical clinics. Triage patients, book appointments, and handle FAQs securely.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+    
+    <!-- CSS (Paths adjusted for subdirectory) -->
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/animate.min.css">
+    <link rel="stylesheet" href="../css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../icons/icomoon/style.css">
+    
+    <!-- Inline Styles from Index (Preserved for Consistency) -->
+    <style>
+        :root {
+            --Black: #000000;
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border: #202568;
+            --Border-3: rgba(32, 37, 104, 0.35);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .tf-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+             background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+        }
+        
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--White);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo span {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-menu a {
+            color: var(--Text-2);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--Primary);
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        /* Buttons */
+        .tf-btn {
+            color: var(--White);
+            background-color: transparent;
+            border-radius: 100px;
+            padding: 14px 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0px 0px 16px 0px rgba(57, 115, 233, 0.25);
+            overflow: hidden;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .tf-btn .s1::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 100px;
+            background: linear-gradient(rgb(77, 77, 77) 0%, rgb(255, 255, 255) 50%, rgba(255, 255, 255, 0) 100%);
+            transition: transform 0.6s cubic-bezier(0.63, 0.25, 0.25, 1);
+        }
+        
+        .tf-btn .s2 {
+            background: var(--Bg);
+            border-radius: 100px;
+            position: absolute;
+            inset: 1px;
+            z-index: 1;
+        }
+        
+        .tf-btn .btn-text {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tf-btn:hover {
+            box-shadow: 0px 0px 25px 5px rgba(57, 115, 233, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .tf-btn:hover .s1::after {
+            transform: rotate(90deg) scale(5);
+        }
+        
+        .tf-btn.style-primary .s2 {
+            background: var(--Primary);
+        }
+
+        /* Banner Specifics */
+        .section-banner {
+            min-height: 60vh;
+            padding: 150px 0 100px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .section-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .banner-title {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            color: var(--White);
+        }
+
+        .banner-description {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        /* Footer Styles */
+        .tf-footer {
+             background: #00041e;
+        }
+        .footer-logo img {
+            filter: brightness(0) invert(1);
+        }
+        .footer-links h5 {
+            color: var(--White);
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-links ul li {
+            margin-bottom: 12px;
+        }
+        .footer-links ul li a {
+            color: var(--Text-2);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links ul li a:hover {
+            color: var(--Primary);
+        }
+        
+        .card-custom {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(79, 96, 250, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--Primary);
+            font-size: 24px;
+        }
+        
+        .feature-title {
+            color: var(--White);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .feature-desc {
+            color: var(--Text-2);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="tf-header is-fixed">
+        <div class="container">
+            <div class="header-inner">
+                <a href="../index.html" class="logo">
+                    Caipher <span>AI</span>
+                </a>
+                
+                <ul class="nav-menu">
+                    <li><a href="../index.html#features">Solutions</a></li>
+                    <li><a href="../index.html#how-it-works">How It Works</a></li>
+                    <li><a href="../index.html#pricing">Pricing</a></li>
+                    <li><a href="../index.html#faq">FAQs</a></li>
+                </ul>
+                
+                <div class="header-buttons">
+                    <a href="https://app.caipher.ai/login" class="login-link" style="color: var(--White); text-decoration: none; font-weight: 500;">Login</a>
+                    <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary">
+                        <span class="s1"></span>
+                        <span class="s2"></span>
+                        <span class="btn-text">Get Started</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="section-banner">
+        <div class="container">
+            <h1 class="banner-title">Caipher for <span style="color: var(--Primary);">Medical Clinics</span></h1>
+            <p class="banner-description">
+                Triage patients, book appointments, and handle FAQs securely. 
+                Our AI receptionists are HIPPA-compliant and available 24/7 to ensure your patients always get the care they need.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                 <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary">
+                    <span class="s1"></span>
+                    <span class="s2"></span>
+                    <span class="btn-text">Book a Demo</span>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Industry Features -->
+    <section class="section-features" style="padding-bottom: 100px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card-custom wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="feature-icon">
+                            <i class="icon-calendar"></i>
+                        </div>
+                        <h3 class="feature-title">Patient Scheduling</h3>
+                        <p class="feature-desc">Connects directly with your EMR/EHR to book appointments in real-time, checking provider availability and handling cancellations.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-custom wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="feature-icon">
+                            <i class="icon-phone"></i>
+                        </div>
+                        <h3 class="feature-title">24/7 Triage</h3>
+                        <p class="feature-desc">Intelligent call routing categorizes emergency vs. routine calls, ensuring urgent patient needs are escalated immediately.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-custom wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="feature-icon">
+                            <i class="icon-shield"></i>
+                        </div>
+                        <h3 class="feature-title">HIPAA Compliant</h3>
+                        <p class="feature-desc">Enterprise-grade security ensures all patient data and conversations are protected according to healthcare standards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="tf-footer" id="contact" style="position: relative; padding: 0; background: #00041e; overflow: hidden;">
+        <!-- Background Wrapper -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+            <img src="../images/section/bg-footer.jpg" alt="" class="burst-bg" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, #00041e 0%, #00041e 35%, transparent 100%);"></div>
+        </div>
+
+        <div class="container" style="position: relative; z-index: 3; padding-top: 80px; padding-bottom: 100px;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="footer-logo"><img src="../images/CaipherAIprimarylogo.png" alt="Caipher" style="height: 96px; width: auto; filter: brightness(0) invert(1);"></div>
+                    <p class="footer-description" style="color: var(--Text-2); margin-top: 20px;">
+                        AI Receptionists for Real-World Businesses. Never miss a call again.
+                    </p>
+                </div>
+                
+                <div class="col-lg-2 offset-lg-1 footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="../index.html#features">Solutions</a></li>
+                        <li><a href="../index.html#how-it-works">How It Works</a></li>
+                        <li><a href="../index.html#pricing">Pricing</a></li>
+                        <li><a href="../index.html#faq">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 footer-links">
+                    <h5>Industries</h5>
+                    <ul>
+                        <li><a href="medical.html" style="color: var(--Primary);">Medical Clinics</a></li>
+                        <li><a href="med-spa.html">Med-Spas</a></li>
+                        <li><a href="real-estate.html">Real Estate</a></li>
+                        <li><a href="home-services.html">Home Services</a></li>
+                        <li><a href="legal.html">Law Firms</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/wow.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+</body>
+</html>

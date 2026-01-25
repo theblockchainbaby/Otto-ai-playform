@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#6e4bff"/>
+      <stop offset="100%" stop-color="#6b49ff"/>
+    </radialGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="transparent" />
+  <circle cx="64" cy="64" r="44" fill="url(#g)" />
+  <!-- speech bubble outline -->
+  <path d="M44 50c0-10.5 8.5-19 19-19s19 8.5 19 19-8.5 19-19 19c-1.9 0-3.8-0.26-5.6-0.76L49 84l4.76-17.24C45.06 64.7 44 57.66 44 50z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- pen/brush icon (simplified) -->
+  <path d="M72 48l8 8M78 54l6 6" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

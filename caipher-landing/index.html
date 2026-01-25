@@ -1,0 +1,3000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caipher - AI-Powered Phone Automation for Businesses</title>
+    <meta name="description" content="Transform your business communication with Caipher. Automated phone calls, appointment scheduling, and customer service powered by conversational AI.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+    
+    <!-- Nexux CSS -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="icons/icomoon/style.css">
+    
+    <style>
+        :root {
+            --Black: #000000;
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border: #202568;
+            --Border-3: rgba(32, 37, 104, 0.35);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .tf-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tf-header.is-fixed {
+            background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+            padding: 5px 0;
+        }
+        
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--White);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo span {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-menu a {
+            color: var(--Text-2);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--Primary);
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        /* Buttons */
+        .tf-btn {
+            color: var(--White);
+            background-color: transparent;
+            border-radius: 100px;
+            padding: 14px 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0px 0px 16px 0px rgba(57, 115, 233, 0.25);
+            overflow: hidden;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .tf-btn .s1::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 100px;
+            background: linear-gradient(rgb(77, 77, 77) 0%, rgb(255, 255, 255) 50%, rgba(255, 255, 255, 0) 100%);
+            transition: transform 0.6s cubic-bezier(0.63, 0.25, 0.25, 1);
+        }
+        
+        .tf-btn .s2 {
+            background: var(--Bg);
+            border-radius: 100px;
+            position: absolute;
+            inset: 1px;
+            z-index: 1;
+        }
+        
+        .tf-btn .btn-text {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tf-btn:hover {
+            box-shadow: 0px 0px 25px 5px rgba(57, 115, 233, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .tf-btn:hover .s1::after {
+            transform: rotate(90deg) scale(5);
+        }
+        
+        .tf-btn.style-primary .s2 {
+            background: var(--Primary);
+        }
+        
+        .tf-btn.style-outline {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2);
+        }
+        
+        .tf-btn.style-outline .btn-text {
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+        
+        .tf-btn.style-outline .s2 {
+            background: transparent;
+        }
+        
+        .tf-btn.style-outline:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), 0 0 80px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Banner Section */
+        .section-banner {
+            min-height: 100vh;
+            padding: 150px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .section-banner::after {
+            content: '';
+            position: absolute;
+            top: 4%;
+            left: 0;
+            width: 100%;
+            height: 600px;
+            background: url('images/item/background.png') no-repeat center center;
+            background-size: cover;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 1;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+        }
+        
+        .section-banner .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .banner-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .sub-heading {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--Primary);
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .sub-heading img {
+            height: 12px;
+        }
+        
+        .banner-title {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            color: var(--White);
+        }
+        
+        .banner-title .gradient-text {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .banner-description {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            max-width: 520px;
+            margin-bottom: 40px;
+        }
+        
+        .banner-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        
+        /* Demo Box */
+        .demo-box {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.95) 0%, rgba(0, 4, 30, 1) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .demo-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--Border-3);
+        }
+        
+        .demo-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #4ade80;
+        }
+        
+        .demo-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-message {
+            background: rgba(79, 96, 250, 0.1);
+            border: 1px solid rgba(79, 96, 250, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--Text-3);
+        }
+        
+        .chat-message.user {
+            background: rgba(196, 111, 248, 0.1);
+            border-color: rgba(196, 111, 248, 0.2);
+            margin-left: 30px;
+        }
+        
+        .appointment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #4ade80;
+            margin-top: 10px;
+            transition: all 0.4s ease;
+        }
+        
+        /* Hero Proof Cards */
+        .hero-proof-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.95) 0%, rgba(0, 4, 30, 1) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            z-index: 3;
+        }
+        
+        .hero-proof-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--Primary), transparent);
+            opacity: 0.5;
+        }
+        
+        .proof-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .proof-card-header h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--White);
+            margin: 0;
+            letter-spacing: 0;
+        }
+        
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #4ade80;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(79, 96, 250, 0.05);
+            border: 1px solid rgba(79, 96, 250, 0.1);
+            border-radius: 12px;
+        }
+        
+        .metric-number {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-number.pulse {
+            animation: metricPulse 0.5s ease;
+        }
+        
+        @keyframes metricPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--Text-2);
+        }
+        
+        /* Integrations Grid */
+        .integrations-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .integration-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 12px;
+            background: rgba(79, 96, 250, 0.05);
+            border: 1px solid rgba(79, 96, 250, 0.1);
+            border-radius: 12px;
+            color: var(--Text-2);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        
+        .integration-icon img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+        }
+        
+        .integration-icon:hover {
+            border-color: var(--Primary);
+            background: rgba(79, 96, 250, 0.15);
+            color: var(--White);
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.2);
+        }
+        
+        .integration-icon span {
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        /* Compliance List */
+        .compliance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .compliance-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--Text-3);
+        }
+        
+        .check-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 6px;
+            color: #4ade80;
+            font-size: 12px;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 991px) {
+            .integrations-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero-proof-card {
+                margin-top: 20px !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .integrations-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Stats Section */
+        .section-stats {
+            padding: 60px 0;
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--Border-3);
+            border-bottom: 1px solid var(--Border-3);
+            background: rgba(0, 4, 30, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: var(--Text-2);
+        }
+        
+        /* Trusted By Section */
+        .section-trusted {
+            padding: 80px 0 120px;
+            background: var(--Bg-7);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-trusted::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 200px;
+            background: 
+                linear-gradient(90deg, transparent 0%, transparent 49.5%, rgba(79, 96, 250, 0.15) 49.5%, rgba(79, 96, 250, 0.15) 50.5%, transparent 50.5%, transparent 100%),
+                linear-gradient(0deg, transparent 0%, transparent 49%, rgba(79, 96, 250, 0.1) 49%, rgba(79, 96, 250, 0.1) 51%, transparent 51%, transparent 100%);
+            background-size: 80px 80px;
+            transform: translateX(-50%) perspective(500px) rotateX(60deg);
+            transform-origin: center bottom;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .trusted-title {
+            text-align: center;
+            font-size: 13px;
+            color: var(--Text);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+        
+        .trusted-tags {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .trusted-tag {
+            background: rgba(15, 18, 50, 0.8);
+            border: 1px solid rgba(79, 96, 250, 0.25);
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            color: var(--Text-2);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .trusted-tag:hover {
+            border-color: var(--Primary);
+            background: rgba(79, 96, 250, 0.15);
+            color: var(--White);
+        }
+        
+        .trusted-tag .star-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .trusted-tag .star-icon.blue { color: #4F60FA; }
+        .trusted-tag .star-icon.green { color: #10B981; }
+        .trusted-tag .star-icon.orange { color: #F59E0B; }
+        .trusted-tag .star-icon.red { color: #EF4444; }
+        .trusted-tag .star-icon.purple { color: #A855F7; }
+        .trusted-tag .star-icon.pink { color: #EC4899; }
+        .trusted-tag .star-icon.cyan { color: #06B6D4; }
+        .trusted-tag .star-icon.yellow { color: #FBBF24; }
+        .trusted-tag .star-icon.lime { color: #84CC16; }
+        
+        /* Section Heading */
+        .section-heading {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-heading .sub-heading {
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 20px;
+        }
+        
+        .section-description {
+            font-size: 18px;
+            color: var(--Text-2);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        /* Features Section */
+        .section-features {
+            padding: 120px 0;
+            position: relative;
+        }
+        
+        .feature-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.3) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--Primary), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--Primary);
+            box-shadow: 0 20px 50px rgba(79, 96, 250, 0.15);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.2) 0%, rgba(196, 111, 248, 0.2) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        
+        .feature-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--White);
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        .feature-card h4 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--White);
+            margin-bottom: 18px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        
+        .feature-card p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--Text-2);
+            margin: 0;
+            padding-top: 4px;
+        }
+        
+        /* Industries Section */
+        .section-industries {
+            padding: 120px 0;
+            background: linear-gradient(180deg, var(--Bg-7) 0%, var(--Bg) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Ceiling Grid */
+        .section-industries::before {
+            content: '';
+            position: absolute;
+            top: -180px;
+            left: -10%;
+            width: 120%;
+            height: 400px;
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(79, 96, 250, 0.5) 59px, rgba(79, 96, 250, 0.5) 60px),
+                repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(79, 96, 250, 0.4) 59px, rgba(79, 96, 250, 0.4) 60px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(-65deg);
+            transform-origin: center bottom;
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+        }
+        
+        /* Floor Grid */
+        .section-industries::after {
+            content: '';
+            position: absolute;
+            bottom: -180px;
+            left: -10%;
+            width: 120%;
+            height: 400px;
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(79, 96, 250, 0.5) 59px, rgba(79, 96, 250, 0.5) 60px),
+                repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(79, 96, 250, 0.4) 59px, rgba(79, 96, 250, 0.4) 60px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(65deg);
+            transform-origin: center top;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+        }
+        
+        .section-industries .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .industry-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.25) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.4s ease;
+            text-decoration: none;
+        }
+        
+        .industry-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--Primary);
+            box-shadow: 0 15px 40px rgba(79, 96, 250, 0.15);
+        }
+        
+        .industry-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.15) 0%, rgba(196, 111, 248, 0.15) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+        
+        .industry-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--White);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .industry-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--Text-2);
+            margin: 0;
+        }
+        
+        /* How It Works */
+        .section-how-it-works {
+            padding: 20px 0 120px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0;
+        }
+        
+        .section-how-it-works::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            height: 600px;
+            background: url('images/item/background-2.png') no-repeat center center;
+            background-size: cover;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 1;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+        }
+        
+        .section-how-it-works .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Stacked Card Carousel */
+        .card-stack-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 580px;
+            margin: 144px auto 0;
+            perspective: 1200px;
+        }
+        
+        .card-stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            z-index: 2;
+        }
+        
+        .stack-card {
+            position: absolute;
+            width: 100%;
+            height: 480px;
+            background: linear-gradient(145deg, rgba(30, 35, 60, 0.95) 0%, rgba(20, 25, 45, 0.98) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s ease-out;
+            overflow: hidden;
+            transform-origin: center bottom;
+        }
+        
+        .stack-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--Primary), #a855f7, var(--Primary));
+            opacity: 0.6;
+        }
+        
+        .stack-card.card-1 {
+            z-index: 3;
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        
+        .stack-card.card-2 {
+            z-index: 2;
+            transform: translateY(-30px) scale(0.94);
+            opacity: 0.7;
+        }
+        
+        .stack-card.card-3 {
+            z-index: 1;
+            transform: translateY(-60px) scale(0.88);
+            opacity: 0.4;
+        }
+        
+        .stack-card.sliding-up {
+            animation: slideUpOut 0.5s ease-out forwards;
+        }
+        
+        @keyframes slideUpOut {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150px) scale(0.9);
+                opacity: 0;
+            }
+        }
+        
+        .stack-card .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .stack-card .card-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .stack-card .card-visual {
+            width: 100%;
+            height: 280px;
+            background: rgba(15, 20, 40, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .stack-card .card-visual img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .card-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .card-indicator {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .card-indicator.active {
+            background: var(--Primary);
+            width: 60px;
+        }
+        
+        .card-pedestal {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: -200px auto 0;
+            z-index: 1;
+        }
+        
+        .card-pedestal img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .step-card p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            margin: 0;
+        }
+        
+        /* Integrations */
+        .section-integrations {
+            padding: 80px 0;
+            background: var(--Bg-7);
+            border-top: 1px solid var(--Border-3);
+            border-bottom: 1px solid var(--Border-3);
+        }
+        
+        .integrations-title {
+            text-align: center;
+            font-size: 13px;
+            color: var(--Text);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+        }
+        
+        .integrations-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .integration-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+        
+        .integration-item:hover {
+            opacity: 1;
+        }
+        
+        .integration-item img {
+            height: 40px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .integration-item span {
+            font-size: 12px;
+            color: var(--Text);
+        }
+        
+        /* Scrolling Icons Marquee */
+        .section-icon-marquee {
+            padding: 80px 0 20px;
+            background: linear-gradient(180deg, var(--Bg) 0%, var(--Bg-7) 100%);
+            overflow: hidden;
+        }
+        
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        
+        .marquee-track {
+            display: flex;
+            gap: 20px;
+            width: max-content;
+        }
+        
+        .marquee-track-left {
+            animation: scrollLeft 20s linear infinite;
+        }
+        
+        .marquee-track-right {
+            animation: scrollRight 20s linear infinite;
+        }
+        
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        @keyframes scrollRight {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+        
+        .marquee-icon {
+            flex-shrink: 0;
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(145deg, rgba(32, 37, 104, 0.6) 0%, rgba(15, 18, 50, 0.8) 100%);
+            border: 1px solid rgba(79, 96, 250, 0.3);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.15), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .marquee-icon:hover {
+            background: linear-gradient(145deg, rgba(79, 96, 250, 0.3) 0%, rgba(32, 37, 104, 0.8) 100%);
+            border-color: var(--Primary);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(79, 96, 250, 0.4), 
+                        0 0 60px rgba(79, 96, 250, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .marquee-icon img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+        }
+        
+        .marquee-icon img[src*="IMG_1169"] {
+            width: 70px;
+            height: 70px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .marquee-icon img[src*="IMG_1191"] {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .marquee-icon img[src*="IMG_1186"] {
+            filter: brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(500%) hue-rotate(180deg) brightness(1.2);
+        }
+
+        /* Pricing Section */
+        .section-pricing {
+            padding: 120px 0;
+        }
+        
+        .pricing-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.2) 0%, rgba(0, 4, 30, 0.9) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 48px 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+            height: 100%;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(79, 96, 250, 0.15);
+        }
+        
+        .pricing-card.featured {
+            background: linear-gradient(180deg, rgba(79, 96, 250, 0.2) 0%, rgba(0, 4, 30, 0.95) 100%);
+            border-color: var(--Primary);
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(79, 96, 250, 0.25);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+        
+        .popular-badge {
+            background: linear-gradient(135deg, var(--Primary), var(--Bg-2));
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .plan-name {
+            font-size: 16px;
+            color: var(--Text-2);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .plan-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 8px;
+        }
+        
+        .plan-price span {
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--Text);
+        }
+        
+        .plan-subtitle {
+            font-size: 14px;
+            color: var(--Text-2);
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+        
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 32px 0;
+            text-align: left;
+        }
+        
+        .plan-features li {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--Border-3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--Text-3);
+        }
+        
+        .plan-features li::before {
+            content: '✓';
+            color: var(--Primary);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        /* Testimonials */
+        .section-testimonials {
+            padding: 120px 0;
+            background: var(--Bg-7);
+        }
+        
+        .testimonial-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.3) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s ease;
+        }
+        
+        .testimonial-card:hover {
+            border-color: var(--Primary);
+            box-shadow: 0 15px 40px rgba(79, 96, 250, 0.1);
+        }
+        
+        .testimonial-stars {
+            color: #fbbf24;
+            font-size: 18px;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+        }
+        
+        .testimonial-quote {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--Text-3);
+            margin-bottom: 28px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .testimonial-author img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--Border);
+        }
+        
+        .testimonial-author h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--White);
+            margin: 0 0 4px;
+        }
+        
+        .testimonial-author p {
+            font-size: 14px;
+            color: var(--Text);
+            margin: 0;
+        }
+        
+        /* CTA Section */
+        .section-cta {
+            padding: 60px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-cta::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -50%;
+            right: -50%;
+            height: 350px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 120px,
+                    rgba(79, 96, 250, 0.25) 120px,
+                    rgba(79, 96, 250, 0.25) 121px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(79, 96, 250, 0.25) 50px,
+                    rgba(79, 96, 250, 0.25) 51px
+                );
+            transform: perspective(300px) rotateX(60deg);
+            transform-origin: bottom center;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%);
+        }
+        
+        .cta-box {
+            background: transparent;
+            border: 1px solid var(--Border-3);
+            border-radius: 32px;
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .cta-box h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta-box p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta-box .tf-btn {
+            background: var(--Primary);
+            color: var(--White);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            border: none;
+        }
+        
+        .cta-box .tf-btn:hover {
+            background: var(--Bg-2);
+            transform: translateY(-3px);
+        }
+        
+        /* Footer Burst Banner */
+        .footer-burst {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-burst .burst-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            min-width: 1400px;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+        
+        .footer-burst .burst-logo-placeholder {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        /* Footer */
+        .tf-footer {
+            padding: 80px 0 40px;
+            border-top: none;
+            background: var(--Bg-7);
+            position: relative;
+        }
+        
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo span {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-description {
+            color: var(--Text-2);
+            max-width: 300px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        
+        .footer-contact p {
+            color: var(--Text-2);
+            margin-bottom: 8px;
+        }
+        
+        .footer-contact a {
+            color: var(--Text-3);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-contact a:hover {
+            color: var(--Primary);
+        }
+        
+        .footer-links h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--White);
+            margin-bottom: 24px;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--Text-2);
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--Primary);
+            padding-left: 5px;
+        }
+        
+        .footer-bottom {
+            padding-top: 40px;
+            margin-top: 60px;
+            border-top: 1px solid var(--Border-3);
+            text-align: center;
+        }
+        
+        .footer-bottom p {
+            color: var(--Text);
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* Bloom Effects */
+        .bloom {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+        
+        .bloom-purple {
+            background: rgba(79, 96, 250, 0.3);
+        }
+        
+        .bloom-pink {
+            background: rgba(196, 111, 248, 0.2);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .banner-title { font-size: 40px; }
+            .section-title { font-size: 32px; }
+            .nav-menu { display: none; }
+            .pricing-card.featured { transform: scale(1); }
+            .stats-grid { gap: 40px; flex-wrap: wrap; }
+            .stat-number { font-size: 36px; }
+            .industry-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 767px) {
+            .banner-title { font-size: 32px; }
+            .banner-buttons { flex-direction: column; }
+            .stats-grid { gap: 30px; }
+            .industry-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* Typing Animation */
+        .typing-text {
+            display: inline-block;
+            min-width: 180px;
+        }
+        
+        .typing-cursor {
+            display: inline-block;
+            color: var(--Primary);
+            font-weight: 300;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="counter-scroll">
+
+    <!-- Header -->
+    <header class="tf-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="logo">
+                    <img src="images/CaipherAIprimarylogo.png" alt="Caipher" style="height: 96px; width: auto; filter: brightness(0) invert(1);">
+                </a>
+                
+                <ul class="nav-menu">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#industries">Industries</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                
+                <div class="header-buttons">
+                    <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary">
+                        <span class="s1"></span>
+                        <span class="s2"></span>
+                        <span class="btn-text">Book a Demo</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Section -->
+    <section class="section-banner">
+        <div class="bloom bloom-purple" style="width: 600px; height: 600px; top: -200px; left: -200px;"></div>
+        <div class="bloom bloom-pink" style="width: 400px; height: 400px; top: 50%; right: -100px;"></div>
+        
+        <div class="container">
+            <!-- Centered Hero Content -->
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-10">
+                    <div class="banner-content wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="sub-heading" style="justify-content: center;">
+                            <img src="icons/sub-title-left.svg" alt="">
+                            AI Receptionist
+                            <img src="icons/sub-title-right.svg" alt="">
+                        </div>
+                        
+                        <h1 class="banner-title" style="font-size: 72px; font-family: 'Fraunces', serif; font-weight: 800; font-style: italic; letter-spacing: -2px;">
+                            Decode Your <span class="gradient-text animated-workflow">Workflow</span>
+                        </h1>
+                        
+                        <style>
+                        /* Increased specificity to override default gradient styles */
+                        .banner-title .animated-workflow {
+                            display: inline-block;
+                            background: linear-gradient(
+                                110deg, 
+                                #4f60fa 15%, 
+                                #c46ff8 35%, 
+                                #ffffff 50%, 
+                                #c46ff8 65%, 
+                                #00d4ff 85%
+                            );
+                            background-size: 200% auto;
+                            -webkit-background-clip: text;
+                            background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            animation: scan-decode 3s linear infinite;
+                            font-style: normal;
+                            padding-right: 2px;
+                        }
+
+                        @keyframes scan-decode {
+                            0% {
+                                background-position: 0% center;
+                            }
+                            100% {
+                                background-position: 200% center;
+                            }
+                        }
+                        </style>
+                        
+                        <h2 style="font-family: 'Poppins', sans-serif; font-weight: 600; font-style: normal; font-size: 32px; line-height: 1.4; margin-top: 60px; margin-bottom: 24px; color: var(--White); max-width: 800px; margin-left: auto; margin-right: auto;">
+                            Whatever you're building, we're here to help you do it faster, better, and easier.
+                        </h2>
+
+                        <p class="banner-description" style="max-width: 800px; margin: 0 auto 40px; font-family: 'Poppins', sans-serif; font-weight: 400; font-style: normal; font-size: 18px; line-height: 1.6; color: var(--White);">
+                            We create custom AI workflows that actually work. From appointment scheduling to inventory management, our purpose-built AI agents transform hours of manual work into minutes of automated precision. Let us help you automate the busywork so your team can get back to working on the things that matter most.
+                        </p>
+                        
+                        <div class="banner-buttons" style="justify-content: center;">
+                            <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary">
+                                <span class="s1"></span>
+                                <span class="s2"></span>
+                                <span class="btn-text">Book a Demo</span>
+                            </a>
+                            <a href="tel:+17622247437" class="tf-btn style-outline">
+                                <span class="s1"></span>
+                                <span class="s2"></span>
+                                <span class="btn-text">📞 Call Caipher: (762) CAIPHER</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Two Column Hero Cards -->
+            <div class="row" style="margin-top: 100px; align-items: stretch;">
+                <!-- Left Column - Chat Simulation -->
+                <div class="col-lg-6" style="display: flex;">
+                    <div class="demo-box wow fadeInLeft" data-wow-delay="0.2s" id="chat-simulation" style="flex: 1; display: flex; flex-direction: column;">
+                        <div class="demo-header">
+                            <span class="demo-status">Caipher Agent Active</span>
+                        </div>
+                        <div class="chat-message" data-step="1">
+                            Thanks for calling Dr. Smith's office. This is Caipher. How can I help you today?
+                        </div>
+                        <div class="chat-message user" data-step="2" style="opacity: 0; transform: translateY(10px);">
+                            Hi, I'd like to book a consultation for next Tuesday.
+                        </div>
+                        <div class="chat-message" data-step="3" style="opacity: 0; transform: translateY(10px);">
+                            I'd be happy to help with that! I see you're a new patient. Can I get your name and phone number?
+                        </div>
+                        <div class="chat-message user" data-step="4" style="opacity: 0; transform: translateY(10px);">
+                            Sure, it's Sarah Johnson. My number is (916) 555-0123.
+                        </div>
+                        <div class="chat-message" data-step="5" style="opacity: 0; transform: translateY(10px);">
+                            Great, thanks Sarah! And what's the best email address to send your confirmation to?
+                        </div>
+                        <div class="chat-message user" data-step="6" style="opacity: 0; transform: translateY(10px);">
+                            sarah.johnson@email.com
+                        </div>
+                        <div class="chat-message" data-step="7" style="opacity: 0; transform: translateY(10px);">
+                            Perfect! And what's the reason for your visit today?
+                        </div>
+                        <div class="chat-message user" data-step="8" style="opacity: 0; transform: translateY(10px);">
+                            I've been having some lower back pain for the past few weeks.
+                        </div>
+                        <div class="chat-message" data-step="9" style="opacity: 0; transform: translateY(10px);">
+                            I understand. We have openings at 2:00 PM or 4:30 PM on Tuesday. Which works better for you?
+                        </div>
+                        <div class="chat-message user" data-step="10" style="opacity: 0; transform: translateY(10px);">
+                            2:00 PM works great.
+                        </div>
+                        <div class="chat-message" data-step="11" style="opacity: 0; transform: translateY(10px);">
+                            Excellent! I've booked your consultation for Tuesday at 2:00 PM for lower back pain. You'll receive a confirmation text and email shortly.
+                        </div>
+                        <div class="appointment-badge" data-step="12" id="appointment-badge" style="opacity: 0; transform: translateY(10px);">
+                            ✓ Appointment Booked — Synced to Google Calendar
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Stacked Proof Cards -->
+                <div class="col-lg-6">
+                    <!-- Card 1: Live Platform Results -->
+                    <div class="hero-proof-card wow fadeInRight" data-wow-delay="0.2s">
+                        <div class="proof-card-header">
+                            <h4>Live Platform Results</h4>
+                            <span class="live-indicator">
+                                <span class="live-dot"></span>
+                                Last 24 Hours
+                            </span>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-number" id="metric-uptime">99.9%</span>
+                                <span class="metric-label">System Uptime</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-number" id="metric-missed">0</span>
+                                <span class="metric-label">Missed Calls</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-number" id="metric-response">1.4s</span>
+                                <span class="metric-label">Avg Response</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-number" id="metric-coverage">24/7</span>
+                                <span class="metric-label">Coverage</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Integrations -->
+                    <div class="hero-proof-card wow fadeInRight" data-wow-delay="0.3s" style="margin-top: 16px;">
+                        <div class="proof-card-header">
+                            <h4>Works Seamlessly With</h4>
+                        </div>
+                        <div class="integrations-grid">
+                            <div class="integration-icon" title="Google Calendar">
+                                <img src="images/integrations/pngwing.com.png" alt="Google Calendar">
+                                <span>Calendar</span>
+                            </div>
+                            <div class="integration-icon" title="Twilio">
+                                <img src="images/integrations/imgbin_a4e4ce94ca2a0ad3499ded8ce8bbeeaf.png" alt="Twilio">
+                                <span>Twilio</span>
+                            </div>
+                            <div class="integration-icon" title="Webhooks">
+                                <img src="images/integrations/pngegg-5.png" alt="Webhooks">
+                                <span>Webhooks</span>
+                            </div>
+                            <div class="integration-icon" title="Eleven Labs">
+                                <img src="images/integrations/elevenlabs.png" alt="Eleven Labs">
+                                <span>Eleven Labs</span>
+                            </div>
+                            <div class="integration-icon" title="SMS">
+                                <img src="images/integrations/pngegg-4.png" alt="SMS">
+                                <span>SMS</span>
+                            </div>
+                            <div class="integration-icon" title="Email">
+                                <img src="images/integrations/pngegg-8.png" alt="Email">
+                                <span>Email</span>
+                            </div>
+                            <div class="integration-icon" title="OpenAI">
+                                <img src="images/integrations/visualhunter-33fd8316d0.png" alt="OpenAI">
+                                <span>OpenAI</span>
+                            </div>
+                            <div class="integration-icon" title="CRM">
+                                <img src="images/integrations/pngegg-7.png" alt="CRM">
+                                <span>CRM</span>
+                            </div>
+                            <div class="integration-icon" title="Google Sheets">
+                                <img src="images/integrations/sheets.png" alt="Google Sheets">
+                                <span>Sheets</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: Trust & Compliance -->
+                    <div class="hero-proof-card wow fadeInRight" data-wow-delay="0.4s" style="margin-top: 16px;">
+                        <div class="proof-card-header">
+                            <h4>Built for Regulated Industries</h4>
+                        </div>
+                        <div class="compliance-list">
+                            <div class="compliance-item">
+                                <span class="check-icon">✓</span>
+                                <span>HIPAA-ready workflows</span>
+                            </div>
+                            <div class="compliance-item">
+                                <span class="check-icon">✓</span>
+                                <span>Audit-friendly call logs</span>
+                            </div>
+                            <div class="compliance-item">
+                                <span class="check-icon">✓</span>
+                                <span>Human handoff at any time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Workflow Video - Below Hero Cards -->
+            <div class="row justify-content-center" style="margin-top: 40px;">
+                <div class="col-lg-12">
+                    <div class="video-box wow fadeInUp" data-wow-delay="0.4s" style="background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.9) 100%); border: 1px solid rgba(32, 37, 104, 0.35); border-radius: 24px; padding: 12px;">
+                        <video autoplay loop muted playsinline style="width: 100%; border-radius: 16px;">
+                            <source src="videos/Otto-workflow-recording.mov" type="video/quicktime">
+                            <source src="videos/Otto-workflow-recording.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="stat-number">+30 - 50%</div>
+                    <div class="stat-label">More Booked Appointments</div>
+                </div>
+                <div class="stat-item wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="stat-number">60%</div>
+                    <div class="stat-label">Fewer Missed Calls</div>
+                </div>
+                <div class="stat-item wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="stat-number">10hrs+</div>
+                    <div class="stat-label">Saved Per Week</div>
+                </div>
+                <div class="stat-item wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Instant Response</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="section-trusted">
+        <div class="container">
+            <p class="trusted-title">Trusted by Teams In</p>
+            <div class="trusted-tags">
+                <span class="trusted-tag">
+                    <svg class="star-icon blue" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Medical Clinics
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Med-Spas
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Real Estate
+                </span>
+            </div>
+            <div class="trusted-tags" style="margin-top: 16px;">
+                <span class="trusted-tag">
+                    <svg class="star-icon red" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Home Services
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon purple" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Insurance
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon pink" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Law Firms
+                </span>
+            </div>
+            <div class="trusted-tags" style="margin-top: 16px;">
+                <span class="trusted-tag">
+                    <svg class="star-icon cyan" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Property Management
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon yellow" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Restaurants
+                </span>
+                <span class="trusted-tag">
+                    <svg class="star-icon lime" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z"/></svg>
+                    Auto Dealerships
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-features" id="features">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    What Caipher Handles
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">More Than Just an Answering Service</h2>
+                <p class="section-description">
+                    Caipher is a full-cycle workflow automation agent for your business.
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        <h4>24/7 Call Answering</h4>
+                        <p>Never let a call go to voicemail. Caipher answers instantly, day or night.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                        </div>
+                        <h4>Lead Qualification</h4>
+                        <p>Caipher asks the right questions to filter spam and prioritize high-value leads.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <h4>Booking & Reminders</h4>
+                        <p>Directly books slots in your calendar and sends SMS reminders automatically.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card wow fadeInUp" data-wow-delay="0.4s">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <h4>Intake & Data Entry</h4>
+                        <p>Collects caller info and syncs it instantly to your CRM or database.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section class="section-industries" id="industries">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    Industries
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">Caipher for Your Industry</h2>
+                <p class="section-description">
+                    Pre-trained with workflows and scripts designed specifically for your vertical.
+                </p>
+            </div>
+            
+            <div class="industry-grid">
+                <a href="industries/medical.html" class="industry-card wow fadeInUp" data-wow-delay="0.1s">
+                    <h4>Medical Clinics</h4>
+                    <p>Triage patients, book appointments, and handle FAQs securely.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/med-spa" class="industry-card wow fadeInUp" data-wow-delay="0.15s">
+                    <h4>Med-Spas</h4>
+                    <p>Capture high-value cosmetic leads and reduce no-shows.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/real-estate" class="industry-card wow fadeInUp" data-wow-delay="0.2s">
+                    <h4>Real Estate</h4>
+                    <p>Qualify buyers/sellers instantly and route hot leads to agents.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/home-services" class="industry-card wow fadeInUp" data-wow-delay="0.25s">
+                    <h4>Home Services</h4>
+                    <p>Book HVAC, plumbing, and electrical jobs while you're in the field.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/insurance" class="industry-card wow fadeInUp" data-wow-delay="0.3s">
+                    <h4>Insurance</h4>
+                    <p>Route claims, quote requests, and policy questions efficiently.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/legal" class="industry-card wow fadeInUp" data-wow-delay="0.35s">
+                    <h4>Law Firms</h4>
+                    <p>Professional intake for potential clients 24/7.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/property-management" class="industry-card wow fadeInUp" data-wow-delay="0.4s">
+                    <h4>Property Management</h4>
+                    <p>Handle tenant maintenance requests and leasing inquiries.</p>
+                </a>
+                
+                <a href="https://ottoaiagent.com/industries/restaurants" class="industry-card wow fadeInUp" data-wow-delay="0.45s">
+                    <h4>Restaurants</h4>
+                    <p>Take reservations, handle takeout orders, and answer questions.</p>
+                </a>
+                
+                <a href="https://ottoagent.net/" class="industry-card wow fadeInUp" data-wow-delay="0.5s">
+                    <h4>Auto Dealerships</h4>
+                    <p>Schedule test drives, service appointments, and route sales calls.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scrolling Icons Marquee Section -->
+    <section class="section-icon-marquee">
+        <div class="container">
+            <div class="section-heading">
+                <h2 class="section-title">Powered by Industry Leaders</h2>
+                <p class="section-description">
+                    Seamlessly integrates with your favorite tools and platforms.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Top Row - Scrolling Left -->
+        <div class="marquee-container">
+            <div class="marquee-track marquee-track-left">
+                <div class="marquee-icon"><img src="images/integrations/elevenlabs.png" alt="Eleven Labs"></div>
+                <div class="marquee-icon"><img src="images/integrations/Salesforce.png" alt="Salesforce"></div>
+                <div class="marquee-icon"><img src="images/integrations/google1.png" alt="Google"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1169.WEBP" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1170.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1173.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1174.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/opentable.png" alt="OpenTable"></div>
+                <div class="marquee-icon"><img src="images/integrations/tost.png" alt="Toast"></div>
+                <div class="marquee-icon"><img src="images/integrations/fub.png" alt="Follow Up Boss"></div>
+                <div class="marquee-icon"><img src="images/integrations/housecall.png" alt="Housecall Pro"></div>
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-icon"><img src="images/integrations/elevenlabs.png" alt="Eleven Labs"></div>
+                <div class="marquee-icon"><img src="images/integrations/Salesforce.png" alt="Salesforce"></div>
+                <div class="marquee-icon"><img src="images/integrations/google1.png" alt="Google"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1169.WEBP" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1170.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1173.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1174.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/opentable.png" alt="OpenTable"></div>
+                <div class="marquee-icon"><img src="images/integrations/tost.png" alt="Toast"></div>
+                <div class="marquee-icon"><img src="images/integrations/fub.png" alt="Follow Up Boss"></div>
+                <div class="marquee-icon"><img src="images/integrations/housecall.png" alt="Housecall Pro"></div>
+            </div>
+        </div>
+        
+        <!-- Bottom Row - Scrolling Right -->
+        <div class="marquee-container">
+            <div class="marquee-track marquee-track-right">
+                <div class="marquee-icon"><img src="images/integrations/IMG_1179.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1181.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1182.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1183.WEBP" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1185.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1186.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1189.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1191.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1192.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1193.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1194.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1195.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/sheets.png" alt="Google Sheets"></div>
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-icon"><img src="images/integrations/IMG_1179.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1181.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1182.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1183.WEBP" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1185.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1186.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1189.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1191.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1192.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1193.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1194.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/IMG_1195.PNG" alt="Integration"></div>
+                <div class="marquee-icon"><img src="images/integrations/sheets.png" alt="Google Sheets"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section-how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    How It Works
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">Get Started in 3 Simple Steps</h2>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card-stack-container wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="card-stack" id="cardStack">
+                            <div class="stack-card card-1" data-card="1">
+                                <h3 class="card-title">Point Twilio to Caipher</h3>
+                                <p class="card-description">Inbound calls hit our API where we return streaming TwiML that pipes audio directly to ElevenLabs.</p>
+                                <div class="card-visual">
+                                    <img src="images/item/card-1.png" alt="Twilio Integration">
+                                </div>
+                            </div>
+                            <div class="stack-card card-2" data-card="2">
+                                <h3 class="card-title">Link the AI Agent</h3>
+                                <p class="card-description">Caipher listens over WebSocket, runs your script, and posts intent + caller data to the AI Router.</p>
+                                <div class="card-visual">
+                                    <img src="images/item/card-2.png" alt="AI Agent">
+                                </div>
+                            </div>
+                            <div class="stack-card card-3" data-card="3">
+                                <h3 class="card-title">Trigger Automations</h3>
+                                <p class="card-description">GPT-4 routing books calendars, updates CRM, and sends SMS/email confirmations automatically.</p>
+                                <div class="card-visual">
+                                    <img src="images/item/card-3.png" alt="Automations">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-indicators">
+                            <div class="card-indicator active" data-card="1"></div>
+                            <div class="card-indicator" data-card="2"></div>
+                            <div class="card-indicator" data-card="3"></div>
+                        </div>
+                        <div class="card-pedestal">
+                            <img src="images/item/decor.png" alt="Pedestal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section-pricing" id="pricing">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    Pricing
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">Simple Pricing</h2>
+                <p class="section-description">
+                    Transparent plans that grow with your business.
+                </p>
+            </div>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4">
+                    <div class="pricing-card wow fadeInUp" data-wow-delay="0.1s">
+                        <p class="plan-name">Starter</p>
+                        <div class="plan-price">$999</div>
+                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">The Starter package is perfect for small businesses ready to implement either an AI agent or an automated workflow.</p>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What's included:</h6>
+                        <ul class="plan-features">
+                            <li>1 custom AI agent or workflow</li>
+                            <li>1,000 minutes/month • 1 phone number</li>
+                            <li>24/7 AI call answering</li>
+                            <li>Appointment booking & lead qualification</li>
+                            <li>SMS + email follow-ups</li>
+                            <li>Basic CRM sync</li>
+                            <li>Implementation, training & efficiency audit</li>
+                            <li>Monthly support (2 hours optimization)</li>
+                        </ul>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
+                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Businesses with 5-15 employees looking to automate one major pain point (like appointment scheduling, invoice processing, customer follow-ups, etc.)</p>
+                        
+                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-outline w-100" style="margin-top: 32px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Get Started</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="pricing-card featured wow fadeInUp" data-wow-delay="0.2s">
+                        <p class="plan-name">Growth</p>
+                        <div class="plan-price">Custom</div>
+                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">Our Growth package is ideal for growing businesses that are ready to invest in AI tools to save time and scale operations.</p>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What's included:</h6>
+                        <ul class="plan-features">
+                            <li>Up to 3 custom AI agents or workflows</li>
+                            <li>3,000 minutes/month • 3 phone numbers</li>
+                            <li>24/7 inbound + outbound calls</li>
+                            <li>Advanced lead qualification & scoring</li>
+                            <li>Multi-calendar booking & AI voicemail</li>
+                            <li>Full CRM integration</li>
+                            <li>Comprehensive efficiency audit</li>
+                            <li>Priority support (5 hours/month optimization)</li>
+                            <li>Quarterly performance reviews</li>
+                        </ul>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
+                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Businesses with 15-50 employees looking to automate multiple workflows across departments</p>
+                        
+                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary w-100" style="margin-top: 32px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Get Started</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="pricing-card wow fadeInUp" data-wow-delay="0.3s">
+                        <p class="plan-name">Scale</p>
+                        <div class="plan-price">Custom</div>
+                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">Built for businesses ready to go all-in on automation, Scale delivers 5 custom agents, unlimited support, and ongoing strategic consulting to maximize efficiency across every department.</p>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What's included:</h6>
+                        <ul class="plan-features">
+                            <li>Up to 5 custom AI agents or workflows</li>
+                            <li>Unlimited minutes & phone numbers</li>
+                            <li>Multi-location routing & custom workflows</li>
+                            <li>Dedicated account manager</li>
+                            <li>API access & custom CRM write-back</li>
+                            <li>Advanced analytics & SLA</li>
+                            <li>Deep-dive efficiency audit with ROI projections</li>
+                            <li>Full team training & implementation</li>
+                            <li>Priority support (10 hours/month consulting)</li>
+                            <li>Monthly reviews & semi-annual re-audits</li>
+                            <li>White-label available</li>
+                        </ul>
+                        
+                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
+                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Businesses with 50+ employees ready for comprehensive automation across multiple departments</p>
+                        
+                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-outline w-100" style="margin-top: 32px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Get Started</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section-testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    Testimonials
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">What Teams Say About Caipher</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="testimonial-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">"We used to miss 10 calls a day. Now Caipher catches everything and our calendar is full."</p>
+                        <div class="testimonial-author">
+                            <img src="images/avatar/team-1.jpg" alt="">
+                            <div>
+                                <h5>Sarah J.</h5>
+                                <p>Clinic Manager, Healthcare</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="testimonial-card wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">"It sounds incredibly human. Clients have no idea they're talking to AI until the appointment is booked."</p>
+                        <div class="testimonial-author">
+                            <img src="images/avatar/team-2.jpg" alt="">
+                            <div>
+                                <h5>Mike T.</h5>
+                                <p>Owner, HVAC Services</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="testimonial-card wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">"The ROI was immediate. We saved $4k/month on staffing costs in the first month alone."</p>
+                        <div class="testimonial-author">
+                            <img src="images/avatar/team-3.jpg" alt="">
+                            <div>
+                                <h5>Elena R.</h5>
+                                <p>Broker, Real Estate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="section-our-story" style="padding: 120px 0; background: var(--Bg); position: relative; overflow: hidden;">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Left: Image with fade effect -->
+                <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0.2s">
+                    <div style="position: relative; border-radius: 24px; overflow: hidden;">
+                        <img src="images/9F3F5F4A-D7CD-4C0C-88FB-30FF7CCA8A7E.JPG" alt="Caipher AI" style="width: 100%; height: auto; display: block;">
+                        <!-- Fade overlay for edges -->
+                        <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, var(--Bg) 100%); pointer-events: none;"></div>
+                    </div>
+                </div>
+                
+                <!-- Right: Story text -->
+                <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.3s" style="padding-left: 60px;">
+                    <h2 style="font-family: 'Fraunces', serif; font-size: 48px; font-weight: 700; color: var(--White); margin-bottom: 32px; line-height: 1.2;">Our story</h2>
+                    <p style="font-family: 'Poppins', sans-serif; font-size: 18px; line-height: 1.8; color: var(--Text-2); margin-bottom: 32px;">
+                        York Sims Jr. and Cassidy Myers-Sims are the husband-wife team behind Caipher AI. York, a self-taught coder and serial entrepreneur, builds the AI agents. Cassidy, a writer and marketing strategist with 15+ years of experience, tells the story. Together, they're on a mission to help businesses automate the busywork and help teams get back to what matters most.
+                    </p>
+                    <a href="https://calendly.com/yorksims/30min" class="tf-btn" style="margin-top: 24px;">
+                        <span class="btn-text">Learn more</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer with Burst Banner Background -->
+    <footer class="tf-footer" id="contact" style="position: relative; height: 800px; padding: 0; background: #00041e; overflow: hidden;">
+        <!-- Background Wrapper -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+            <img src="images/section/bg-footer.jpg" alt="" class="burst-bg" style="width: 100%; height: 100%; object-fit: cover;">
+            <!-- Fade Overlay: Hides lines behind text at top, reveals them at bottom -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, #00041e 0%, #00041e 35%, transparent 100%);"></div>
+        </div>
+
+        <!-- Content Overlay -->
+        <div class="container" style="position: relative; z-index: 3; padding-top: 80px;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="footer-logo"><img src="images/CaipherAIprimarylogo.png" alt="Caipher" style="height: 96px; width: auto; filter: brightness(0) invert(1);"></div>
+                    <p class="footer-description">
+                        AI Receptionists for Real-World Businesses. Never miss a call again.
+                    </p>
+                    <div class="footer-contact">
+                        <p><strong>Phone:</strong> <a href="tel:+17622247437">(762) 224-7437</a></p>
+                        <p><strong>Email:</strong> <a href="mailto:support@caipherai.com">support@caipherai.com</a></p>
+                        <p style="margin-top: 20px; font-size: 14px; color: var(--Text-2);">© 2025 Caipher. All rights reserved.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 offset-lg-1 footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="#features">Solutions</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#faq">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 footer-links">
+                    <h5>Industries</h5>
+                    <ul>
+                        <li><a href="industries/medical.html">Medical Clinics</a></li>
+                        <li><a href="https://ottoaiagent.com/industries/med-spa">Med-Spas</a></li>
+                        <li><a href="https://ottoaiagent.com/industries/real-estate">Real Estate</a></li>
+                        <li><a href="https://ottoaiagent.com/industries/home-services">Home Services</a></li>
+                        <li><a href="https://ottoaiagent.com/industries/legal">Law Firms</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 footer-links">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Big Logo Bottom Overlay -->
+        <div class="burst-content" style="position: absolute; bottom: -100px; left: 0; width: 100%; z-index: 2; display: flex; justify-content: center;">
+            <img src="images/integrations/IMG_0975.PNG" alt="Caipher Dashboard" style="width: 100%; max-width: 100%; height: auto; display: block;">
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/wow.min.js"></script>
+    
+    <script>
+        new WOW().init();
+        
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.tf-header');
+            if (window.scrollY > 50) {
+                header.classList.add('is-fixed');
+            } else {
+                header.classList.remove('is-fixed');
+            }
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Stacked Card Carousel Animation
+        (function() {
+            const cards = document.querySelectorAll('.stack-card');
+            const indicators = document.querySelectorAll('.card-indicator');
+            let currentCard = 0;
+            const totalCards = 3;
+            
+            function rotateCards() {
+                // Get the front card and add slide-up animation
+                const frontCard = document.querySelector('.stack-card.card-1');
+                if (frontCard) {
+                    frontCard.classList.add('sliding-up');
+                }
+                
+                // After animation completes, reorder cards
+                setTimeout(() => {
+                    // Remove all classes
+                    cards.forEach(card => {
+                        card.classList.remove('card-1', 'card-2', 'card-3', 'sliding-up');
+                    });
+                    
+                    // Calculate new positions
+                    for (let i = 0; i < totalCards; i++) {
+                        const position = (i - currentCard + totalCards) % totalCards;
+                        if (position === 0) {
+                            cards[i].classList.add('card-1');
+                        } else if (position === 1) {
+                            cards[i].classList.add('card-2');
+                        } else {
+                            cards[i].classList.add('card-3');
+                        }
+                    }
+                    
+                    // Update indicators
+                    indicators.forEach((ind, index) => {
+                        ind.classList.remove('active');
+                        if (index === currentCard) {
+                            ind.classList.add('active');
+                        }
+                    });
+                }, 500);
+                
+                currentCard = (currentCard + 1) % totalCards;
+            }
+            
+            // Auto-rotate every 2.5 seconds
+            setInterval(rotateCards, 2500);
+            
+            // Click on indicators to jump to card
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentCard = index;
+                    rotateCards();
+                });
+            });
+        })();
+        
+        // Chat Simulation Animation
+        (function() {
+            const chatMessages = document.querySelectorAll('#chat-simulation [data-step]');
+            const appointmentBadge = document.getElementById('appointment-badge');
+            const metricAppointments = document.getElementById('metric-appointments');
+            let currentAppointments = 89;
+            let currentStep = 1;
+            const totalSteps = 12;
+            
+            function showNextMessage() {
+                currentStep++;
+                if (currentStep > totalSteps) {
+                    // Reset and loop
+                    setTimeout(() => {
+                        chatMessages.forEach((msg, index) => {
+                            if (index > 0) {
+                                msg.style.opacity = '0';
+                                msg.style.transform = 'translateY(10px)';
+                            }
+                        });
+                        currentStep = 1;
+                        setTimeout(showNextMessage, 2000);
+                    }, 4000);
+                    return;
+                }
+                
+                const message = document.querySelector(`[data-step="${currentStep}"]`);
+                if (message) {
+                    message.style.transition = 'all 0.5s ease';
+                    message.style.opacity = '1';
+                    message.style.transform = 'translateY(0)';
+                    
+                    // When appointment is booked (step 12), increment the metric
+                    if (currentStep === 12 && metricAppointments) {
+                        setTimeout(() => {
+                            currentAppointments++;
+                            metricAppointments.textContent = currentAppointments;
+                            metricAppointments.classList.add('pulse');
+                            setTimeout(() => metricAppointments.classList.remove('pulse'), 500);
+                        }, 500);
+                    }
+                }
+                
+                // Schedule next message with varying delays
+                const delay = currentStep === 12 ? 3000 : (currentStep % 2 === 0 ? 1500 : 2000);
+                setTimeout(showNextMessage, delay);
+            }
+            
+            // Start animation after a short delay
+            setTimeout(showNextMessage, 2500);
+            
+            // Subtle metric updates for other values
+            setInterval(() => {
+                const callsEl = document.getElementById('metric-calls');
+                if (callsEl) {
+                    const currentCalls = parseInt(callsEl.textContent);
+                    if (Math.random() > 0.7) {
+                        callsEl.textContent = currentCalls + 1;
+                        callsEl.classList.add('pulse');
+                        setTimeout(() => callsEl.classList.remove('pulse'), 500);
+                    }
+                }
+            }, 8000);
+        })();
+        
+    </script>
+    
+    <!-- ChatGPT Floating Widget -->
+    <div id="chat-widget-container">
+        <!-- Chat Toggle Button -->
+        <button id="chat-toggle" aria-label="Open chat" title="Chat with Caipher">
+            <img id="chat-icon-img" src="images/chatbot-icon.PNG" alt="Caipher" />
+            <svg id="chat-icon-open" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none !important;">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <svg id="chat-icon-close" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        
+        <!-- Chat Window -->
+        <div id="chat-window" class="chat-hidden">
+            <div id="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-avatar">
+                        <img src="images/chatbot-icon.PNG" alt="Caipher AI">
+                    </div>
+                    <div>
+                        <div class="chat-title">Caipher Assistant</div>
+                        <div class="chat-status"><span class="status-dot"></span>Online</div>
+                    </div>
+                </div>
+            </div>
+            <div id="chat-messages">
+                <div class="chat-msg bot">
+                    <div class="msg-content">Hi! 👋 I'm Caipher. How can I help you learn about our AI receptionist platform?</div>
+                </div>
+            </div>
+            <div id="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+                <button id="chat-send">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        /* ChatGPT Widget Styles */
+        #chat-widget-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes pulse-purple-glow {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+                transform: scale(1);
+            }
+            70% { 
+                box-shadow: 0 0 0 20px rgba(168, 85, 247, 0);
+                transform: scale(1.05);
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+                transform: scale(1);
+            }
+        }
+
+        #chat-toggle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+            animation: pulse-purple-glow 2s infinite;
+        }
+
+        #chat-toggle:hover {
+            animation: none;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* Caipher logo inside the chat toggle button */
+        #chat-toggle img#chat-icon-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.12s ease, transform 0.12s ease;
+            transform: scale(1.6);
+            filter: brightness(0) invert(1);
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Ensure svg icons are positioned above the image when shown */
+        #chat-toggle svg {
+            position: absolute;
+            pointer-events: none;
+            color: white;
+        }
+        
+        #chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(79, 96, 250, 0.6);
+        }
+        
+        #chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 520px;
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.98) 0%, rgba(0, 4, 30, 0.99) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #chat-window.chat-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        
+        #chat-header {
+            padding: 16px 20px;
+            background: rgba(79, 96, 250, 0.15);
+            border-bottom: 1px solid var(--Border-3);
+        }
+        
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(79, 96, 250, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .chat-avatar img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        
+        .chat-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--White);
+        }
+        
+        .chat-status {
+            font-size: 12px;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .chat-msg {
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-msg.bot {
+            align-self: flex-start;
+        }
+        
+        .chat-msg.user {
+            align-self: flex-end;
+        }
+        
+        .msg-content {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .chat-msg.bot .msg-content {
+            background: rgba(79, 96, 250, 0.15);
+            border: 1px solid rgba(79, 96, 250, 0.2);
+            color: var(--Text-3);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-msg.user .msg-content {
+            background: linear-gradient(135deg, var(--Primary) 0%, #c46ff8 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-msg.typing .msg-content {
+            display: flex;
+            gap: 4px;
+            padding: 16px 20px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--Primary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        
+        #chat-input-container {
+            padding: 16px;
+            border-top: 1px solid var(--Border-3);
+            display: flex;
+            gap: 12px;
+            background: rgba(0, 4, 30, 0.5);
+        }
+        
+        #chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--Border-3);
+            background: rgba(79, 96, 250, 0.05);
+            color: var(--White);
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #chat-input:focus {
+            border-color: var(--Primary);
+        }
+        
+        #chat-input::placeholder {
+            color: var(--Text-2);
+        }
+
+        /* Chat header avatar: make logo white */
+        .chat-avatar img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 50%;
+            background-color: transparent;
+            filter: brightness(0) invert(1);
+            display: block;
+        }
+        
+        #chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--Primary) 0%, #c46ff8 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        #chat-send:hover {
+            transform: scale(1.05);
+        }
+        
+        #chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 480px) {
+            #chat-window {
+                width: calc(100vw - 48px);
+                height: 70vh;
+                bottom: 90px;
+                right: -12px;
+            }
+        }
+    </style>
+    
+    <script>
+        // ChatGPT Widget Logic
+        (function() {
+            const toggle = document.getElementById('chat-toggle');
+            const chatWindow = document.getElementById('chat-window');
+            const iconOpen = document.getElementById('chat-icon-open');
+            const iconClose = document.getElementById('chat-icon-close');
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send');
+            const messages = document.getElementById('chat-messages');
+            
+            let isOpen = false;
+            
+            // Toggle chat window
+            const iconImg = document.getElementById('chat-icon-img');
+            toggle.addEventListener('click', () => {
+                isOpen = !isOpen;
+                chatWindow.classList.toggle('chat-hidden', !isOpen);
+                iconOpen.style.display = isOpen ? 'none' : 'block';
+                iconClose.style.display = isOpen ? 'block' : 'none';
+                if (iconImg) iconImg.style.opacity = isOpen ? '0' : '1';
+                if (isOpen) input.focus();
+            });
+            
+            // Send message
+            async function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+                
+                // Add user message
+                addMessage(text, 'user');
+                input.value = '';
+                sendBtn.disabled = true;
+                
+                // Show typing indicator
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'chat-msg bot typing';
+                typingDiv.innerHTML = '<div class="msg-content"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+                messages.appendChild(typingDiv);
+                messages.scrollTop = messages.scrollHeight;
+                
+                try {
+                    const response = await fetch('https://ottoagent.net/api/ai/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: text })
+                    });
+                    
+                    const data = await response.json();
+                    typingDiv.remove();
+                    
+                    if (data.reply) {
+                        addMessage(data.reply, 'bot');
+                    } else {
+                        addMessage('I apologize, but I encountered an issue. Please call us at (888) 411-8568 or book a demo directly!', 'bot');
+                    }
+                } catch (error) {
+                    typingDiv.remove();
+                    addMessage('I apologize, but I\'m having trouble connecting. Please call us at (888) 411-8568 or book a demo at calendly.com/yorksims/30min!', 'bot');
+                }
+                
+                sendBtn.disabled = false;
+            }
+            
+            function addMessage(text, type) {
+                const div = document.createElement('div');
+                div.className = `chat-msg ${type}`;
+                div.innerHTML = `<div class="msg-content">${text}</div>`;
+                messages.appendChild(div);
+                messages.scrollTop = messages.scrollHeight;
+            }
+            
+            sendBtn.addEventListener('click', sendMessage);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+        })();
+    </script>
+</body>
+</html>
