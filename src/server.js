@@ -36,9 +36,25 @@ app.use(helmet({
     },
   },
 }));
+// CORS configuration - supports multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'https://caipherai.com',
+  'https://www.caipherai.com',
+  'https://ottoaiagent.com',
+  'https://www.ottoaiagent.com',
+  'https://ottoagent.net',
+  'https://www.ottoagent.net',
+  process.env.CORS_ORIGIN,
+  process.env.DOMAIN,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.DOMAIN || 'http://localhost:3000',
-  credentials: true
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Rate limiting - relaxed for development
