@@ -2687,11 +2687,9 @@
             margin: 0;
         }
 
-        /* Ensure svg icons are positioned above the image when shown */
+        /* Hide SVG icons by default - we only use the logo image */
         #chat-toggle svg {
-            position: absolute;
-            pointer-events: none;
-            color: white;
+            display: none !important;
         }
         
         #chat-toggle:hover {
@@ -2736,19 +2734,19 @@
         }
         
         .chat-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: rgba(79, 96, 250, 0.2);
+            background: rgba(79, 96, 250, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
         }
-        
+
         .chat-avatar img {
-            width: 28px;
-            height: 28px;
+            width: 38px;
+            height: 38px;
             object-fit: contain;
         }
         
@@ -2872,12 +2870,12 @@
             color: var(--Text-2);
         }
 
-        /* Chat header avatar: make logo white and fill circle */
+        /* Chat header avatar: make logo white and bigger */
         .chat-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 0;
             background-color: transparent;
             filter: brightness(0) invert(1);
             display: block;
