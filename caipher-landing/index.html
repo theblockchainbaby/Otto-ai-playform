@@ -2600,9 +2600,7 @@
             <div id="chat-header">
                 <div class="chat-header-info">
                     <div class="chat-avatar">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
+                        <img src="images/chatbot-icon.PNG" alt="Caipher AI">
                     </div>
                     <div>
                         <div class="chat-title">Caipher Assistant</div>
@@ -2866,10 +2864,12 @@
             color: var(--Text-2);
         }
 
-        /* Chat header avatar: style the chat icon */
-        .chat-avatar svg {
-            width: 28px;
-            height: 28px;
+        /* Chat header avatar: make logo 90% of circle */
+        .chat-avatar img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
         }
         
         #chat-send {
