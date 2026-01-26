@@ -2742,6 +2742,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
         
         .chat-title {
@@ -2864,12 +2865,16 @@
             color: var(--Text-2);
         }
 
-        /* Chat header avatar: make logo 140% of circle */
+        /* Chat header avatar: make logo 160% of circle and centered */
         .chat-avatar img {
-            width: 140%;
-            height: 140%;
+            width: 160%;
+            height: 160%;
             object-fit: contain;
             filter: brightness(0) invert(1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         
         #chat-send {
