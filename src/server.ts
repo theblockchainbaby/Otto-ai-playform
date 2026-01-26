@@ -63,6 +63,8 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
   'https://caipherai.com',
   'https://www.caipherai.com',
+  'https://caipherai.io',
+  'https://www.caipherai.io',
   'https://ottoaiagent.com',
   'https://www.ottoaiagent.com',
   'https://ottoagent.net',
