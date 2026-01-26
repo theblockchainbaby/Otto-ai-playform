@@ -144,15 +144,25 @@ Keep responses concise, friendly, and helpful. Guide users to book a demo at cal
     });
     
     const data = await response.json();
-    
+
+    // Log OpenAI response for debugging
+    if (!response.ok) {
+      console.error('OpenAI API error:', response.status, JSON.stringify(data));
+      return res.status(500).json({
+        error: 'Failed to get response from AI',
+        details: data.error?.message || 'Unknown error'
+      });
+    }
+
     if (data.choices && data.choices[0]) {
       res.json({ reply: data.choices[0].message.content });
     } else {
+      console.error('OpenAI unexpected response:', JSON.stringify(data));
       res.status(500).json({ error: 'Failed to get response from AI' });
     }
   } catch (error) {
     console.error('Error in chat proxy:', error);
-    res.status(500).json({ error: 'Failed to process chat request' });
+    res.status(500).json({ error: 'Failed to process chat request', details: error.message });
   }
 });
 
