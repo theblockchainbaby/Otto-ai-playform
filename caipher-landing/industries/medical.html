@@ -4,57 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Medical Receptionist for Clinics | Caipher AI</title>
-    <meta name="description" content="Automate patient intake, appointment booking, triage routing, and common questions — 24/7 — without replacing your staff. AI medical receptionist for clinics.">
+    <meta name="description" content="Automate patient intake, appointment booking, triage routing, and common questions — 24/7 — without replacing your staff.">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="../css/bootstrap.css">
-    <link rel="stylesheet" href="../css/animate.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
 
     <style>
         :root {
-            --Black: #000000;
             --White: #ffffff;
             --Primary: #4f60fa;
-            --Primary-glow: rgba(79, 96, 250, 0.3);
             --Text: #73799b;
             --Text-2: #cac9d1;
             --Text-3: #f4f7ff;
             --Bg: #00031c;
             --Bg-2: #c46ff8;
             --Bg-7: #00041e;
-            --Border: #202568;
             --Border-3: rgba(32, 37, 104, 0.35);
-            --Medical-accent: #10b981;
+            --Medical: #10b981;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--Bg);
             color: var(--Text-3);
-            overflow-x: hidden;
             line-height: 1.6;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
         /* Header */
-        .tf-header {
+        .header {
             position: fixed;
             top: 0;
             left: 0;
@@ -66,113 +49,44 @@
             border-bottom: 1px solid var(--Border-3);
         }
 
-        .header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; }
 
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--White);
-            text-decoration: none;
-        }
+        .logo { font-size: 28px; font-weight: 700; color: var(--White); text-decoration: none; }
+        .logo span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .logo span {
-            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
+        .nav-menu a { color: var(--Text-2); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--Primary); }
 
-        .nav-menu {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
-
-        .nav-menu a {
-            color: var(--Text-2);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-menu a:hover {
-            color: var(--Primary);
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        /* Buttons */
         .btn-primary {
             background: var(--Primary);
             color: var(--White);
-            padding: 14px 32px;
+            padding: 12px 28px;
             border-radius: 100px;
             text-decoration: none;
             font-weight: 600;
             font-size: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
             box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
         }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(79, 96, 250, 0.5);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--White);
-            padding: 14px 32px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            border: 1px solid var(--Border);
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--Primary);
-            background: rgba(79, 96, 250, 0.1);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            min-height: 100vh;
-            padding: 160px 0 100px;
+        /* Hero */
+        .hero {
+            padding: 140px 0 80px;
+            text-align: center;
             position: relative;
-            overflow: hidden;
         }
-
-        .hero-section::before {
+        .hero::before {
             content: '';
             position: absolute;
             top: -200px;
             left: 50%;
             transform: translateX(-50%);
-            width: 1000px;
-            height: 1000px;
+            width: 800px;
+            height: 800px;
             background: radial-gradient(circle, rgba(79, 96, 250, 0.12) 0%, transparent 60%);
             pointer-events: none;
-        }
-
-        .hero-content {
-            text-align: center;
-            position: relative;
-            z-index: 2;
         }
 
         .hero-badge {
@@ -181,1251 +95,403 @@
             gap: 8px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 100px;
-            font-size: 14px;
-            color: var(--Medical-accent);
-            margin-bottom: 32px;
-        }
-
-        .hero-title {
-            font-size: 64px;
-            font-weight: 700;
-            line-height: 1.1;
+            font-size: 13px;
+            color: var(--Medical);
             margin-bottom: 24px;
-            color: var(--White);
         }
 
-        .hero-title span {
-            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .hero h1 { font-size: 52px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; color: var(--White); }
+        .hero h1 span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 18px; color: var(--Text-2); max-width: 600px; margin: 0 auto 32px; }
 
-        .hero-subtitle {
-            font-size: 20px;
-            line-height: 1.7;
-            color: var(--Text-2);
-            max-width: 700px;
-            margin: 0 auto 48px;
-        }
-
-        /* Hero Highlights */
-        .hero-highlights {
+        .hero-features {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 16px;
-            margin-top: 60px;
+            gap: 12px;
+            margin-top: 40px;
         }
-
-        .highlight-item {
+        .hero-features span {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: rgba(32, 37, 104, 0.3);
             border: 1px solid var(--Border-3);
-            padding: 14px 24px;
+            padding: 10px 18px;
             border-radius: 100px;
-            font-size: 14px;
-            color: var(--Text-3);
+            font-size: 13px;
         }
+        .hero-features svg { width: 16px; height: 16px; color: var(--Medical); }
 
-        .highlight-item svg {
-            width: 20px;
-            height: 20px;
-            color: var(--Medical-accent);
-        }
+        /* Section */
+        .section { padding: 80px 0; }
+        .section-dark { background: var(--Bg-7); }
+        .section-title { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 12px; text-align: center; }
+        .section-subtitle { font-size: 16px; color: var(--Text-2); text-align: center; max-width: 500px; margin: 0 auto 48px; }
 
-        /* Section Styles */
-        .section {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        .section-dark {
-            background: var(--Bg-7);
-        }
-
-        .section-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: var(--White);
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--Text-2);
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 60px;
-        }
-
-        /* Capability Cards */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .capability-card {
+        /* Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card {
             background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
             border: 1px solid var(--Border-3);
-            border-radius: 24px;
-            padding: 36px;
+            border-radius: 20px;
+            padding: 28px;
             transition: all 0.3s ease;
         }
-
-        .capability-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--Primary);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
+        .card:hover { transform: translateY(-4px); border-color: var(--Primary); }
         .card-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: rgba(79, 96, 250, 0.15);
-            border-radius: 16px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
+        .card-icon svg { width: 24px; height: 24px; color: var(--Primary); }
+        .card h3 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 8px; }
+        .card p { font-size: 14px; color: var(--Text-2); line-height: 1.6; }
 
-        .card-icon svg {
-            width: 28px;
-            height: 28px;
-            color: var(--Primary);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--White);
-            margin-bottom: 12px;
-        }
-
-        .card-desc {
-            font-size: 15px;
-            color: var(--Text-2);
-            line-height: 1.7;
-        }
-
-        /* Workflow Section */
-        .workflow-section {
-            background: linear-gradient(180deg, var(--Bg) 0%, var(--Bg-7) 100%);
-        }
-
-        .workflow-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .workflow-step {
-            display: flex;
-            gap: 32px;
-            margin-bottom: 48px;
-            position: relative;
-        }
-
+        /* Workflow */
+        .workflow { max-width: 800px; margin: 0 auto; }
+        .workflow-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
         .workflow-step:not(:last-child)::after {
             content: '';
             position: absolute;
-            left: 28px;
-            top: 70px;
+            left: 22px;
+            top: 56px;
             width: 2px;
-            height: calc(100% - 20px);
+            height: calc(100% - 24px);
             background: linear-gradient(180deg, var(--Primary) 0%, transparent 100%);
         }
-
-        .step-number {
-            width: 56px;
-            height: 56px;
-            min-width: 56px;
+        .step-num {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
             background: var(--Primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
-            color: var(--White);
             position: relative;
             z-index: 2;
         }
+        .step-content { flex: 1; padding-top: 4px; }
+        .step-content h4 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 6px; }
+        .step-content p { font-size: 14px; color: var(--Text-2); }
 
-        .step-content {
-            flex: 1;
-            padding-top: 8px;
-        }
-
-        .step-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--White);
-            margin-bottom: 12px;
-        }
-
-        .step-desc {
-            font-size: 16px;
-            color: var(--Text-2);
-            line-height: 1.7;
-            margin-bottom: 16px;
-        }
-
-        .step-details {
-            background: rgba(32, 37, 104, 0.3);
-            border: 1px solid var(--Border-3);
-            border-radius: 16px;
-            padding: 20px 24px;
-        }
-
-        .step-details ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .step-details li {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--Text-3);
-        }
-
-        .step-details li:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-details li::before {
-            content: '→';
-            color: var(--Primary);
-            font-weight: 600;
-        }
-
-        .routing-paths {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .routing-path {
-            background: rgba(32, 37, 104, 0.4);
-            border: 1px solid var(--Border-3);
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .routing-path h5 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--Primary);
-            margin-bottom: 8px;
-        }
-
-        .routing-path ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .routing-path li {
-            font-size: 13px;
-            color: var(--Text-2);
-            margin-bottom: 4px;
-        }
-
-        /* Benefits Section */
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-        }
-
-        .benefits-column {
+        /* Benefits */
+        .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .benefits-box {
             background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
             border: 1px solid var(--Border-3);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 32px;
         }
+        .benefits-box h3 { font-size: 20px; font-weight: 600; color: var(--White); margin-bottom: 20px; }
+        .benefit-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; }
+        .benefit-item svg { width: 18px; height: 18px; color: var(--Medical); }
 
-        .benefits-column h3 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--White);
-            margin-bottom: 28px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .benefits-column h3 svg {
-            width: 28px;
-            height: 28px;
-            color: var(--Primary);
-        }
-
-        .benefit-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .benefit-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .benefit-check {
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
-            background: rgba(16, 185, 129, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 2px;
-        }
-
-        .benefit-check svg {
-            width: 14px;
-            height: 14px;
-            color: var(--Medical-accent);
-        }
-
-        .benefit-text {
-            font-size: 16px;
-            color: var(--Text-3);
-        }
-
-        /* Call Script Section */
-        .script-section {
-            background: var(--Bg);
-        }
-
-        .script-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-
+        /* Script */
+        .script-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
         .script-box {
             background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.8) 100%);
             border: 1px solid var(--Border-3);
-            border-radius: 24px;
-            padding: 36px;
-        }
-
-        .script-box h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--White);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .script-box h3 .badge {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--Medical-accent);
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 100px;
-            font-weight: 500;
-        }
-
-        .script-box h3 .badge-urgent {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-        }
-
-        .conversation {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .message {
-            display: flex;
-            gap: 12px;
-        }
-
-        .message-ai .avatar {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            background: var(--Primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .message-ai .avatar svg {
-            width: 18px;
-            height: 18px;
-            color: var(--White);
-        }
-
-        .message-patient .avatar {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .message-patient .avatar svg {
-            width: 18px;
-            height: 18px;
-            color: var(--Text-2);
-        }
-
-        .message-bubble {
-            flex: 1;
-        }
-
-        .message-bubble .label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--Text);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .message-ai .label {
-            color: var(--Primary);
-        }
-
-        .message-bubble p {
-            font-size: 14px;
-            color: var(--Text-3);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* Staff Control Section */
-        .control-section {
-            background: var(--Bg-7);
-        }
-
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-        }
-
-        .control-item {
-            text-align: center;
-            padding: 32px 24px;
-            background: rgba(32, 37, 104, 0.3);
-            border: 1px solid var(--Border-3);
             border-radius: 20px;
+            padding: 28px;
         }
+        .script-box h3 { font-size: 16px; font-weight: 600; color: var(--White); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .script-box .badge { background: rgba(16, 185, 129, 0.15); color: var(--Medical); font-size: 11px; padding: 4px 10px; border-radius: 100px; }
+        .script-box .badge-urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .msg { margin-bottom: 12px; font-size: 13px; }
+        .msg-label { font-weight: 600; margin-bottom: 2px; }
+        .msg-ai .msg-label { color: var(--Primary); }
+        .msg-patient .msg-label { color: var(--Text); }
+        .msg p { color: var(--Text-3); margin: 0; }
 
-        .control-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(79, 96, 250, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
+        /* Control */
+        .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .control-item { text-align: center; padding: 24px 16px; background: rgba(32, 37, 104, 0.3); border: 1px solid var(--Border-3); border-radius: 16px; }
+        .control-item svg { width: 32px; height: 32px; color: var(--Primary); margin-bottom: 12px; }
+        .control-item h4 { font-size: 14px; font-weight: 600; color: var(--White); margin-bottom: 4px; }
+        .control-item p { font-size: 12px; color: var(--Text-2); margin: 0; }
 
-        .control-icon svg {
-            width: 28px;
-            height: 28px;
-            color: var(--Primary);
-        }
-
-        .control-item h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--White);
-            margin-bottom: 8px;
-        }
-
-        .control-item p {
-            font-size: 14px;
-            color: var(--Text-2);
-            margin: 0;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 120px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
+        /* CTA */
+        .cta { padding: 80px 0; text-align: center; position: relative; }
+        .cta::before {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 800px;
-            height: 800px;
+            width: 600px;
+            height: 600px;
             background: radial-gradient(circle, rgba(79, 96, 250, 0.15) 0%, transparent 60%);
             pointer-events: none;
         }
-
-        .cta-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .cta-title {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--White);
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .cta-subtitle {
-            font-size: 18px;
-            color: var(--Text-2);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            line-height: 1.7;
-        }
+        .cta h2 { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 16px; position: relative; }
+        .cta p { font-size: 16px; color: var(--Text-2); max-width: 500px; margin: 0 auto 32px; position: relative; }
 
         /* Footer */
-        .tf-footer {
-            background: var(--Bg-7);
-            padding: 80px 0 40px;
-            border-top: 1px solid var(--Border-3);
-        }
+        .footer { background: var(--Bg-7); padding: 60px 0 30px; border-top: 1px solid var(--Border-3); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+        .footer-brand p { color: var(--Text-2); font-size: 13px; max-width: 240px; }
+        .footer-links h5 { color: var(--White); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: var(--Text-2); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--Primary); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--Border-3); text-align: center; color: var(--Text); font-size: 12px; }
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 60px;
-        }
-
-        .footer-brand img {
-            height: 48px;
-            filter: brightness(0) invert(1);
-            margin-bottom: 20px;
-        }
-
-        .footer-brand p {
-            color: var(--Text-2);
-            font-size: 15px;
-            line-height: 1.7;
-            max-width: 280px;
-        }
-
-        .footer-links h5 {
-            color: var(--White);
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: var(--Text-2);
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--Primary);
-        }
-
-        .footer-bottom {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid var(--Border-3);
-            text-align: center;
-            color: var(--Text);
-            font-size: 14px;
-        }
-
-        /* Responsive */
         @media (max-width: 1024px) {
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .routing-paths {
-                grid-template-columns: 1fr;
-            }
-
-            .control-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 40px;
-            }
+            .card-grid, .control-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-
-            .hero-title {
-                font-size: 40px;
-            }
-
-            .section-title {
-                font-size: 32px;
-            }
-
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .script-container {
-                grid-template-columns: 1fr;
-            }
-
-            .control-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta-title {
-                font-size: 32px;
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .hero-highlights {
-                flex-direction: column;
-                align-items: center;
-            }
+            .nav-menu { display: none; }
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 28px; }
+            .card-grid, .benefits-grid, .script-grid, .control-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .hero-features { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="tf-header">
+    <header class="header">
         <div class="container">
             <div class="header-inner">
-                <a href="../index.html" class="logo">
-                    Caipher <span>AI</span>
-                </a>
-
+                <a href="../index.html" class="logo">Caipher <span>AI</span></a>
                 <ul class="nav-menu">
                     <li><a href="../index.html#features">Solutions</a></li>
                     <li><a href="../index.html#how-it-works">How It Works</a></li>
                     <li><a href="../index.html#pricing">Pricing</a></li>
-                    <li><a href="../index.html#faq">FAQs</a></li>
                 </ul>
-
-                <div class="header-buttons">
-                    <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
-                </div>
+                <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    Medical Clinic Solutions
-                </div>
+            <div class="hero-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Medical Clinic Solutions
+            </div>
+            <h1>AI Medical Receptionist<br><span>for Clinics</span></h1>
+            <p>Automate patient intake, appointment booking, triage routing, and FAQs — 24/7 — without replacing your staff.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
 
-                <h1 class="hero-title">AI Medical Receptionist<br><span>for Clinics</span></h1>
-
-                <p class="hero-subtitle">
-                    Automate patient intake, appointment booking, triage routing, and common questions — 24/7 — without replacing your staff.
-                </p>
-
-                <div class="hero-buttons" style="display: flex; justify-content: center; gap: 16px;">
-                    <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
-                    <a href="#how-it-works" class="btn-outline">See How It Works</a>
-                </div>
-
-                <div class="hero-highlights">
-                    <div class="highlight-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                        Answers calls instantly
-                    </div>
-                    <div class="highlight-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        Books & modifies appointments
-                    </div>
-                    <div class="highlight-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
-                        Routes urgent cases correctly
-                    </div>
-                    <div class="highlight-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        Handles FAQs securely
-                    </div>
-                    <div class="highlight-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        Reduces front-desk overload
-                    </div>
-                </div>
+            <div class="hero-features">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Instant answers</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Appointment booking</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Triage routing</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 24/7 coverage</span>
             </div>
         </div>
     </section>
 
-    <!-- What the AI Handles Section -->
     <section class="section section-dark">
         <div class="container">
             <h2 class="section-title">What the AI Handles</h2>
-            <p class="section-subtitle">Your AI receptionist manages routine calls so your staff can focus on patient care.</p>
+            <p class="section-subtitle">Your AI receptionist manages routine calls so staff can focus on patient care.</p>
 
             <div class="card-grid">
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <h3 class="card-title">Appointment Management</h3>
-                    <p class="card-desc">Books, reschedules, and cancels appointments based on your availability rules and provider calendars. Syncs directly with your scheduling system.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                    <h3>Appointment Management</h3>
+                    <p>Books, reschedules, and cancels based on your availability rules and provider calendars.</p>
                 </div>
-
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/></svg>
-                    </div>
-                    <h3 class="card-title">Patient Intake</h3>
-                    <p class="card-desc">Collects structured information before the visit — name, DOB, reason for visit, insurance status, and symptom categories — saving staff time.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
+                    <h3>Patient Intake</h3>
+                    <p>Collects name, DOB, reason for visit, insurance status, and symptom categories.</p>
                 </div>
-
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    </div>
-                    <h3 class="card-title">Smart Triage Routing</h3>
-                    <p class="card-desc">Identifies urgent vs routine cases and routes appropriately — emergency guidance, nurse callback queue, or standard scheduling.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                    <h3>Smart Triage</h3>
+                    <p>Identifies urgent vs routine cases. Routes to emergency, nurse callback, or scheduling.</p>
                 </div>
-
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                    </div>
-                    <h3 class="card-title">Insurance & Billing FAQs</h3>
-                    <p class="card-desc">Answers common questions about accepted insurance plans, payment methods, visit types, and billing procedures based on your approved responses.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+                    <h3>Insurance FAQs</h3>
+                    <p>Answers common questions about accepted plans, payments, and visit types.</p>
                 </div>
-
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <h3 class="card-title">After-Hours Coverage</h3>
-                    <p class="card-desc">Captures messages, schedules future callbacks, or escalates urgent matters based on your clinic's rules — even at 2 AM.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <h3>After-Hours</h3>
+                    <p>Captures messages, schedules callbacks, or escalates urgent matters — even at 2 AM.</p>
                 </div>
-
-                <div class="capability-card">
-                    <div class="card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-                    </div>
-                    <h3 class="card-title">Call Routing</h3>
-                    <p class="card-desc">Transfers calls to the right department — billing, nurse line, scheduling desk, or specific providers — when human help is needed.</p>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
+                    <h3>Call Routing</h3>
+                    <p>Transfers to billing, nurse line, or specific providers when human help is needed.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How the Workflow Operates Section -->
-    <section class="section workflow-section" id="how-it-works">
+    <section class="section" id="how-it-works">
         <div class="container">
-            <h2 class="section-title">How the Medical Workflow Operates</h2>
-            <p class="section-subtitle">A step-by-step look at how every patient call is handled.</p>
+            <h2 class="section-title">How the Workflow Operates</h2>
+            <p class="section-subtitle">Every patient call follows a structured path.</p>
 
-            <div class="workflow-container">
+            <div class="workflow">
                 <div class="workflow-step">
-                    <div class="step-number">1</div>
+                    <div class="step-num">1</div>
                     <div class="step-content">
-                        <h3 class="step-title">Call Answered Instantly</h3>
-                        <p class="step-desc">AI greets the patient, identifies your clinic by name, and asks how it can help. No hold times, no missed calls.</p>
+                        <h4>Call Answered Instantly</h4>
+                        <p>AI greets the patient, identifies your clinic, and asks how it can help. No hold times.</p>
                     </div>
                 </div>
-
                 <div class="workflow-step">
-                    <div class="step-number">2</div>
+                    <div class="step-num">2</div>
                     <div class="step-content">
-                        <h3 class="step-title">Intent Detection</h3>
-                        <p class="step-desc">The system identifies the purpose of the call:</p>
-                        <div class="step-details">
-                            <ul>
-                                <li>Book a new appointment</li>
-                                <li>Change or cancel existing appointment</li>
-                                <li>Symptoms or health concern</li>
-                                <li>Billing or insurance question</li>
-                                <li>Prescription inquiry</li>
-                                <li>Other / General question</li>
-                            </ul>
-                        </div>
+                        <h4>Intent & Patient Identification</h4>
+                        <p>Detects purpose (booking, symptoms, billing) and collects name, DOB, and patient status.</p>
                     </div>
                 </div>
-
                 <div class="workflow-step">
-                    <div class="step-number">3</div>
+                    <div class="step-num">3</div>
                     <div class="step-content">
-                        <h3 class="step-title">Patient Identification</h3>
-                        <p class="step-desc">The AI collects or confirms key patient information:</p>
-                        <div class="step-details">
-                            <ul>
-                                <li>Full name</li>
-                                <li>Date of birth</li>
-                                <li>Phone number</li>
-                                <li>New or existing patient status</li>
-                            </ul>
-                        </div>
+                        <h4>Smart Path Routing</h4>
+                        <p>Booking → offers time slots. Symptoms → triage questions. Billing → FAQ answers or transfer.</p>
                     </div>
                 </div>
-
                 <div class="workflow-step">
-                    <div class="step-number">4</div>
+                    <div class="step-num">4</div>
                     <div class="step-content">
-                        <h3 class="step-title">Smart Path Routing</h3>
-                        <p class="step-desc">Based on intent, the AI follows the appropriate workflow path:</p>
-                        <div class="routing-paths">
-                            <div class="routing-path">
-                                <h5>If Booking</h5>
-                                <ul>
-                                    <li>Collects visit reason</li>
-                                    <li>Checks provider rules</li>
-                                    <li>Offers available time slots</li>
-                                    <li>Confirms appointment</li>
-                                </ul>
-                            </div>
-                            <div class="routing-path">
-                                <h5>If Symptoms</h5>
-                                <ul>
-                                    <li>Asks triage questions</li>
-                                    <li>Flags severity level</li>
-                                    <li>Schedules urgent slot OR</li>
-                                    <li>Nurse callback / Emergency</li>
-                                </ul>
-                            </div>
-                            <div class="routing-path">
-                                <h5>If Billing</h5>
-                                <ul>
-                                    <li>Provides FAQ responses</li>
-                                    <li>Answers insurance questions</li>
-                                    <li>Routes to billing desk</li>
-                                    <li>If needed</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="workflow-step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Data Structured & Logged</h3>
-                        <p class="step-desc">All information is automatically saved to:</p>
-                        <div class="step-details">
-                            <ul>
-                                <li>Your CRM / EHR integration</li>
-                                <li>Front desk notification queue</li>
-                                <li>Complete call summary with transcript</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="workflow-step">
-                    <div class="step-number">6</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Staff Handoff (Only When Needed)</h3>
-                        <p class="step-desc">Your staff only handles what requires human judgment:</p>
-                        <div class="step-details">
-                            <ul>
-                                <li>Complex clinical questions</li>
-                                <li>Escalated patient concerns</li>
-                                <li>Clinical decisions</li>
-                            </ul>
-                        </div>
-                        <p style="margin-top: 16px; color: var(--Medical-accent); font-weight: 500;">Routine calls never reach your front desk.</p>
+                        <h4>Data Logged & Staff Notified</h4>
+                        <p>All information saved to your CRM/EHR. Staff only handle complex cases and escalations.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Benefits Section -->
     <section class="section section-dark">
         <div class="container">
             <h2 class="section-title">Benefits for Clinics</h2>
-            <p class="section-subtitle">Measurable improvements for your operations and patient experience.</p>
-
             <div class="benefits-grid">
-                <div class="benefits-column">
-                    <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                        Operational Benefits
-                    </h3>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Fewer missed calls and lost patients</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Less staff interruption during patient care</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Reduced hold times and call abandonment</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Fewer scheduling errors and double-bookings</span>
-                    </div>
+                <div class="benefits-box">
+                    <h3>Operational</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Fewer missed calls</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Less staff interruption</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Reduced hold times</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Fewer scheduling errors</div>
+                </div>
+                <div class="benefits-box">
+                    <h3>Patient Experience</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> No waiting on hold</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 24/7 availability</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Faster booking</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Clear next steps</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Example Call Flows</h2>
+            <p class="section-subtitle">See how the AI handles real patient scenarios.</p>
+
+            <div class="script-grid">
+                <div class="script-box">
+                    <h3>Appointment Booking <span class="badge">Standard</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Thank you for calling. How can I help you today?</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>I need to schedule an appointment.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I can help. Are you a new or existing patient?</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>Existing. [Provides name, DOB, reason]</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Is this pain severe or accompanied by swelling?</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>No.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I have Tuesday 10:30 AM or Thursday 2:15 PM available.</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>Thursday.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>You're booked for Thursday at 2:15 PM. Confirmation sent by text.</p></div>
                 </div>
 
-                <div class="benefits-column">
-                    <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Patient Experience Benefits
-                    </h3>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">No waiting on hold — ever</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">24/7 response availability</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Faster appointment booking process</span>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-check">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <span class="benefit-text">Clear guidance for next steps</span>
+                <div class="script-box">
+                    <h3>Urgent Triage <span class="badge badge-urgent">Emergency</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Are you experiencing chest pain, difficulty breathing, or an emergency?</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>Yes, chest pain.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p><strong>Please hang up and call 911 immediately.</strong> Would you like me to notify the clinic?</p></div>
+                    <div class="msg msg-patient"><div class="msg-label">Patient</div><p>Yes.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Done. The clinic has been notified. Please call 911 now.</p></div>
+
+                    <div style="margin-top: 20px; padding: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px;">
+                        <p style="color: #ef4444; font-weight: 600; font-size: 12px; margin-bottom: 4px;">Emergency Protocol</p>
+                        <p style="color: var(--Text-2); font-size: 12px; margin: 0;">AI never handles emergencies. It directs to 911 immediately.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sample Call Script Section -->
-    <section class="section script-section">
+    <section class="section section-dark">
         <div class="container">
-            <h2 class="section-title">Example Patient Call Flows</h2>
-            <p class="section-subtitle">See exactly how the AI handles common patient scenarios.</p>
-
-            <div class="script-container">
-                <div class="script-box">
-                    <h3>Appointment Booking <span class="badge">Standard Flow</span></h3>
-                    <div class="conversation">
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Thank you for calling [Clinic Name]. How can I help you today?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>I need to schedule an appointment.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>I can help with that. Are you a new or existing patient?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>Existing.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Great. May I have your full name and date of birth?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>[Provides information]</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Thank you. What is the main reason for your visit today?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>Ongoing knee pain.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Understood. Is this pain severe, sudden, or accompanied by swelling or fever?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>No.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Thank you. I can schedule you with a provider. Here are the next available options: Tuesday at 10:30 AM or Thursday at 2:15 PM. Which works best?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>Thursday.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>You're scheduled for Thursday at 2:15 PM. You'll receive a confirmation by text. Is there anything else I can help with?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="script-box">
-                    <h3>Urgent Triage <span class="badge badge-urgent">Emergency Protocol</span></h3>
-                    <div class="conversation">
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>Are you experiencing chest pain, difficulty breathing, or a life-threatening emergency?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>Yes, I'm having chest pain.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p><strong>Please hang up and call 911 immediately.</strong> If you'd like, I can notify the clinic of your call so they can follow up. Would you like me to do that?</p>
-                            </div>
-                        </div>
-                        <div class="message message-patient">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">Patient</div>
-                                <p>Yes, please.</p>
-                            </div>
-                        </div>
-                        <div class="message message-ai">
-                            <div class="avatar">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                            </div>
-                            <div class="message-bubble">
-                                <div class="label">AI</div>
-                                <p>I've flagged this as urgent and notified the clinic. Please call 911 now. Take care.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 32px; padding: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px;">
-                        <p style="color: #ef4444; font-weight: 600; margin-bottom: 8px; font-size: 14px;">Emergency Protocol Active</p>
-                        <p style="color: var(--Text-2); font-size: 14px; margin: 0;">The AI never attempts to handle emergencies. It immediately directs patients to 911 while offering to notify your clinic for follow-up.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Staff Control Section -->
-    <section class="section control-section">
-        <div class="container">
-            <h2 class="section-title">How Staff Stays in Control</h2>
-            <p class="section-subtitle">Your clinic defines the rules. The AI follows them precisely.</p>
-
+            <h2 class="section-title">Staff Stays in Control</h2>
             <div class="control-grid">
                 <div class="control-item">
-                    <div class="control-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </div>
-                    <h4>Clinic Defines Rules</h4>
-                    <p>You set scheduling parameters, FAQs, and routing logic</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <h4>Clinic Rules</h4>
+                    <p>You set scheduling & routing</p>
                 </div>
-
                 <div class="control-item">
-                    <div class="control-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <h4>Scheduling Limits</h4>
-                    <p>Control provider capacity and appointment types</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <h4>Capacity Limits</h4>
+                    <p>Control provider availability</p>
                 </div>
-
                 <div class="control-item">
-                    <div class="control-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <h4>No Medical Advice</h4>
-                    <p>AI never diagnoses or recommends treatment</p>
+                    <p>AI never diagnoses</p>
                 </div>
-
                 <div class="control-item">
-                    <div class="control-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-                    </div>
-                    <h4>Gather & Route Only</h4>
-                    <p>AI collects information and routes appropriately</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    <h4>Gather & Route</h4>
+                    <p>Collects info, routes properly</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="section cta-section">
+    <section class="cta">
         <div class="container">
-            <div class="cta-content">
-                <h2 class="cta-title">Your Clinic Stays Focused on Care.<br>We Handle the Calls.</h2>
-                <p class="cta-subtitle">This is a front-desk workload solution, not a clinical decision tool. Let your staff spend their time with patients, not on the phone.</p>
-                <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
-            </div>
+            <h2>Your Clinic Stays Focused on Care.<br>We Handle the Calls.</h2>
+            <p>A front-desk workload solution, not a clinical decision tool.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="tf-footer">
+    <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <img src="../images/CaipherAIprimarylogo.png" alt="Caipher AI">
                     <p>AI Receptionists for Real-World Businesses. Never miss a call again.</p>
                 </div>
-
                 <div class="footer-links">
                     <h5>Product</h5>
                     <ul>
                         <li><a href="../index.html#features">Solutions</a></li>
-                        <li><a href="../index.html#how-it-works">How It Works</a></li>
                         <li><a href="../index.html#pricing">Pricing</a></li>
-                        <li><a href="../index.html#faq">FAQs</a></li>
                     </ul>
                 </div>
-
                 <div class="footer-links">
                     <h5>Industries</h5>
                     <ul>
                         <li><a href="medical.html" style="color: var(--Primary);">Medical Clinics</a></li>
                         <li><a href="med-spa.html">Med-Spas</a></li>
                         <li><a href="real-estate.html">Real Estate</a></li>
-                        <li><a href="home-services.html">Home Services</a></li>
-                        <li><a href="legal.html">Law Firms</a></li>
                     </ul>
                 </div>
-
                 <div class="footer-links">
                     <h5>Legal</h5>
                     <ul>
@@ -1434,14 +500,11 @@
                     </ul>
                 </div>
             </div>
-
             <div class="footer-bottom">
                 <p>&copy; 2026 Caipher AI. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>
