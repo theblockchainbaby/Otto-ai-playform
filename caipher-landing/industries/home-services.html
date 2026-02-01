@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Receptionist for Home Services | Caipher AI</title>
+    <meta name="description" content="Capture service calls, book appointments, and dispatch technicians — 24/7 — so your team can focus on the job.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+
+    <style>
+        :root {
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border-3: rgba(32, 37, 104, 0.35);
+            --Accent: #22c55e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+        }
+
+        .header-inner { display: flex; align-items: center; justify-content: space-between; }
+
+        .logo { font-size: 28px; font-weight: 700; color: var(--White); text-decoration: none; }
+        .logo span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
+        .nav-menu a { color: var(--Text-2); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--Primary); }
+
+        .btn-primary {
+            background: var(--Primary);
+            color: var(--White);
+            padding: 12px 28px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        /* Hero */
+        .hero {
+            padding: 140px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--Accent);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 { font-size: 52px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; color: var(--White); }
+        .hero h1 span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 18px; color: var(--Text-2); max-width: 600px; margin: 0 auto 32px; }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+        .hero-features span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(32, 37, 104, 0.3);
+            border: 1px solid var(--Border-3);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+        }
+        .hero-features svg { width: 16px; height: 16px; color: var(--Accent); }
+
+        /* Section */
+        .section { padding: 80px 0; }
+        .section-dark { background: var(--Bg-7); }
+        .section-title { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 12px; text-align: center; }
+        .section-subtitle { font-size: 16px; color: var(--Text-2); text-align: center; max-width: 500px; margin: 0 auto 48px; }
+
+        /* Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        .card:hover { transform: translateY(-4px); border-color: var(--Accent); }
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(34, 197, 94, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .card-icon svg { width: 24px; height: 24px; color: var(--Accent); }
+        .card h3 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 8px; }
+        .card p { font-size: 14px; color: var(--Text-2); line-height: 1.6; }
+
+        /* Workflow */
+        .workflow { max-width: 800px; margin: 0 auto; }
+        .workflow-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
+        .workflow-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 22px;
+            top: 56px;
+            width: 2px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, var(--Accent) 0%, transparent 100%);
+        }
+        .step-num {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            background: var(--Accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+        .step-content { flex: 1; padding-top: 4px; }
+        .step-content h4 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 6px; }
+        .step-content p { font-size: 14px; color: var(--Text-2); }
+
+        /* Benefits */
+        .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .benefits-box {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 32px;
+        }
+        .benefits-box h3 { font-size: 20px; font-weight: 600; color: var(--White); margin-bottom: 20px; }
+        .benefit-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; }
+        .benefit-item svg { width: 18px; height: 18px; color: var(--Accent); }
+
+        /* Script */
+        .script-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .script-box {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 28px;
+        }
+        .script-box h3 { font-size: 16px; font-weight: 600; color: var(--White); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .script-box .badge { background: rgba(34, 197, 94, 0.15); color: var(--Accent); font-size: 11px; padding: 4px 10px; border-radius: 100px; }
+        .script-box .badge-urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .msg { margin-bottom: 12px; font-size: 13px; }
+        .msg-label { font-weight: 600; margin-bottom: 2px; }
+        .msg-ai .msg-label { color: var(--Primary); }
+        .msg-caller .msg-label { color: var(--Text); }
+        .msg p { color: var(--Text-3); margin: 0; }
+
+        /* Control */
+        .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .control-item { text-align: center; padding: 24px 16px; background: rgba(32, 37, 104, 0.3); border: 1px solid var(--Border-3); border-radius: 16px; }
+        .control-item svg { width: 32px; height: 32px; color: var(--Accent); margin-bottom: 12px; }
+        .control-item h4 { font-size: 14px; font-weight: 600; color: var(--White); margin-bottom: 4px; }
+        .control-item p { font-size: 12px; color: var(--Text-2); margin: 0; }
+
+        /* CTA */
+        .cta { padding: 80px 0; text-align: center; position: relative; }
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .cta h2 { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 16px; position: relative; }
+        .cta p { font-size: 16px; color: var(--Text-2); max-width: 500px; margin: 0 auto 32px; position: relative; }
+
+        /* Footer */
+        .footer { background: var(--Bg-7); padding: 60px 0 30px; border-top: 1px solid var(--Border-3); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+        .footer-brand p { color: var(--Text-2); font-size: 13px; max-width: 240px; }
+        .footer-links h5 { color: var(--White); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: var(--Text-2); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--Primary); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--Border-3); text-align: center; color: var(--Text); font-size: 12px; }
+
+        @media (max-width: 1024px) {
+            .card-grid, .control-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 28px; }
+            .card-grid, .benefits-grid, .script-grid, .control-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .hero-features { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="../index.html" class="logo">Caipher <span>AI</span></a>
+                <ul class="nav-menu">
+                    <li><a href="../index.html#features">Solutions</a></li>
+                    <li><a href="../index.html#how-it-works">How It Works</a></li>
+                    <li><a href="../index.html#pricing">Pricing</a></li>
+                </ul>
+                <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                Home Services Solutions
+            </div>
+            <h1>AI Receptionist<br><span>for Home Services</span></h1>
+            <p>Capture service calls, book appointments, and dispatch technicians — 24/7 — so your team can focus on the job.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+
+            <div class="hero-features">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Service requests</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Appointment booking</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Emergency dispatch</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 24/7 coverage</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">What the AI Handles</h2>
+            <p class="section-subtitle">Your AI receptionist manages calls so technicians can stay on the job.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <h3>Service Call Intake</h3>
+                    <p>Captures issue type, address, contact info, and urgency level from every caller.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                    <h3>Appointment Scheduling</h3>
+                    <p>Books service windows based on technician availability and service area.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <h3>Emergency Dispatch</h3>
+                    <p>Identifies urgent issues (burst pipes, no heat) and escalates immediately.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                    <h3>Service FAQs</h3>
+                    <p>Answers questions about pricing, service areas, and what to expect.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <h3>After-Hours Coverage</h3>
+                    <p>Takes service requests at midnight. Emergency calls get dispatched immediately.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+                    <h3>Follow-Up & Reminders</h3>
+                    <p>Sends appointment confirmations and "on the way" alerts via text.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How the Workflow Operates</h2>
+            <p class="section-subtitle">Every service call follows a structured path.</p>
+
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4>Call Answered Instantly</h4>
+                        <p>AI greets the caller with your company name. No hold music, no voicemail.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4>Issue & Location Captured</h4>
+                        <p>Collects service type, problem description, address, and urgency level.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4>Smart Path Routing</h4>
+                        <p>Emergency → dispatch. Routine → schedule. Quote request → logs for follow-up.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4>Job Logged & Team Notified</h4>
+                        <p>All info pushed to your system. Technician gets assignment via text or app.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Benefits for Home Services</h2>
+            <div class="benefits-grid">
+                <div class="benefits-box">
+                    <h3>For Your Business</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Never miss a service call</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Techs stay on the job</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Faster emergency response</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Fewer scheduling conflicts</div>
+                </div>
+                <div class="benefits-box">
+                    <h3>For Customers</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Immediate response</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 24/7 availability</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Text confirmations</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Clear service windows</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Example Call Flows</h2>
+            <p class="section-subtitle">See how the AI handles home service scenarios.</p>
+
+            <div class="script-grid">
+                <div class="script-box">
+                    <h3>Routine Service <span class="badge">Standard</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Thanks for calling. How can I help you today?</p></div>
+                    <div class="msg msg-caller"><div class="msg-label">Caller</div><p>I need to schedule an AC tune-up.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I can help with that. What's your address?</p></div>
+                    <div class="msg msg-caller"><div class="msg-label">Caller</div><p>456 Pine Street.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>We have Tuesday 8-10 AM or Wednesday 1-3 PM available.</p></div>
+                    <div class="msg msg-caller"><div class="msg-label">Caller</div><p>Tuesday morning works.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>You're booked for Tuesday 8-10 AM. I'll text you a confirmation.</p></div>
+                </div>
+
+                <div class="script-box">
+                    <h3>Emergency Call <span class="badge badge-urgent">Emergency</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Thanks for calling. Is this an emergency?</p></div>
+                    <div class="msg msg-caller"><div class="msg-label">Caller</div><p>Yes! My pipe burst and water is everywhere!</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I understand. Can you shut off the main water valve?</p></div>
+                    <div class="msg msg-caller"><div class="msg-label">Caller</div><p>I don't know where it is.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>It's usually near the water meter. I'm dispatching a technician now. What's your address?</p></div>
+
+                    <div style="margin-top: 20px; padding: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px;">
+                        <p style="color: #ef4444; font-weight: 600; font-size: 12px; margin-bottom: 4px;">Emergency Protocol</p>
+                        <p style="color: var(--Text-2); font-size: 12px; margin: 0;">AI dispatches on-call technician immediately for emergencies.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">You Stay in Control</h2>
+            <div class="control-grid">
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <h4>Your Rules</h4>
+                    <p>Set service areas & pricing</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <h4>Tech Schedules</h4>
+                    <p>Control availability windows</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <h4>Emergency Rules</h4>
+                    <p>Define what triggers dispatch</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    <h4>Job Tracking</h4>
+                    <p>All calls logged to your system</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Your Team Stays on the Job.<br>We Handle the Calls.</h2>
+            <p>Capture every service request, dispatch emergencies, and book appointments 24/7.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="../images/CaipherAIprimarylogo.png" alt="Caipher AI">
+                    <p>AI Receptionists for Real-World Businesses. Never miss a call again.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="../index.html#features">Solutions</a></li>
+                        <li><a href="../index.html#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Industries</h5>
+                    <ul>
+                        <li><a href="medical.html">Medical Clinics</a></li>
+                        <li><a href="home-services.html" style="color: var(--Accent);">Home Services</a></li>
+                        <li><a href="real-estate.html">Real Estate</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms-of-service.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Caipher AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
