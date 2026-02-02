@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Receptionist for Auto Dealerships | Caipher AI</title>
+    <meta name="description" content="Automate test drive scheduling, service appointments, inventory inquiries, and customer follow-ups — 24/7 — so your sales team can focus on closing deals.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+
+    <style>
+        :root {
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border-3: rgba(32, 37, 104, 0.35);
+            --Auto: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+        }
+
+        .header-inner { display: flex; align-items: center; justify-content: space-between; }
+
+        .logo { font-size: 28px; font-weight: 700; color: var(--White); text-decoration: none; }
+        .logo span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
+        .nav-menu a { color: var(--Text-2); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--Primary); }
+
+        .btn-primary {
+            background: var(--Primary);
+            color: var(--White);
+            padding: 12px 28px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        /* Hero */
+        .hero {
+            padding: 140px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--Auto);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 { font-size: 52px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; color: var(--White); }
+        .hero h1 span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 18px; color: var(--Text-2); max-width: 600px; margin: 0 auto 32px; }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+        .hero-features span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(32, 37, 104, 0.3);
+            border: 1px solid var(--Border-3);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+        }
+        .hero-features svg { width: 16px; height: 16px; color: var(--Auto); }
+
+        /* Section */
+        .section { padding: 80px 0; }
+        .section-dark { background: var(--Bg-7); }
+        .section-title { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 12px; text-align: center; }
+        .section-subtitle { font-size: 16px; color: var(--Text-2); text-align: center; max-width: 500px; margin: 0 auto 48px; }
+
+        /* Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        .card:hover { transform: translateY(-4px); border-color: var(--Primary); }
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(79, 96, 250, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .card-icon svg { width: 24px; height: 24px; color: var(--Primary); }
+        .card h3 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 8px; }
+        .card p { font-size: 14px; color: var(--Text-2); line-height: 1.6; }
+
+        /* Workflow */
+        .workflow { max-width: 800px; margin: 0 auto; }
+        .workflow-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
+        .workflow-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 22px;
+            top: 56px;
+            width: 2px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, var(--Primary) 0%, transparent 100%);
+        }
+        .step-num {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            background: var(--Primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+        .step-content { flex: 1; padding-top: 4px; }
+        .step-content h4 { font-size: 18px; font-weight: 600; color: var(--White); margin-bottom: 6px; }
+        .step-content p { font-size: 14px; color: var(--Text-2); }
+
+        /* Benefits */
+        .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .benefits-box {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 32px;
+        }
+        .benefits-box h3 { font-size: 20px; font-weight: 600; color: var(--White); margin-bottom: 20px; }
+        .benefit-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; }
+        .benefit-item svg { width: 18px; height: 18px; color: var(--Auto); }
+
+        /* Script */
+        .script-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .script-box {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 28px;
+        }
+        .script-box h3 { font-size: 16px; font-weight: 600; color: var(--White); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .script-box .badge { background: rgba(245, 158, 11, 0.15); color: var(--Auto); font-size: 11px; padding: 4px 10px; border-radius: 100px; }
+        .script-box .badge-hot { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .msg { margin-bottom: 12px; font-size: 13px; }
+        .msg-label { font-weight: 600; margin-bottom: 2px; }
+        .msg-ai .msg-label { color: var(--Primary); }
+        .msg-customer .msg-label { color: var(--Text); }
+        .msg p { color: var(--Text-3); margin: 0; }
+
+        /* Control */
+        .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .control-item { text-align: center; padding: 24px 16px; background: rgba(32, 37, 104, 0.3); border: 1px solid var(--Border-3); border-radius: 16px; }
+        .control-item svg { width: 32px; height: 32px; color: var(--Primary); margin-bottom: 12px; }
+        .control-item h4 { font-size: 14px; font-weight: 600; color: var(--White); margin-bottom: 4px; }
+        .control-item p { font-size: 12px; color: var(--Text-2); margin: 0; }
+
+        /* CTA */
+        .cta { padding: 80px 0; text-align: center; position: relative; }
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .cta h2 { font-size: 36px; font-weight: 700; color: var(--White); margin-bottom: 16px; position: relative; }
+        .cta p { font-size: 16px; color: var(--Text-2); max-width: 500px; margin: 0 auto 32px; position: relative; }
+
+        /* Footer */
+        .footer { background: var(--Bg-7); padding: 60px 0 30px; border-top: 1px solid var(--Border-3); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+        .footer-brand p { color: var(--Text-2); font-size: 13px; max-width: 240px; }
+        .footer-links h5 { color: var(--White); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: var(--Text-2); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--Primary); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--Border-3); text-align: center; color: var(--Text); font-size: 12px; }
+
+        @media (max-width: 1024px) {
+            .card-grid, .control-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 28px; }
+            .card-grid, .benefits-grid, .script-grid, .control-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .hero-features { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="../index.html" class="logo">Caipher <span>AI</span></a>
+                <ul class="nav-menu">
+                    <li><a href="../index.html#features">Solutions</a></li>
+                    <li><a href="../index.html#how-it-works">How It Works</a></li>
+                    <li><a href="../index.html#pricing">Pricing</a></li>
+                </ul>
+                <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                Auto Dealership Solutions
+            </div>
+            <h1>AI Receptionist<br><span>for Auto Dealerships</span></h1>
+            <p>Automate test drive scheduling, service appointments, and inventory inquiries — 24/7 — so your sales team can focus on closing deals.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+
+            <div class="hero-features">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Instant call answering</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Test drive booking</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Inventory lookups</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 24/7 coverage</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">What the AI Handles</h2>
+            <p class="section-subtitle">Your AI receptionist manages routine calls so your sales and service teams can focus on customers.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
+                    <h3>Test Drive Scheduling</h3>
+                    <p>Books test drives based on vehicle availability and salesperson calendars. Sends confirmation texts.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+                    <h3>Inventory Inquiries</h3>
+                    <p>Answers questions about vehicle availability, pricing, features, and specifications from your live inventory.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                    <h3>Service Appointments</h3>
+                    <p>Schedules oil changes, repairs, recalls, and maintenance. Routes complex issues to service advisors.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <h3>Financing Questions</h3>
+                    <p>Answers FAQs about financing options, credit requirements, and down payments. Captures lead info for F&I.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg></div>
+                    <h3>Trade-In Inquiries</h3>
+                    <p>Collects vehicle details for trade-in estimates. Routes hot leads to sales managers for follow-up.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <h3>After-Hours Leads</h3>
+                    <p>Captures buyer inquiries 24/7. Sends lead details to your CRM so sales can follow up first thing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How the Workflow Operates</h2>
+            <p class="section-subtitle">Every customer call follows a structured path.</p>
+
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4>Call Answered Instantly</h4>
+                        <p>AI greets the caller, identifies your dealership, and asks how it can help. No hold music.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4>Intent Detection</h4>
+                        <p>Identifies purpose — sales inquiry, service appointment, parts question, or financing — and routes accordingly.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4>Smart Information Gathering</h4>
+                        <p>Sales → vehicle preferences, budget, trade-in. Service → vehicle info, issue description, preferred time.</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4>Action & Notification</h4>
+                        <p>Books appointments, answers FAQs, or creates leads in your CRM. Sales team notified of hot prospects instantly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Benefits for Dealerships</h2>
+            <div class="benefits-grid">
+                <div class="benefits-box">
+                    <h3>Sales Team</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Never miss a sales lead</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> More time with customers</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Pre-qualified appointments</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Hot lead notifications</div>
+                </div>
+                <div class="benefits-box">
+                    <h3>Customer Experience</h3>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> No waiting on hold</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 24/7 availability</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Instant inventory answers</div>
+                    <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Easy appointment booking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Example Call Flows</h2>
+            <p class="section-subtitle">See how the AI handles real customer scenarios.</p>
+
+            <div class="script-grid">
+                <div class="script-box">
+                    <h3>Test Drive Request <span class="badge">Sales</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Thanks for calling. Are you looking at a new or pre-owned vehicle today?</p></div>
+                    <div class="msg msg-customer"><div class="msg-label">Customer</div><p>I'm interested in the 2024 Camry.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>We have several in stock. Would you like to schedule a test drive?</p></div>
+                    <div class="msg msg-customer"><div class="msg-label">Customer</div><p>Yes, this Saturday if possible.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I have 10 AM or 2 PM available Saturday. Which works better?</p></div>
+                    <div class="msg msg-customer"><div class="msg-label">Customer</div><p>10 AM.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Perfect. You're booked for Saturday at 10 AM. Can I get your name and phone number for confirmation?</p></div>
+                </div>
+
+                <div class="script-box">
+                    <h3>Hot Buyer Lead <span class="badge badge-hot">Priority</span></h3>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Do you have a vehicle to trade in?</p></div>
+                    <div class="msg msg-customer"><div class="msg-label">Customer</div><p>Yes, a 2021 Accord with 35k miles.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>Great. And are you planning to finance or pay cash?</p></div>
+                    <div class="msg msg-customer"><div class="msg-label">Customer</div><p>Finance, with about $5k down.</p></div>
+                    <div class="msg msg-ai"><div class="msg-label">AI</div><p>I'll have a sales specialist reach out with financing options. When's the best time to call you back?</p></div>
+
+                    <div style="margin-top: 20px; padding: 14px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px;">
+                        <p style="color: #f59e0b; font-weight: 600; font-size: 12px; margin-bottom: 4px;">Hot Lead Alert</p>
+                        <p style="color: var(--Text-2); font-size: 12px; margin: 0;">Sales manager notified immediately with full lead details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">You Stay in Control</h2>
+            <div class="control-grid">
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <h4>Your Rules</h4>
+                    <p>Set scheduling & routing preferences</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <h4>Live Inventory</h4>
+                    <p>Syncs with your DMS</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <h4>Team Routing</h4>
+                    <p>Route to right salesperson</p>
+                </div>
+                <div class="control-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    <h4>CRM Integration</h4>
+                    <p>Leads flow to your system</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Your Sales Team Stays on the Floor.<br>We Handle the Phones.</h2>
+            <p>Stop losing leads to voicemail. Let AI capture every opportunity.</p>
+            <a href="https://calendly.com/yorksims/30min" class="btn-primary">Book a Demo</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="../images/CaipherAIprimarylogo.png" alt="Caipher AI">
+                    <p>AI Receptionists for Real-World Businesses. Never miss a call again.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="../index.html#features">Solutions</a></li>
+                        <li><a href="../index.html#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Industries</h5>
+                    <ul>
+                        <li><a href="medical.html">Medical Clinics</a></li>
+                        <li><a href="auto-dealerships.html" style="color: var(--Primary);">Auto Dealerships</a></li>
+                        <li><a href="real-estate.html">Real Estate</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms-of-service.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Caipher AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
