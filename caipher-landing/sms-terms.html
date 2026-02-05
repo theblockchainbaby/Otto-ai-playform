@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Terms & Conditions - Caipher AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --Bg-7: #00041e;
+            --Text-3: #e0e0ff;
+            --Text-2: #a0a0c0;
+            --White: #ffffff;
+            --Border-3: rgba(79, 96, 250, 0.3);
+            --Primary: #4f60fa;
+        }
+        body {
+            background: var(--Bg-7);
+            color: var(--Text-3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .legal-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+        }
+        .legal-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .legal-header h1 {
+            font-size: 42px;
+            color: var(--White);
+            margin-bottom: 16px;
+        }
+        .legal-header p {
+            color: var(--Text-2);
+            font-size: 16px;
+        }
+        .legal-content {
+            background: rgba(32, 37, 104, 0.2);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 60px;
+        }
+        .legal-content h2 {
+            color: var(--White);
+            font-size: 28px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .legal-content h2:first-child {
+            margin-top: 0;
+        }
+        .legal-content h3 {
+            color: var(--Text-3);
+            font-size: 20px;
+            margin-top: 30px;
+            margin-bottom: 16px;
+        }
+        .legal-content p {
+            line-height: 1.8;
+            margin-bottom: 16px;
+            color: var(--Text-2);
+        }
+        .legal-content ul {
+            margin-left: 24px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .legal-content ul li {
+            margin-bottom: 8px;
+            color: var(--Text-2);
+        }
+        .legal-content strong {
+            color: var(--White);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--Primary);
+            text-decoration: none;
+            margin-bottom: 40px;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover {
+            opacity: 0.8;
+        }
+        .highlight-box {
+            background: rgba(79, 96, 250, 0.15);
+            border: 1px solid var(--Primary);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        .highlight-box p {
+            margin-bottom: 8px;
+        }
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+        .consent-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 30px 0;
+        }
+        .consent-box h3 {
+            color: #10b981;
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        .consent-box p {
+            margin-bottom: 8px;
+        }
+        .consent-box p:last-child {
+            margin-bottom: 0;
+        }
+        .cta-section {
+            background: rgba(79, 96, 250, 0.1);
+            border: 2px solid var(--Primary);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        .cta-section h2 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .cta-section p {
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        .cta-section .disclosure {
+            font-size: 13px;
+            color: var(--Text-2);
+            max-width: 600px;
+            margin: 20px auto 0;
+            line-height: 1.6;
+        }
+        .cta-section a.btn {
+            display: inline-block;
+            background: var(--Primary);
+            color: var(--White);
+            padding: 14px 32px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .cta-section a.btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(79, 96, 250, 0.5);
+        }
+        .quick-ref {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 30px 0;
+        }
+        .quick-ref-item {
+            background: rgba(32, 37, 104, 0.3);
+            border: 1px solid var(--Border-3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .quick-ref-item .label {
+            font-size: 12px;
+            color: var(--Text-2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .quick-ref-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--White);
+        }
+        @media (max-width: 768px) {
+            .legal-content {
+                padding: 30px 24px;
+            }
+            .quick-ref {
+                grid-template-columns: 1fr;
+            }
+            .cta-section {
+                padding: 28px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="legal-container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="legal-header">
+            <h1>SMS Terms & Conditions</h1>
+            <p>Last Updated: February 5, 2026</p>
+        </div>
+
+        <div class="legal-content">
+            <h2>Caipher AI SMS Messaging Program</h2>
+            <p><strong>Program Name:</strong> Caipher AI Appointment & Service Notifications</p>
+            <p><strong>Organization:</strong> Caipher AI (caipherai.com)</p>
+
+            <div class="quick-ref">
+                <div class="quick-ref-item">
+                    <div class="label">Opt Out</div>
+                    <div class="value">Reply STOP</div>
+                </div>
+                <div class="quick-ref-item">
+                    <div class="label">Get Help</div>
+                    <div class="value">Reply HELP</div>
+                </div>
+                <div class="quick-ref-item">
+                    <div class="label">Cost</div>
+                    <div class="value">Msg & Data Rates Apply</div>
+                </div>
+            </div>
+
+            <h2>What Messages Will You Receive?</h2>
+            <p>When you opt in to receive text messages from Caipher AI, you may receive the following types of messages:</p>
+            <ul>
+                <li><strong>Appointment Confirmations:</strong> Confirmation of scheduled demos, meetings, or service appointments</li>
+                <li><strong>Appointment Reminders:</strong> Reminders about upcoming scheduled appointments</li>
+                <li><strong>Follow-Up Messages:</strong> Responses to your inquiries or demo requests</li>
+                <li><strong>Scheduling Links:</strong> Links to book or reschedule appointments with our team</li>
+                <li><strong>Service Updates:</strong> Important updates about services related to your account</li>
+            </ul>
+            <p>Caipher AI does not send unsolicited marketing messages, cold outreach, or promotional spam. All messages are transactional and conversational, directly related to your inquiry or appointment.</p>
+
+            <h2>Message Frequency</h2>
+            <p>Message frequency varies based on your interactions with Caipher AI. You may receive approximately <strong>1-5 messages per interaction or appointment</strong>. Recurring messages may be sent for appointment reminders and follow-ups.</p>
+
+            <h2>How to Opt In (Call to Action)</h2>
+            <p>You consent to receive text messages from Caipher AI when you voluntarily take any of the following actions:</p>
+
+            <div class="consent-box">
+                <h3>Opt-In Methods</h3>
+                <p><strong>1. Website Form Submission:</strong> When you submit a demo request, contact form, or booking form on caipherai.com and provide your phone number, you consent to receive appointment-related text messages.</p>
+                <p><strong>2. Calendly Booking:</strong> When you schedule a demo or meeting through our Calendly booking page (linked from caipherai.com) and provide your phone number, you consent to receive appointment confirmations and reminders via text.</p>
+                <p><strong>3. Phone Call Opt-In:</strong> When you call our business phone number at (762) 224-7437 and verbally provide your phone number or request to receive a text message, you consent to receive text messages related to your inquiry.</p>
+                <p><strong>4. Text-In Opt-In:</strong> When you text START, YES, or SUBSCRIBE to our business number, you consent to receive messages from Caipher AI.</p>
+                <p><strong>5. Chatbot Interaction:</strong> When you interact with our website chatbot and provide your phone number requesting follow-up, you consent to receive text messages.</p>
+            </div>
+
+            <p>By providing your phone number through any of the above methods and requesting communication, you expressly consent to receive text messages from Caipher AI related to your inquiry, appointment, or account.</p>
+
+            <div class="highlight-box">
+                <p><strong>Consent is not required as a condition of purchase.</strong> You are not required to opt in to SMS messaging to use Caipher AI's services or purchase any product.</p>
+            </div>
+
+            <h2>How to Opt Out</h2>
+            <p>You may opt out of receiving text messages at any time using any of the following methods:</p>
+            <ul>
+                <li><strong>Reply STOP:</strong> Text "STOP" to any message from Caipher AI to immediately unsubscribe from all future messages</li>
+                <li><strong>Reply CANCEL, UNSUBSCRIBE, END, or QUIT:</strong> Any of these keywords will also opt you out</li>
+                <li><strong>Contact Support:</strong> Email support@caipherai.com or call (762) 224-7437 to request removal</li>
+            </ul>
+            <p>After opting out, you will receive a single confirmation message: <em>"You have been unsubscribed from Caipher AI messages. You will not receive any more messages. Reply START to re-subscribe."</em></p>
+            <p>You will not receive any further messages unless you opt back in by texting START.</p>
+
+            <h2>Help & Customer Support</h2>
+            <p>For assistance with our text messaging program:</p>
+            <ul>
+                <li>Reply <strong>HELP</strong> to any message for support information</li>
+                <li>Email: <strong>support@caipherai.com</strong></li>
+                <li>Phone: <strong>(762) 224-7437</strong></li>
+            </ul>
+            <p>When you text HELP, you will receive a message: <em>"Caipher AI SMS Help: For support, email support@caipherai.com or call (762) 224-7437. Reply STOP to opt out. Msg & data rates may apply."</em></p>
+
+            <h2>Message & Data Rates</h2>
+            <p><strong>Message and data rates may apply.</strong> Standard messaging fees from your mobile carrier apply to messages sent and received. Caipher AI does not charge for text messages, but your carrier's standard messaging rates will apply. Please contact your mobile carrier for details about your messaging plan.</p>
+
+            <h2>Supported Carriers</h2>
+            <p>Our SMS program is supported on all major US carriers, including but not limited to AT&T, Verizon, T-Mobile, Sprint, U.S. Cellular, and other regional carriers. Carriers are not liable for delayed or undelivered messages.</p>
+
+            <h2>Privacy & Data Sharing</h2>
+            <div class="highlight-box">
+                <p><strong>We do not sell, rent, loan, trade, lease, or otherwise transfer for profit any phone numbers or personal information collected through our SMS program to any third party.</strong></p>
+            </div>
+            <p>Your phone number is used exclusively for the purposes described in this policy: appointment confirmations, reminders, and responses to your inquiries. We will never share your mobile information with third parties or affiliates for marketing or promotional purposes.</p>
+            <p>For complete details on how we handle your data, please review our <a href="privacy-policy.html" style="color: var(--Primary);">Privacy Policy</a>.</p>
+
+            <h2>Terms & Conditions</h2>
+            <p>By opting in to Caipher AI's SMS messaging program, you agree to these SMS Terms & Conditions, our <a href="privacy-policy.html" style="color: var(--Primary);">Privacy Policy</a>, and our <a href="terms-of-service.html" style="color: var(--Primary);">Terms of Service</a>.</p>
+
+            <div class="cta-section">
+                <h2>Ready to See Caipher AI in Action?</h2>
+                <p>Book a free 15-minute demo to see how AI can answer your business calls 24/7.</p>
+                <a href="https://calendly.com/yorksims/30min" class="btn">Book a Demo</a>
+                <p class="disclosure">By booking a demo and providing your phone number, you consent to receive appointment confirmations, reminders, and follow-up text messages from Caipher AI. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time. Reply HELP for help. View our <a href="privacy-policy.html" style="color: var(--Primary);">Privacy Policy</a> and <a href="terms-of-service.html" style="color: var(--Primary);">Terms of Service</a>.</p>
+            </div>
+
+            <h2>Contact Us</h2>
+            <p>If you have questions about our SMS messaging program, please contact us:</p>
+            <p><strong>Caipher AI</strong><br>
+            Email: support@caipherai.com<br>
+            Phone: (762) 224-7437<br>
+            Website: caipherai.com</p>
+        </div>
+    </div>
+</body>
+</html>
