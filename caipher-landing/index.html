@@ -1685,104 +1685,410 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* === PRICING SECTION MOTION GRAPHICS === */
+        /* === PRICING SECTION — REDESIGNED MOTION GRAPHICS === */
 
-        /* Neon scan line that sweeps down comparison tables */
-        .table-scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent 0%, #4f60fa 20%, #a855f7 50%, #4ade80 80%, transparent 100%);
-            z-index: 10;
-            pointer-events: none;
+        /* --- Shared --- */
+        .compare-title {
+            font-family: 'Fraunces', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--White);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .compare-subtitle {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            color: var(--Text);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .title-reveal {
             opacity: 0;
-            box-shadow: 0 0 15px rgba(79, 96, 250, 0.8), 0 0 30px rgba(168, 85, 247, 0.4), 0 2px 8px rgba(74, 222, 128, 0.3);
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        @keyframes scanDown {
-            0% { top: 0; opacity: 0; }
-            5% { opacity: 1; }
-            85% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        /* Table row staggered reveal */
-        .anim-row {
-            opacity: 0;
-            transform: translateX(-30px);
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .anim-row.from-right {
-            transform: translateX(30px);
-        }
-
-        .anim-row.revealed {
+        .title-reveal.revealed {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
-
-        /* Green glow pulse for Caipher advantage values */
         @keyframes glowPulse {
             0%, 100% { text-shadow: 0 0 6px rgba(74, 222, 128, 0.2); }
             50% { text-shadow: 0 0 16px rgba(74, 222, 128, 0.5), 0 0 32px rgba(74, 222, 128, 0.15); }
         }
-
         .glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
 
-        /* Table header shimmer sweep */
-        @keyframes shimmerSweep {
-            0% { left: -100%; }
-            100% { left: 200%; }
+        /* --- PILLAR CARDS (Human vs AI) --- */
+        .pillar-grid {
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+            justify-content: center;
         }
-
-        .table-shimmer { position: relative; overflow: hidden; }
-
-        .table-shimmer::after {
+        .pillar-card {
+            flex: 1;
+            max-width: 420px;
+            border-radius: 20px;
+            padding: 36px 32px;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pillar-human {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transform: translateX(-40px);
+        }
+        .pillar-human.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .pillar-ai {
+            background: rgba(79, 96, 250, 0.05);
+            border: 1px solid rgba(79, 96, 250, 0.2);
+            box-shadow: 0 0 40px rgba(79, 96, 250, 0.08), 0 0 80px rgba(79, 96, 250, 0.03);
+            transform: translateX(40px) scale(1.02);
+        }
+        .pillar-ai.revealed {
+            opacity: 1;
+            transform: translateX(0) scale(1.02);
+        }
+        .pillar-ai::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background: linear-gradient(90deg, #4f60fa, #c46ff8, #4ade80);
+            border-radius: 2px;
+        }
+        .pillar-badge {
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            background: linear-gradient(135deg, #4f60fa, #c46ff8);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .pillar-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .pillar-icon-human {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--Text);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .pillar-icon-ai {
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.3), rgba(196, 111, 248, 0.2));
+            color: var(--White);
+            border: 1px solid rgba(79, 96, 250, 0.3);
+        }
+        .pillar-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--White);
+            margin: 0;
+        }
+        .pillar-rows { display: flex; flex-direction: column; }
+        .pillar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .pillar-row:last-child { border-bottom: none; }
+        .pillar-row.revealed { opacity: 1; transform: translateY(0); }
+        .pillar-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--Text);
+            font-weight: 500;
+        }
+        .pillar-value { font-size: 18px; font-weight: 700; }
+        .human-val { color: rgba(255, 255, 255, 0.35); }
+        .ai-val { color: #4ade80; }
+        .pillar-vs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .pillar-vs span {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--Text);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- SPOTLIGHT ROW GRID (Competitor Comparison) --- */
+        .spotlight-header {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            padding: 0 24px 16px;
+        }
+        .spotlight-col-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--Text);
+            font-weight: 600;
+        }
+        .spotlight-col-label:not(:first-child) { text-align: center; }
+        .spotlight-col-caipher { color: var(--Primary); }
+        .spotlight-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+        .spotlight-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            align-items: center;
+            padding: 18px 24px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: border-color 0.3s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        .spotlight-row.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, background 0.3s ease;
+        }
+        .spotlight-row::before {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            top: var(--mouse-y, 50%);
+            left: var(--mouse-x, 50%);
+        }
+        .spotlight-row:hover {
+            border-color: rgba(79, 96, 250, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .spotlight-row:hover::before { opacity: 1; }
+        .spotlight-feature {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--White);
+        }
+        .spotlight-caipher {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4ade80;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .spotlight-competitor {
+            font-size: 14px;
+            color: var(--Text);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .check-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: #4ade80;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .x-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.15);
+            color: rgba(248, 113, 113, 0.7);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
-        .table-shimmer.active::after { animation: shimmerSweep 1.8s ease-in-out forwards; }
-
-        /* Checkmark/X icon bounce-in */
-        .anim-icon {
-            display: inline-block;
-            margin-right: 4px;
-            transform: scale(0);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .anim-icon.bounced { transform: scale(1); }
-
-        /* Savings card entrance + cycling glow */
-        .savings-animated {
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        /* --- SAVINGS CARD PREMIUM (Rotating Gradient Border) --- */
+        .savings-premium {
+            position: relative;
+            border-radius: 24px;
+            padding: 3px;
+            overflow: hidden;
             transform: scale(0.92) translateY(20px);
             opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
         }
-
-        .savings-animated.active {
+        .savings-premium.active {
             transform: scale(1) translateY(0);
             opacity: 1;
-            animation: savingsGlow 4s ease-in-out 0.8s infinite;
         }
-
-        @keyframes savingsGlow {
-            0%, 100% { box-shadow: 0 0 30px rgba(79, 96, 250, 0.15), 0 0 60px rgba(79, 96, 250, 0.05); border-color: rgba(79, 96, 250, 0.3); }
-            33% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.2), 0 0 60px rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.35); }
-            66% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.15), 0 0 60px rgba(74, 222, 128, 0.05); border-color: rgba(74, 222, 128, 0.25); }
+        .savings-premium::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(#4f60fa, #c46ff8, #4ade80, #4f60fa);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease;
         }
-
-        /* Sparkle particles floating up from savings card */
+        .savings-premium.active::before {
+            opacity: 0.6;
+            animation: rotateBorderGlow 8s linear infinite;
+        }
+        @keyframes rotateBorderGlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .savings-inner {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(145deg, #00031c, #080e2a);
+            border-radius: 21px;
+            padding: 52px 44px;
+            text-align: center;
+        }
+        .savings-tag {
+            display: inline-block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: var(--Primary);
+            background: rgba(79, 96, 250, 0.1);
+            border: 1px solid rgba(79, 96, 250, 0.2);
+            border-radius: 20px;
+            padding: 6px 16px;
+            margin-bottom: 20px;
+        }
+        .savings-headline {
+            font-family: 'Fraunces', serif;
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .savings-accent {
+            background: linear-gradient(135deg, #4f60fa, #c46ff8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .savings-desc {
+            font-size: 16px;
+            color: var(--Text-2);
+            margin-bottom: 40px;
+        }
+        .savings-amounts {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+        }
+        .savings-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .savings-plan-name {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--Text);
+            font-weight: 600;
+        }
+        .savings-figure {
+            font-family: 'Fraunces', serif;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .savings-figure .count-up {
+            background: linear-gradient(135deg, #ffffff 30%, #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .savings-figure-custom {
+            font-family: 'Fraunces', serif;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 30%, #c46ff8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .savings-per { font-size: 13px; color: var(--Text); }
+        .savings-divider {
+            width: 1px;
+            height: 64px;
+            background: linear-gradient(180deg, transparent, rgba(79, 96, 250, 0.3), transparent);
+            flex-shrink: 0;
+        }
         .sparkle-particle {
             position: absolute;
             width: 3px;
@@ -1790,25 +2096,13 @@
             border-radius: 50%;
             pointer-events: none;
             opacity: 0;
+            z-index: 2;
         }
-
         @keyframes sparkleUp {
             0% { opacity: 0; transform: translateY(0) scale(0); }
             15% { opacity: 0.8; transform: translateY(-8px) scale(1); }
             85% { opacity: 0.3; }
             100% { opacity: 0; transform: translateY(-50px) scale(0); }
-        }
-
-        /* Section title reveal */
-        .title-reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .title-reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         /* Plan includes pill badges stagger */
@@ -1817,10 +2111,38 @@
             transform: translateY(12px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         .anim-pill.revealed {
             opacity: 1;
             transform: translateY(0) scale(1);
+        }
+
+        /* --- Pricing Redesign Mobile --- */
+        @media (max-width: 991px) {
+            .pillar-grid { flex-direction: column; align-items: center; }
+            .pillar-card { max-width: 100%; }
+            .pillar-ai { transform: scale(1); }
+            .pillar-ai.revealed { transform: scale(1); }
+            .pillar-vs { padding: 4px 0; }
+        }
+        @media (max-width: 767px) {
+            .compare-title { font-size: 28px; }
+            .pillar-card { padding: 28px 24px; }
+            .pillar-value { font-size: 16px; }
+            .spotlight-header { display: none; }
+            .spotlight-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 16px 20px;
+            }
+            .spotlight-feature { font-size: 14px; margin-bottom: 4px; }
+            .spotlight-caipher, .spotlight-competitor { justify-content: flex-start; font-size: 13px; }
+            .spotlight-caipher::before { content: 'Caipher: '; color: var(--Text); font-weight: 400; font-size: 12px; }
+            .spotlight-competitor::before { content: 'Others: '; color: var(--Text); font-weight: 400; font-size: 12px; }
+            .savings-amounts { flex-direction: column; gap: 24px; }
+            .savings-divider { width: 60px; height: 1px; }
+            .savings-headline { font-size: 26px; }
+            .savings-figure, .savings-figure-custom { font-size: 32px; }
+            .savings-inner { padding: 36px 24px; }
         }
     </style>
 </head>
@@ -2583,28 +2905,47 @@
                 </div>
             </div>
 
-            <!-- Human vs AI Comparison -->
-            <div id="human-ai-compare" class="row justify-content-center" style="margin-top: 80px;">
+            <!-- Human vs AI Comparison — Side-by-Side Pillar Cards -->
+            <div id="human-ai-compare" class="row justify-content-center" style="margin-top: 100px;">
                 <div class="col-lg-10">
-                    <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">Why Businesses Switch to Caipher AI</h3>
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--Border-3);">
-                            <thead>
-                                <tr>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--White); font-weight: 600; text-align: left; font-size: 15px;"></th>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--Text-2); font-weight: 600; text-align: center; font-size: 15px;">Human Receptionist</th>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.25); color: var(--White); font-weight: 700; text-align: center; font-size: 15px;">Caipher AI</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color: var(--Text-2); font-size: 15px;">
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Cost</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">$3,500+/mo</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">$199/mo</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Availability</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">40 hrs/week</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">24/7/365</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Missed calls</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">Happens daily</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Never</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">SMS follow-ups</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">Manual</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Automatic</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Languages</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">1-2</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">60+</td></tr>
-                                <tr><td style="padding: 16px 24px;">Setup time</td><td style="padding: 16px 24px; text-align: center;">2-4 weeks training</td><td style="padding: 16px 24px; text-align: center; color: #4ade80; font-weight: 600;">48 hours</td></tr>
-                            </tbody>
-                        </table>
+                    <h3 class="compare-title">Why Businesses Switch to Caipher AI</h3>
+                    <p class="compare-subtitle">See how AI stacks up against traditional hiring</p>
+                    <div class="pillar-grid">
+                        <!-- Human Card (muted) -->
+                        <div class="pillar-card pillar-human">
+                            <div class="pillar-header">
+                                <span class="pillar-icon-circle pillar-icon-human">H</span>
+                                <h4 class="pillar-name">Human Receptionist</h4>
+                            </div>
+                            <div class="pillar-rows">
+                                <div class="pillar-row"><span class="pillar-label">Monthly Cost</span><span class="pillar-value human-val">$3,500+</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Availability</span><span class="pillar-value human-val">40 hrs/week</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Missed Calls</span><span class="pillar-value human-val">Happens daily</span></div>
+                                <div class="pillar-row"><span class="pillar-label">SMS Follow-ups</span><span class="pillar-value human-val">Manual</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Languages</span><span class="pillar-value human-val">1-2</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Setup Time</span><span class="pillar-value human-val">2-4 weeks</span></div>
+                            </div>
+                        </div>
+
+                        <!-- VS Divider -->
+                        <div class="pillar-vs"><span>VS</span></div>
+
+                        <!-- Caipher AI Card (elevated, glowing) -->
+                        <div class="pillar-card pillar-ai">
+                            <div class="pillar-badge">Recommended</div>
+                            <div class="pillar-header">
+                                <span class="pillar-icon-circle pillar-icon-ai">Ci</span>
+                                <h4 class="pillar-name">Caipher AI</h4>
+                            </div>
+                            <div class="pillar-rows">
+                                <div class="pillar-row"><span class="pillar-label">Monthly Cost</span><span class="pillar-value ai-val">$199</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Availability</span><span class="pillar-value ai-val">24/7/365</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Missed Calls</span><span class="pillar-value ai-val">Never</span></div>
+                                <div class="pillar-row"><span class="pillar-label">SMS Follow-ups</span><span class="pillar-value ai-val">Automatic</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Languages</span><span class="pillar-value ai-val">60+</span></div>
+                                <div class="pillar-row"><span class="pillar-label">Setup Time</span><span class="pillar-value ai-val">48 hours</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2624,52 +2965,91 @@
                 </div>
             </div>
 
-            <!-- Competitor Comparison -->
-            <div id="competitor-compare" class="row justify-content-center" style="margin-top: 80px;">
+            <!-- Competitor Comparison — Spotlight Row Grid -->
+            <div id="competitor-compare" class="row justify-content-center" style="margin-top: 100px;">
                 <div class="col-lg-10">
-                    <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">How We Compare</h3>
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--Border-3);">
-                            <thead>
-                                <tr>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--White); font-weight: 600; text-align: left; font-size: 15px;">Feature</th>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.25); color: var(--White); font-weight: 700; text-align: center; font-size: 15px;">Caipher AI</th>
-                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--Text-2); font-weight: 600; text-align: center; font-size: 15px;">Competitors</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color: var(--Text-2); font-size: 15px;">
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Starting price</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">$199/mo</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">$99-299/mo</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Calls included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">150</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">60</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">SMS follow-ups</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not included</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Lead scoring</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not included</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Custom implementation</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">DIY setup</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">White-label</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Available</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not available</td></tr>
-                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Outbound calling</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not available</td></tr>
-                                <tr><td style="padding: 16px 24px;">Deployment time</td><td style="padding: 16px 24px; text-align: center; color: #4ade80; font-weight: 600;">48 hours</td><td style="padding: 16px 24px; text-align: center;">DIY setup</td></tr>
-                            </tbody>
-                        </table>
+                    <h3 class="compare-title">How We Compare</h3>
+                    <p class="compare-subtitle">Feature-by-feature. No fluff.</p>
+
+                    <!-- Column Headers -->
+                    <div class="spotlight-header">
+                        <span class="spotlight-col-label">Feature</span>
+                        <span class="spotlight-col-label spotlight-col-caipher">Caipher AI</span>
+                        <span class="spotlight-col-label">Competitors</span>
+                    </div>
+
+                    <!-- Row Cards with Mouse Spotlight -->
+                    <div class="spotlight-grid" id="spotlight-grid">
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Starting price</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> $199/mo</span>
+                            <span class="spotlight-competitor">$99-299/mo</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Calls included</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> 150</span>
+                            <span class="spotlight-competitor">60</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">SMS follow-ups</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> Included</span>
+                            <span class="spotlight-competitor"><span class="x-circle">&#10007;</span> Not included</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Lead scoring</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> Included</span>
+                            <span class="spotlight-competitor"><span class="x-circle">&#10007;</span> Not included</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Custom implementation</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> Included</span>
+                            <span class="spotlight-competitor"><span class="x-circle">&#10007;</span> DIY setup</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">White-label</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> Available</span>
+                            <span class="spotlight-competitor"><span class="x-circle">&#10007;</span> Not available</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Outbound calling</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> Included</span>
+                            <span class="spotlight-competitor"><span class="x-circle">&#10007;</span> Not available</span>
+                        </div>
+                        <div class="spotlight-row">
+                            <span class="spotlight-feature">Deployment time</span>
+                            <span class="spotlight-caipher"><span class="check-circle">&#10003;</span> 48 hours</span>
+                            <span class="spotlight-competitor">DIY setup</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Annual Savings Table -->
-            <div class="row justify-content-center" style="margin-top: 60px;">
+            <!-- Annual Savings — Premium Animated Card -->
+            <div class="row justify-content-center" style="margin-top: 80px;">
                 <div class="col-lg-8">
-                    <div id="savings-callout" style="background: linear-gradient(145deg, rgba(79, 96, 250, 0.1), rgba(196, 111, 248, 0.05)); border: 1px solid rgba(79, 96, 250, 0.2); border-radius: 20px; padding: 40px; text-align: center; position: relative; overflow: hidden;">
-                        <h4 style="font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; color: var(--White); margin-bottom: 8px;">Save 20% + waive setup fees</h4>
-                        <p style="color: var(--Text-2); font-size: 15px; margin-bottom: 24px;">Go annual and keep more money in your pocket.</p>
-                        <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-                            <div>
-                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Capture</p>
-                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save <span class="count-up" data-count-to="1459">$1,459</span><span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
-                            </div>
-                            <div>
-                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Convert</p>
-                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save <span class="count-up" data-count-to="2199">$2,199</span><span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
-                            </div>
-                            <div>
-                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Grow</p>
-                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Custom</p>
+                    <div id="savings-callout" class="savings-premium">
+                        <div class="savings-inner">
+                            <div class="savings-tag">Annual Plans</div>
+                            <h3 class="savings-headline">Save 20% <span class="savings-accent">+</span> waive setup fees</h3>
+                            <p class="savings-desc">Switch to annual billing and keep more money in your pocket.</p>
+                            <div class="savings-amounts">
+                                <div class="savings-block">
+                                    <span class="savings-plan-name">Capture</span>
+                                    <span class="savings-figure"><span class="count-up" data-count-to="1459">$1,459</span></span>
+                                    <span class="savings-per">/year</span>
+                                </div>
+                                <div class="savings-divider"></div>
+                                <div class="savings-block">
+                                    <span class="savings-plan-name">Convert</span>
+                                    <span class="savings-figure"><span class="count-up" data-count-to="2199">$2,199</span></span>
+                                    <span class="savings-per">/year</span>
+                                </div>
+                                <div class="savings-divider"></div>
+                                <div class="savings-block">
+                                    <span class="savings-plan-name">Grow</span>
+                                    <span class="savings-figure-custom">Custom</span>
+                                    <span class="savings-per">&nbsp;</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2947,48 +3327,27 @@
             }
         })();
 
-        // === PRICING SECTION MOTION GRAPHICS ===
+        // === PRICING SECTION MOTION GRAPHICS (Redesigned) ===
         (function() {
             // --- Utility: Animate counting from 0 to target ---
             function countUp(el, target, prefix, duration) {
-                var start = 0;
                 var startTime = performance.now();
                 function tick(now) {
                     var elapsed = now - startTime;
                     var progress = Math.min(elapsed / duration, 1);
-                    var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-                    var current = Math.round(start + (target - start) * eased);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var current = Math.round(target * eased);
                     el.textContent = prefix + current.toLocaleString();
-                    if (progress < 1) {
-                        requestAnimationFrame(tick);
-                    }
+                    if (progress < 1) requestAnimationFrame(tick);
                 }
                 requestAnimationFrame(tick);
-            }
-
-            // --- Utility: Create neon scan line element ---
-            function createScanLine(container) {
-                var line = document.createElement('div');
-                line.className = 'table-scan-line';
-                container.style.position = 'relative';
-                container.appendChild(line);
-                return line;
-            }
-
-            // --- Utility: Stagger-reveal rows ---
-            function revealRows(rows, baseDelay) {
-                rows.forEach(function(row, i) {
-                    setTimeout(function() {
-                        row.classList.add('revealed');
-                    }, baseDelay + i * 130);
-                });
             }
 
             // --- Utility: Add sparkle particles ---
             function addSparkles(container, count) {
                 var colors = ['#4f60fa', '#a855f7', '#4ade80', '#ffffff'];
                 for (var i = 0; i < count; i++) {
-                    (function(index) {
+                    (function() {
                         var spark = document.createElement('div');
                         spark.className = 'sparkle-particle';
                         spark.style.left = (Math.random() * 90 + 5) + '%';
@@ -3000,209 +3359,138 @@
                         setTimeout(function() {
                             spark.style.animation = 'sparkleUp ' + (2 + Math.random() * 2) + 's ' + (Math.random() * 3) + 's ease-in-out infinite';
                         }, 600);
-                    })(i);
+                    })();
                 }
             }
 
-            // --- Utility: Check if cell has specific color in inline style ---
-            function hasColor(el, hex) {
-                var style = el.getAttribute('style') || '';
-                return style.indexOf(hex) !== -1;
-            }
-
             // =========================================
-            // HUMAN VS AI COMPARISON TABLE
+            // HUMAN VS AI — PILLAR CARDS
             // =========================================
-            var humanAiSection = document.getElementById('human-ai-compare');
-            if (humanAiSection) {
-                var table = humanAiSection.querySelector('table');
-                var tbody = table ? table.querySelector('tbody') : null;
-                var rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-                var header = table ? table.querySelector('thead tr') : null;
-                var sectionTitle = humanAiSection.querySelector('h3');
+            var humanAi = document.getElementById('human-ai-compare');
+            if (humanAi) {
+                var title = humanAi.querySelector('.compare-title');
+                var subtitle = humanAi.querySelector('.compare-subtitle');
+                var humanCard = humanAi.querySelector('.pillar-human');
+                var aiCard = humanAi.querySelector('.pillar-ai');
+                var allRows = humanAi.querySelectorAll('.pillar-row');
 
-                // Prep: hide rows and title
-                rows.forEach(function(row) { row.classList.add('anim-row'); });
-                if (sectionTitle) sectionTitle.classList.add('title-reveal');
-                if (header) header.classList.add('table-shimmer');
+                if (title) title.classList.add('title-reveal');
+                if (subtitle) { subtitle.classList.add('title-reveal'); subtitle.style.transitionDelay = '0.1s'; }
 
-                // Create scan line
-                var scanContainer = table ? table.parentElement : null;
-                var scanLine = scanContainer ? createScanLine(scanContainer) : null;
-
-                var observer = new IntersectionObserver(function(entries) {
+                var obs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            // 1. Reveal title
-                            if (sectionTitle) sectionTitle.classList.add('revealed');
-
-                            // 2. Fire scan line
-                            if (scanLine) {
-                                scanLine.style.animation = 'scanDown 1.5s ease-in-out forwards';
-                                scanLine.style.opacity = '1';
-                            }
-
-                            // 3. Shimmer header
-                            if (header) setTimeout(function() { header.classList.add('active'); }, 200);
-
-                            // 4. Stagger-reveal rows
-                            revealRows(rows, 350);
-
-                            // 5. Add green glow to Caipher values after rows finish
+                            if (title) title.classList.add('revealed');
+                            if (subtitle) subtitle.classList.add('revealed');
+                            setTimeout(function() { if (humanCard) humanCard.classList.add('revealed'); }, 200);
+                            setTimeout(function() { if (aiCard) aiCard.classList.add('revealed'); }, 400);
+                            // Stagger-reveal rows
+                            allRows.forEach(function(row, i) {
+                                setTimeout(function() { row.classList.add('revealed'); }, 600 + i * 80);
+                            });
+                            // Add glow to AI values
                             setTimeout(function() {
-                                rows.forEach(function(row) {
-                                    var cells = row.querySelectorAll('td');
-                                    var last = cells[cells.length - 1];
-                                    if (last && hasColor(last, '#4ade80')) {
-                                        last.classList.add('glow-pulse');
-                                    }
+                                humanAi.querySelectorAll('.ai-val').forEach(function(v) {
+                                    v.classList.add('glow-pulse');
                                 });
-                            }, rows.length * 130 + 600);
-
-                            observer.unobserve(entry.target);
+                            }, 600 + allRows.length * 80 + 400);
+                            obs.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.15 });
-
-                observer.observe(humanAiSection);
+                }, { threshold: 0.12 });
+                obs.observe(humanAi);
             }
 
             // =========================================
-            // EVERY PLAN INCLUDES - PILL BADGES
+            // EVERY PLAN INCLUDES — PILL BADGES
             // =========================================
             var pillsContainer = document.getElementById('plan-pills');
             if (pillsContainer) {
                 var pills = Array.from(pillsContainer.querySelectorAll('span'));
                 pills.forEach(function(pill) { pill.classList.add('anim-pill'); });
-
-                var pillObserver = new IntersectionObserver(function(entries) {
+                var pillObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
                             pills.forEach(function(pill, i) {
                                 setTimeout(function() { pill.classList.add('revealed'); }, i * 120);
                             });
-                            pillObserver.unobserve(entry.target);
+                            pillObs.unobserve(entry.target);
                         }
                     });
                 }, { threshold: 0.3 });
-
-                pillObserver.observe(pillsContainer);
+                pillObs.observe(pillsContainer);
             }
 
             // =========================================
-            // COMPETITOR COMPARISON TABLE
+            // COMPETITOR — SPOTLIGHT ROWS + MOUSE GLOW
             // =========================================
-            var competitorSection = document.getElementById('competitor-compare');
-            if (competitorSection) {
-                var cTable = competitorSection.querySelector('table');
-                var cTbody = cTable ? cTable.querySelector('tbody') : null;
-                var cRows = cTbody ? Array.from(cTbody.querySelectorAll('tr')) : [];
-                var cHeader = cTable ? cTable.querySelector('thead tr') : null;
-                var cTitle = competitorSection.querySelector('h3');
+            var competitor = document.getElementById('competitor-compare');
+            if (competitor) {
+                var cTitle = competitor.querySelector('.compare-title');
+                var cSub = competitor.querySelector('.compare-subtitle');
+                var spotlightGrid = document.getElementById('spotlight-grid');
+                var spotRows = spotlightGrid ? Array.from(spotlightGrid.querySelectorAll('.spotlight-row')) : [];
 
-                // Prep: hide rows (slide from right)
-                cRows.forEach(function(row) { row.classList.add('anim-row', 'from-right'); });
                 if (cTitle) cTitle.classList.add('title-reveal');
-                if (cHeader) cHeader.classList.add('table-shimmer');
+                if (cSub) { cSub.classList.add('title-reveal'); cSub.style.transitionDelay = '0.1s'; }
 
-                var cScanContainer = cTable ? cTable.parentElement : null;
-                var cScanLine = cScanContainer ? createScanLine(cScanContainer) : null;
+                // Mouse-following spotlight
+                if (spotlightGrid) {
+                    spotlightGrid.addEventListener('mousemove', function(e) {
+                        spotRows.forEach(function(row) {
+                            var rect = row.getBoundingClientRect();
+                            row.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                            row.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+                        });
+                    });
+                }
 
-                var cObserver = new IntersectionObserver(function(entries) {
+                var cObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            // 1. Reveal title
                             if (cTitle) cTitle.classList.add('revealed');
-
-                            // 2. Scan line
-                            if (cScanLine) {
-                                cScanLine.style.animation = 'scanDown 1.5s ease-in-out forwards';
-                                cScanLine.style.opacity = '1';
-                            }
-
-                            // 3. Shimmer header
-                            if (cHeader) setTimeout(function() { cHeader.classList.add('active'); }, 200);
-
-                            // 4. Stagger-reveal rows
-                            revealRows(cRows, 400);
-
-                            // 5. After rows reveal, inject animated check/X icons
+                            if (cSub) cSub.classList.add('revealed');
+                            spotRows.forEach(function(row, i) {
+                                setTimeout(function() { row.classList.add('revealed'); }, 300 + i * 100);
+                            });
+                            // Green glow on Caipher values
                             setTimeout(function() {
-                                cRows.forEach(function(row, ri) {
-                                    var cells = row.querySelectorAll('td');
-                                    // Caipher column (index 1) — green values get checkmark
-                                    if (cells[1] && hasColor(cells[1], '#4ade80')) {
-                                        var check = document.createElement('span');
-                                        check.className = 'anim-icon';
-                                        check.textContent = '\u2713 ';
-                                        check.style.color = '#4ade80';
-                                        check.style.fontWeight = '700';
-                                        cells[1].insertBefore(check, cells[1].firstChild);
-                                        setTimeout(function() { check.classList.add('bounced'); }, ri * 80);
-                                    }
-                                    // Competitor column (index 2) — red values get X
-                                    if (cells[2] && hasColor(cells[2], '#f87171')) {
-                                        var xIcon = document.createElement('span');
-                                        xIcon.className = 'anim-icon';
-                                        xIcon.textContent = '\u2717 ';
-                                        xIcon.style.color = '#f87171';
-                                        xIcon.style.fontWeight = '700';
-                                        cells[2].insertBefore(xIcon, cells[2].firstChild);
-                                        setTimeout(function() { xIcon.classList.add('bounced'); }, ri * 80 + 100);
-                                    }
+                                competitor.querySelectorAll('.spotlight-caipher').forEach(function(v) {
+                                    v.classList.add('glow-pulse');
                                 });
-
-                                // Green glow on entire Caipher column
-                                cRows.forEach(function(row) {
-                                    var cells = row.querySelectorAll('td');
-                                    if (cells[1] && hasColor(cells[1], '#4ade80')) {
-                                        cells[1].classList.add('glow-pulse');
-                                    }
-                                });
-                            }, cRows.length * 130 + 700);
-
-                            cObserver.unobserve(entry.target);
+                            }, 300 + spotRows.length * 100 + 400);
+                            cObs.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.15 });
-
-                cObserver.observe(competitorSection);
+                }, { threshold: 0.1 });
+                cObs.observe(competitor);
             }
 
             // =========================================
-            // SAVINGS CARD — Scale, Glow, Count, Sparkle
+            // SAVINGS CARD — Rotating Border, Counter, Sparkles
             // =========================================
-            var savingsCard = document.getElementById('savings-callout');
-            if (savingsCard) {
-                savingsCard.classList.add('savings-animated');
-
-                var savingsObserver = new IntersectionObserver(function(entries) {
+            var savings = document.getElementById('savings-callout');
+            if (savings) {
+                var sObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            // 1. Scale + fade in
-                            savingsCard.classList.add('active');
-
-                            // 2. Counter animations for dollar amounts
-                            var countEls = savingsCard.querySelectorAll('.count-up');
+                            savings.classList.add('active');
+                            // Counter animations
+                            var countEls = savings.querySelectorAll('.count-up');
                             countEls.forEach(function(el, i) {
                                 var target = parseInt(el.getAttribute('data-count-to'));
                                 setTimeout(function() {
                                     el.textContent = '$0';
                                     countUp(el, target, '$', 2200);
-                                }, 500 + i * 350);
+                                }, 600 + i * 350);
                             });
-
-                            // 3. Sparkle particles
-                            setTimeout(function() {
-                                addSparkles(savingsCard, 14);
-                            }, 900);
-
-                            savingsObserver.unobserve(entry.target);
+                            // Sparkle particles
+                            setTimeout(function() { addSparkles(savings, 14); }, 1000);
+                            sObs.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.3 });
-
-                savingsObserver.observe(savingsCard);
+                }, { threshold: 0.25 });
+                sObs.observe(savings);
             }
         })();
 
