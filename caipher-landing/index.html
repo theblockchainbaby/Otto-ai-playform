@@ -1684,6 +1684,144 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
         }
+
+        /* === PRICING SECTION MOTION GRAPHICS === */
+
+        /* Neon scan line that sweeps down comparison tables */
+        .table-scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #4f60fa 20%, #a855f7 50%, #4ade80 80%, transparent 100%);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 0 15px rgba(79, 96, 250, 0.8), 0 0 30px rgba(168, 85, 247, 0.4), 0 2px 8px rgba(74, 222, 128, 0.3);
+        }
+
+        @keyframes scanDown {
+            0% { top: 0; opacity: 0; }
+            5% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Table row staggered reveal */
+        .anim-row {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .anim-row.from-right {
+            transform: translateX(30px);
+        }
+
+        .anim-row.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Green glow pulse for Caipher advantage values */
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 6px rgba(74, 222, 128, 0.2); }
+            50% { text-shadow: 0 0 16px rgba(74, 222, 128, 0.5), 0 0 32px rgba(74, 222, 128, 0.15); }
+        }
+
+        .glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
+
+        /* Table header shimmer sweep */
+        @keyframes shimmerSweep {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .table-shimmer { position: relative; overflow: hidden; }
+
+        .table-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            pointer-events: none;
+        }
+
+        .table-shimmer.active::after { animation: shimmerSweep 1.8s ease-in-out forwards; }
+
+        /* Checkmark/X icon bounce-in */
+        .anim-icon {
+            display: inline-block;
+            margin-right: 4px;
+            transform: scale(0);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .anim-icon.bounced { transform: scale(1); }
+
+        /* Savings card entrance + cycling glow */
+        .savings-animated {
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+            transform: scale(0.92) translateY(20px);
+            opacity: 0;
+        }
+
+        .savings-animated.active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            animation: savingsGlow 4s ease-in-out 0.8s infinite;
+        }
+
+        @keyframes savingsGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(79, 96, 250, 0.15), 0 0 60px rgba(79, 96, 250, 0.05); border-color: rgba(79, 96, 250, 0.3); }
+            33% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.2), 0 0 60px rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.35); }
+            66% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.15), 0 0 60px rgba(74, 222, 128, 0.05); border-color: rgba(74, 222, 128, 0.25); }
+        }
+
+        /* Sparkle particles floating up from savings card */
+        .sparkle-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes sparkleUp {
+            0% { opacity: 0; transform: translateY(0) scale(0); }
+            15% { opacity: 0.8; transform: translateY(-8px) scale(1); }
+            85% { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(-50px) scale(0); }
+        }
+
+        /* Section title reveal */
+        .title-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .title-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Plan includes pill badges stagger */
+        .anim-pill {
+            opacity: 0;
+            transform: translateY(12px) scale(0.9);
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .anim-pill.revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     </style>
 </head>
 <body class="counter-scroll">
@@ -2446,7 +2584,7 @@
             </div>
 
             <!-- Human vs AI Comparison -->
-            <div class="row justify-content-center" style="margin-top: 80px;">
+            <div id="human-ai-compare" class="row justify-content-center" style="margin-top: 80px;">
                 <div class="col-lg-10">
                     <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">Why Businesses Switch to Caipher AI</h3>
                     <div style="overflow-x: auto;">
@@ -2475,7 +2613,7 @@
             <div class="row justify-content-center" style="margin-top: 60px;">
                 <div class="col-lg-8 text-center">
                     <h4 style="font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 600; color: var(--White); margin-bottom: 32px;">Every plan includes:</h4>
-                    <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+                    <div id="plan-pills" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
                         <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">Custom-built AI agents for YOUR business</span>
                         <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">SMS follow-ups (A2P verified)</span>
                         <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">CRM integration</span>
@@ -2487,7 +2625,7 @@
             </div>
 
             <!-- Competitor Comparison -->
-            <div class="row justify-content-center" style="margin-top: 80px;">
+            <div id="competitor-compare" class="row justify-content-center" style="margin-top: 80px;">
                 <div class="col-lg-10">
                     <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">How We Compare</h3>
                     <div style="overflow-x: auto;">
@@ -2517,17 +2655,17 @@
             <!-- Annual Savings Table -->
             <div class="row justify-content-center" style="margin-top: 60px;">
                 <div class="col-lg-8">
-                    <div style="background: linear-gradient(145deg, rgba(79, 96, 250, 0.1), rgba(196, 111, 248, 0.05)); border: 1px solid rgba(79, 96, 250, 0.2); border-radius: 20px; padding: 40px; text-align: center;">
+                    <div id="savings-callout" style="background: linear-gradient(145deg, rgba(79, 96, 250, 0.1), rgba(196, 111, 248, 0.05)); border: 1px solid rgba(79, 96, 250, 0.2); border-radius: 20px; padding: 40px; text-align: center; position: relative; overflow: hidden;">
                         <h4 style="font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; color: var(--White); margin-bottom: 8px;">Save 20% + waive setup fees</h4>
                         <p style="color: var(--Text-2); font-size: 15px; margin-bottom: 24px;">Go annual and keep more money in your pocket.</p>
                         <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
                             <div>
                                 <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Capture</p>
-                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save $1,459<span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
+                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save <span class="count-up" data-count-to="1459">$1,459</span><span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
                             </div>
                             <div>
                                 <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Convert</p>
-                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save $2,199<span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
+                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save <span class="count-up" data-count-to="2199">$2,199</span><span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
                             </div>
                             <div>
                                 <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Grow</p>
@@ -2806,6 +2944,265 @@
                         el.style.display = isAnnual ? 'inline' : 'none';
                     });
                 });
+            }
+        })();
+
+        // === PRICING SECTION MOTION GRAPHICS ===
+        (function() {
+            // --- Utility: Animate counting from 0 to target ---
+            function countUp(el, target, prefix, duration) {
+                var start = 0;
+                var startTime = performance.now();
+                function tick(now) {
+                    var elapsed = now - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                    var current = Math.round(start + (target - start) * eased);
+                    el.textContent = prefix + current.toLocaleString();
+                    if (progress < 1) {
+                        requestAnimationFrame(tick);
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+
+            // --- Utility: Create neon scan line element ---
+            function createScanLine(container) {
+                var line = document.createElement('div');
+                line.className = 'table-scan-line';
+                container.style.position = 'relative';
+                container.appendChild(line);
+                return line;
+            }
+
+            // --- Utility: Stagger-reveal rows ---
+            function revealRows(rows, baseDelay) {
+                rows.forEach(function(row, i) {
+                    setTimeout(function() {
+                        row.classList.add('revealed');
+                    }, baseDelay + i * 130);
+                });
+            }
+
+            // --- Utility: Add sparkle particles ---
+            function addSparkles(container, count) {
+                var colors = ['#4f60fa', '#a855f7', '#4ade80', '#ffffff'];
+                for (var i = 0; i < count; i++) {
+                    (function(index) {
+                        var spark = document.createElement('div');
+                        spark.className = 'sparkle-particle';
+                        spark.style.left = (Math.random() * 90 + 5) + '%';
+                        spark.style.top = (Math.random() * 80 + 10) + '%';
+                        spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        spark.style.width = (2 + Math.random() * 3) + 'px';
+                        spark.style.height = spark.style.width;
+                        container.appendChild(spark);
+                        setTimeout(function() {
+                            spark.style.animation = 'sparkleUp ' + (2 + Math.random() * 2) + 's ' + (Math.random() * 3) + 's ease-in-out infinite';
+                        }, 600);
+                    })(i);
+                }
+            }
+
+            // --- Utility: Check if cell has specific color in inline style ---
+            function hasColor(el, hex) {
+                var style = el.getAttribute('style') || '';
+                return style.indexOf(hex) !== -1;
+            }
+
+            // =========================================
+            // HUMAN VS AI COMPARISON TABLE
+            // =========================================
+            var humanAiSection = document.getElementById('human-ai-compare');
+            if (humanAiSection) {
+                var table = humanAiSection.querySelector('table');
+                var tbody = table ? table.querySelector('tbody') : null;
+                var rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+                var header = table ? table.querySelector('thead tr') : null;
+                var sectionTitle = humanAiSection.querySelector('h3');
+
+                // Prep: hide rows and title
+                rows.forEach(function(row) { row.classList.add('anim-row'); });
+                if (sectionTitle) sectionTitle.classList.add('title-reveal');
+                if (header) header.classList.add('table-shimmer');
+
+                // Create scan line
+                var scanContainer = table ? table.parentElement : null;
+                var scanLine = scanContainer ? createScanLine(scanContainer) : null;
+
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            // 1. Reveal title
+                            if (sectionTitle) sectionTitle.classList.add('revealed');
+
+                            // 2. Fire scan line
+                            if (scanLine) {
+                                scanLine.style.animation = 'scanDown 1.5s ease-in-out forwards';
+                                scanLine.style.opacity = '1';
+                            }
+
+                            // 3. Shimmer header
+                            if (header) setTimeout(function() { header.classList.add('active'); }, 200);
+
+                            // 4. Stagger-reveal rows
+                            revealRows(rows, 350);
+
+                            // 5. Add green glow to Caipher values after rows finish
+                            setTimeout(function() {
+                                rows.forEach(function(row) {
+                                    var cells = row.querySelectorAll('td');
+                                    var last = cells[cells.length - 1];
+                                    if (last && hasColor(last, '#4ade80')) {
+                                        last.classList.add('glow-pulse');
+                                    }
+                                });
+                            }, rows.length * 130 + 600);
+
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+
+                observer.observe(humanAiSection);
+            }
+
+            // =========================================
+            // EVERY PLAN INCLUDES - PILL BADGES
+            // =========================================
+            var pillsContainer = document.getElementById('plan-pills');
+            if (pillsContainer) {
+                var pills = Array.from(pillsContainer.querySelectorAll('span'));
+                pills.forEach(function(pill) { pill.classList.add('anim-pill'); });
+
+                var pillObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            pills.forEach(function(pill, i) {
+                                setTimeout(function() { pill.classList.add('revealed'); }, i * 120);
+                            });
+                            pillObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+
+                pillObserver.observe(pillsContainer);
+            }
+
+            // =========================================
+            // COMPETITOR COMPARISON TABLE
+            // =========================================
+            var competitorSection = document.getElementById('competitor-compare');
+            if (competitorSection) {
+                var cTable = competitorSection.querySelector('table');
+                var cTbody = cTable ? cTable.querySelector('tbody') : null;
+                var cRows = cTbody ? Array.from(cTbody.querySelectorAll('tr')) : [];
+                var cHeader = cTable ? cTable.querySelector('thead tr') : null;
+                var cTitle = competitorSection.querySelector('h3');
+
+                // Prep: hide rows (slide from right)
+                cRows.forEach(function(row) { row.classList.add('anim-row', 'from-right'); });
+                if (cTitle) cTitle.classList.add('title-reveal');
+                if (cHeader) cHeader.classList.add('table-shimmer');
+
+                var cScanContainer = cTable ? cTable.parentElement : null;
+                var cScanLine = cScanContainer ? createScanLine(cScanContainer) : null;
+
+                var cObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            // 1. Reveal title
+                            if (cTitle) cTitle.classList.add('revealed');
+
+                            // 2. Scan line
+                            if (cScanLine) {
+                                cScanLine.style.animation = 'scanDown 1.5s ease-in-out forwards';
+                                cScanLine.style.opacity = '1';
+                            }
+
+                            // 3. Shimmer header
+                            if (cHeader) setTimeout(function() { cHeader.classList.add('active'); }, 200);
+
+                            // 4. Stagger-reveal rows
+                            revealRows(cRows, 400);
+
+                            // 5. After rows reveal, inject animated check/X icons
+                            setTimeout(function() {
+                                cRows.forEach(function(row, ri) {
+                                    var cells = row.querySelectorAll('td');
+                                    // Caipher column (index 1) — green values get checkmark
+                                    if (cells[1] && hasColor(cells[1], '#4ade80')) {
+                                        var check = document.createElement('span');
+                                        check.className = 'anim-icon';
+                                        check.textContent = '\u2713 ';
+                                        check.style.color = '#4ade80';
+                                        check.style.fontWeight = '700';
+                                        cells[1].insertBefore(check, cells[1].firstChild);
+                                        setTimeout(function() { check.classList.add('bounced'); }, ri * 80);
+                                    }
+                                    // Competitor column (index 2) — red values get X
+                                    if (cells[2] && hasColor(cells[2], '#f87171')) {
+                                        var xIcon = document.createElement('span');
+                                        xIcon.className = 'anim-icon';
+                                        xIcon.textContent = '\u2717 ';
+                                        xIcon.style.color = '#f87171';
+                                        xIcon.style.fontWeight = '700';
+                                        cells[2].insertBefore(xIcon, cells[2].firstChild);
+                                        setTimeout(function() { xIcon.classList.add('bounced'); }, ri * 80 + 100);
+                                    }
+                                });
+
+                                // Green glow on entire Caipher column
+                                cRows.forEach(function(row) {
+                                    var cells = row.querySelectorAll('td');
+                                    if (cells[1] && hasColor(cells[1], '#4ade80')) {
+                                        cells[1].classList.add('glow-pulse');
+                                    }
+                                });
+                            }, cRows.length * 130 + 700);
+
+                            cObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+
+                cObserver.observe(competitorSection);
+            }
+
+            // =========================================
+            // SAVINGS CARD — Scale, Glow, Count, Sparkle
+            // =========================================
+            var savingsCard = document.getElementById('savings-callout');
+            if (savingsCard) {
+                savingsCard.classList.add('savings-animated');
+
+                var savingsObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            // 1. Scale + fade in
+                            savingsCard.classList.add('active');
+
+                            // 2. Counter animations for dollar amounts
+                            var countEls = savingsCard.querySelectorAll('.count-up');
+                            countEls.forEach(function(el, i) {
+                                var target = parseInt(el.getAttribute('data-count-to'));
+                                setTimeout(function() {
+                                    el.textContent = '$0';
+                                    countUp(el, target, '$', 2200);
+                                }, 500 + i * 350);
+                            });
+
+                            // 3. Sparkle particles
+                            setTimeout(function() {
+                                addSparkles(savingsCard, 14);
+                            }, 900);
+
+                            savingsObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+
+                savingsObserver.observe(savingsCard);
             }
         })();
 
