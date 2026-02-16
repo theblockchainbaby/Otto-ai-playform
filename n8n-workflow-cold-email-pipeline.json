@@ -1,0 +1,459 @@
+{
+  "name": "Caipher Cold Email Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cold-email/run",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Start Campaign",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "cold-email-run"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract campaign parameters from webhook body\nconst input = $input.first().json;\n\nreturn [{\n  json: {\n    niche: input.niche || 'HVAC companies',\n    location: input.location || 'Atlanta, Georgia, USA',\n    maxResults: input.maxResults || 20,\n    senderName: input.senderName || 'York',\n    senderTitle: input.senderTitle || 'Founder',\n    calendarLink: input.calendarLink || 'https://calendly.com/yorksims/30min'\n  }\n}];"
+      },
+      "id": "parse-params",
+      "name": "Parse Campaign Params",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $env.GOOGLE_MAPS_API_KEY }}"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.primaryTypeDisplayName,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"textQuery\": \"{{ $json.niche }} in {{ $json.location }}\",\n  \"maxResultCount\": {{ $json.maxResults }}\n}",
+        "options": {}
+      },
+      "id": "google-places-search",
+      "name": "1. Find Businesses (Google Places)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "places",
+        "options": {}
+      },
+      "id": "split-places",
+      "name": "Split Into Individual Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.websiteUri }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "filter-has-website",
+      "name": "Filter - Has Website",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "businessName",
+              "value": "={{ $json.displayName?.text || '' }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $json.nationalPhoneNumber || '' }}"
+            },
+            {
+              "name": "address",
+              "value": "={{ $json.formattedAddress || '' }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $json.websiteUri || '' }}"
+            },
+            {
+              "name": "category",
+              "value": "={{ $json.primaryTypeDisplayName?.text || '' }}"
+            },
+            {
+              "name": "rating",
+              "value": "={{ $json.rating || '' }}"
+            },
+            {
+              "name": "reviewCount",
+              "value": "={{ $json.userRatingCount || 0 }}"
+            },
+            {
+              "name": "hours",
+              "value": "={{ $json.regularOpeningHours?.weekdayDescriptions?.join('; ') || 'Not listed' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "format-lead",
+      "name": "Format Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~website-content-crawler/runs?token={{ $env.APIFY_API_TOKEN }}&waitForFinish=60",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"startUrls\": [{ \"url\": \"{{ $json.website }}\" }],\n  \"maxCrawlPages\": 3,\n  \"maxCrawlDepth\": 1,\n  \"crawlerType\": \"cheerio\",\n  \"maxRequestRetries\": 1,\n  \"requestTimeoutSecs\": 15\n}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "id": "apify-scrape-website",
+      "name": "2. Scrape Website (Apify)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data?.defaultDatasetId }}/items?token={{ $env.APIFY_API_TOKEN }}&limit=3",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "apify-get-results",
+      "name": "Get Scraped Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1600, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine scraped website text (truncated to avoid token limits)\nconst pages = $input.first().json;\nlet websiteText = '';\n\nif (Array.isArray(pages)) {\n  websiteText = pages\n    .map(p => (p.text || p.markdown || '').substring(0, 1500))\n    .join('\\n---\\n')\n    .substring(0, 4000);\n} else if (pages && pages.text) {\n  websiteText = (pages.text || '').substring(0, 4000);\n}\n\n// Get lead data from earlier in the chain\nconst lead = $('Format Lead Data').first().json;\n\nreturn [{\n  json: {\n    ...lead,\n    websiteText: websiteText || 'No content scraped'\n  }\n}];"
+      },
+      "id": "merge-scraped-data",
+      "name": "Merge Lead + Website Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1800, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-5-20250929\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are a cold email copywriter for Caipher AI, an AI voice agent company that answers business phone calls 24/7, books appointments, and handles SMS follow-ups.\\n\\nWrite a personalized cold email for this business. The email must feel handcrafted, not templated.\\n\\n--- BUSINESS DATA ---\\nName: {{ $json.businessName }}\\nCategory: {{ $json.category }}\\nAddress: {{ $json.address }}\\nPhone: {{ $json.phone }}\\nRating: {{ $json.rating }} ({{ $json.reviewCount }} reviews)\\nHours: {{ $json.hours }}\\n\\n--- WEBSITE CONTENT ---\\n{{ $json.websiteText }}\\n\\n--- INSTRUCTIONS ---\\n1. Write a specific ICEBREAKER (1 sentence) referencing something real from their website or business (a service they offer, their team, their location, etc.)\\n2. Identify their likely PAIN POINT around missed calls, after-hours availability, or staffing challenges\\n3. Present Caipher AI as the solution with a ZERO-RISK offer: free 14-day pilot\\n4. Keep it under 120 words total\\n5. Tone: conversational, peer-to-peer (founder to owner), no corporate speak\\n6. No fake urgency or pushy CTAs\\n\\nReturn ONLY valid JSON with no markdown:\\n{\\n  \\\"subject\\\": \\\"short subject line (under 8 words, lowercase, no emojis)\\\",\\n  \\\"icebreaker\\\": \\\"the personalized opening line\\\",\\n  \\\"body\\\": \\\"the full email body (include icebreaker)\\\",\\n  \\\"painPoint\\\": \\\"the identified pain point\\\",\\n  \\\"personalizationNote\\\": \\\"what you referenced from their data\\\"\\n}\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "ai-personalize",
+      "name": "3. AI Personalize Email (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the AI response and combine with lead data\nconst aiResponse = $input.first().json;\nconst lead = $('Merge Lead + Website Data').first().json;\n\nlet emailData = {};\ntry {\n  const content = aiResponse.content[0].text;\n  // Try to extract JSON from the response\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  emailData = JSON.parse(jsonMatch ? jsonMatch[0] : content);\n} catch (e) {\n  emailData = {\n    subject: 'quick question about ' + lead.businessName,\n    body: 'Could not generate personalized email. Raw AI response: ' + JSON.stringify(aiResponse).substring(0, 500),\n    painPoint: 'unknown',\n    personalizationNote: 'parse error'\n  };\n}\n\nreturn [{\n  json: {\n    // Lead info\n    businessName: lead.businessName,\n    phone: lead.phone,\n    address: lead.address,\n    website: lead.website,\n    category: lead.category,\n    rating: lead.rating,\n    reviewCount: lead.reviewCount,\n    // Email content\n    emailSubject: emailData.subject || '',\n    emailBody: emailData.body || '',\n    icebreaker: emailData.icebreaker || '',\n    painPoint: emailData.painPoint || '',\n    personalizationNote: emailData.personalizationNote || '',\n    // Meta\n    status: 'ready_to_send',\n    generatedAt: new Date().toISOString(),\n    campaign: lead.category + ' - ' + new Date().toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "build-email-record",
+      "name": "4. Build Email Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Cold Emails"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Business Name": "={{ $json.businessName }}",
+            "Category": "={{ $json.category }}",
+            "Phone": "={{ $json.phone }}",
+            "Website": "={{ $json.website }}",
+            "Address": "={{ $json.address }}",
+            "Rating": "={{ $json.rating }}",
+            "Reviews": "={{ $json.reviewCount }}",
+            "Subject": "={{ $json.emailSubject }}",
+            "Email Body": "={{ $json.emailBody }}",
+            "Icebreaker": "={{ $json.icebreaker }}",
+            "Pain Point": "={{ $json.painPoint }}",
+            "Personalization Note": "={{ $json.personalizationNote }}",
+            "Status": "={{ $json.status }}",
+            "Generated At": "={{ $json.generatedAt }}",
+            "Campaign": "={{ $json.campaign }}"
+          },
+          "matchingColumns": ["Phone"]
+        },
+        "options": {}
+      },
+      "id": "sheets-save-email",
+      "name": "5. Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [2400, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [2600, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Cold email campaign generated\",\n  \"emailsGenerated\": {{ $json.data ? $json.data.length : 0 }},\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}"
+      },
+      "id": "respond-success",
+      "name": "Respond - Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2800, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"{{ $json.error || 'An error occurred during email generation' }}\"\n}"
+      },
+      "id": "respond-error",
+      "name": "Respond - Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2800, 600]
+    }
+  ],
+  "connections": {
+    "Webhook - Start Campaign": {
+      "main": [
+        [
+          {
+            "node": "Parse Campaign Params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Campaign Params": {
+      "main": [
+        [
+          {
+            "node": "1. Find Businesses (Google Places)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Find Businesses (Google Places)": {
+      "main": [
+        [
+          {
+            "node": "Split Into Individual Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Individual Leads": {
+      "main": [
+        [
+          {
+            "node": "Filter - Has Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter - Has Website": {
+      "main": [
+        [
+          {
+            "node": "Format Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lead Data": {
+      "main": [
+        [
+          {
+            "node": "2. Scrape Website (Apify)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Scrape Website (Apify)": {
+      "main": [
+        [
+          {
+            "node": "Get Scraped Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scraped Content": {
+      "main": [
+        [
+          {
+            "node": "Merge Lead + Website Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Lead + Website Data": {
+      "main": [
+        [
+          {
+            "node": "3. AI Personalize Email (Claude)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. AI Personalize Email (Claude)": {
+      "main": [
+        [
+          {
+            "node": "4. Build Email Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Build Email Record": {
+      "main": [
+        [
+          {
+            "node": "5. Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Save to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Respond - Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    {
+      "name": "cold-email"
+    },
+    {
+      "name": "sales"
+    }
+  ]
+}

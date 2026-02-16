@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free 14-Day AI Pilot - Caipher AI</title>
+    <meta name="description" content="Try Caipher AI free for 14 days. Your AI receptionist answers calls 24/7, books appointments, and follows up via SMS. Zero risk, no credit card required.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <style>
+        :root {
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border-3: rgba(32, 37, 104, 0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+        }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 28px; font-weight: 700; color: var(--White); text-decoration: none; }
+        .logo span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
+        .nav-menu a { color: var(--Text-2); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--Primary); }
+        .btn-primary-nav {
+            background: var(--Primary); color: var(--White); padding: 12px 28px;
+            border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;
+            transition: all 0.3s ease; box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .btn-primary-nav:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        .page-content {
+            padding: 140px 0 80px;
+            position: relative;
+        }
+        .page-content::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* Left - Info */
+        .info-side h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 44px; font-weight: 700;
+            line-height: 1.15; color: var(--White);
+            margin-bottom: 20px;
+        }
+        .info-side h1 span {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .info-side > p {
+            font-size: 17px; color: var(--Text-2);
+            margin-bottom: 40px; line-height: 1.7;
+        }
+
+        .zero-risk-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 40px; padding: 8px 20px;
+            font-size: 13px; font-weight: 600; color: #4ade80;
+            margin-bottom: 24px;
+        }
+
+        .benefit-list { list-style: none; }
+        .benefit-list li {
+            display: flex; align-items: flex-start; gap: 14px;
+            margin-bottom: 20px; font-size: 15px; color: var(--Text-3);
+        }
+        .benefit-list li .check-icon {
+            width: 24px; height: 24px; min-width: 24px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            display: flex; align-items: center; justify-content: center;
+            color: #4ade80; font-size: 12px; font-weight: 700;
+            margin-top: 2px;
+        }
+        .benefit-list li strong { color: var(--White); }
+
+        .social-proof {
+            margin-top: 40px; padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .stats-row {
+            display: flex; gap: 36px;
+        }
+        .stat-block {
+            display: flex; flex-direction: column;
+        }
+        .stat-number {
+            font-family: 'Fraunces', serif;
+            font-size: 28px; font-weight: 700; color: var(--White);
+        }
+        .stat-label {
+            font-size: 13px; color: var(--Text);
+        }
+
+        /* Right - Form */
+        .form-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px; padding: 40px;
+            position: relative;
+        }
+        .form-card::before {
+            content: '';
+            position: absolute; top: 0; left: 24px; right: 24px; height: 2px;
+            background: linear-gradient(90deg, #4f60fa, #c46ff8, #4ade80);
+            border-radius: 2px;
+        }
+        .form-card h2 {
+            font-size: 24px; font-weight: 600;
+            color: var(--White); margin-bottom: 4px;
+        }
+        .form-card > p {
+            font-size: 14px; color: var(--Text-2); margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 500;
+            color: var(--Text-3); margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 12px 16px;
+            background: rgba(0, 3, 28, 0.8);
+            border: 1px solid var(--Border-3);
+            border-radius: 12px; color: var(--White);
+            font-family: 'Poppins', sans-serif; font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none; border-color: var(--Primary);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: var(--Text); }
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2373799b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            cursor: pointer;
+        }
+        .form-group select option { background: var(--Bg); color: var(--White); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .submit-btn {
+            width: 100%; padding: 16px 28px;
+            background: linear-gradient(135deg, var(--Primary), var(--Bg-2));
+            color: var(--White); border: none;
+            border-radius: 100px;
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        .form-note {
+            text-align: center; font-size: 12px;
+            color: var(--Text); margin-top: 16px;
+        }
+
+        .success-message {
+            display: none; text-align: center; padding: 40px 20px;
+        }
+        .success-message .success-icon {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; color: #4ade80; font-size: 28px;
+        }
+        .success-message h3 { font-size: 22px; color: var(--White); margin-bottom: 12px; }
+        .success-message p { color: var(--Text-2); font-size: 15px; }
+
+        /* How it works mini */
+        .how-it-works {
+            margin-top: 80px; padding-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .how-it-works h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px; font-weight: 700;
+            color: var(--White); text-align: center;
+            margin-bottom: 48px;
+        }
+        .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .step-item { text-align: center; }
+        .step-number {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(79, 96, 250, 0.15);
+            border: 1px solid rgba(79, 96, 250, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700;
+            color: var(--Primary);
+        }
+        .step-item h4 { color: var(--White); font-size: 16px; margin-bottom: 8px; }
+        .step-item p { color: var(--Text-2); font-size: 14px; line-height: 1.6; }
+
+        /* Footer */
+        .footer {
+            background: var(--Bg-7); padding: 60px 0 30px;
+            border-top: 1px solid var(--Border-3); margin-top: 80px;
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+        .footer-brand p { color: var(--Text-2); font-size: 13px; max-width: 240px; }
+        .footer-links h5 { color: var(--White); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: var(--Text-2); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--Primary); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--Border-3); text-align: center; color: var(--Text); font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .page-grid { grid-template-columns: 1fr; gap: 40px; }
+            .info-side h1 { font-size: 32px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-card { padding: 28px 20px; }
+            .steps-row { grid-template-columns: 1fr; gap: 24px; }
+            .stats-row { gap: 24px; flex-wrap: wrap; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo">Caipher <span>AI</span></a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#features">Solutions</a></li>
+                    <li><a href="index.html#how-it-works">How It Works</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+                <a href="contact.html" class="btn-primary-nav">Book a Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-content">
+        <div class="container">
+            <div class="page-grid">
+                <div class="info-side">
+                    <div class="zero-risk-badge">&#10003; Zero Risk &mdash; No Credit Card Required</div>
+                    <h1>Try Caipher AI<br><span>Free for 14 Days</span></h1>
+                    <p>We'll set up a custom AI phone agent for your business at no cost. It answers calls, books appointments, and follows up via SMS &mdash; 24/7. If it doesn't save you 10+ hours in the first two weeks, we part as friends.</p>
+
+                    <ul class="benefit-list">
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Fully built for you</strong> &mdash; We configure the AI for your business, hours, and services</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Live in 48 hours</strong> &mdash; From signup to answering real calls in two days</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Real calls, real results</strong> &mdash; You'll see exactly how many calls were handled and appointments booked</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>No strings attached</strong> &mdash; Walk away anytime. Keep all the data and recordings.</div>
+                        </li>
+                    </ul>
+
+                    <div class="social-proof">
+                        <div class="stats-row">
+                            <div class="stat-block">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Call coverage</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">48hr</span>
+                                <span class="stat-label">Setup time</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">60+</span>
+                                <span class="stat-label">Languages</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">$0</span>
+                                <span class="stat-label">Pilot cost</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>Start Your Free Pilot</h2>
+                    <p>Tell us about your business and we'll build your AI agent.</p>
+
+                    <form id="pilot-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" placeholder="York" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" placeholder="Sims" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessName">Business Name *</label>
+                            <input type="text" id="businessName" name="businessName" placeholder="Your Business" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" placeholder="you@business.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="industry">Industry *</label>
+                            <select id="industry" name="industry" required>
+                                <option value="" disabled selected>Select your industry</option>
+                                <option value="Medical Clinic">Medical Clinic</option>
+                                <option value="Med-Spa / Aesthetics">Med-Spa / Aesthetics</option>
+                                <option value="Dental Office">Dental Office</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Property Management">Property Management</option>
+                                <option value="Home Services (HVAC, Plumbing, etc.)">Home Services (HVAC, Plumbing, etc.)</option>
+                                <option value="Insurance">Insurance</option>
+                                <option value="Law Firm">Law Firm</option>
+                                <option value="Restaurant">Restaurant</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="callVolume">Monthly Call Volume (estimate)</label>
+                            <select id="callVolume" name="callVolume">
+                                <option value="" disabled selected>How many calls per month?</option>
+                                <option value="Under 50">Under 50</option>
+                                <option value="50 - 150">50 - 150</option>
+                                <option value="150 - 400">150 - 400</option>
+                                <option value="400+">400+</option>
+                                <option value="Not sure">Not sure</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="painPoint">What's your biggest phone challenge?</label>
+                            <textarea id="painPoint" name="painPoint" rows="3" placeholder="e.g., We miss calls after hours, our receptionist is overwhelmed, we lose leads to voicemail..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Start My Free 14-Day Pilot</button>
+                        <p class="form-note">No credit card. No contracts. We'll reach out within 24 hours.</p>
+                    </form>
+
+                    <div class="success-message" id="success-msg">
+                        <div class="success-icon">&#10003;</div>
+                        <h3>You're In!</h3>
+                        <p>We'll reach out within 24 hours to get your AI agent set up. In the meantime, check your email for next steps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How the Pilot Works -->
+            <div class="how-it-works">
+                <h2>How the Free Pilot Works</h2>
+                <div class="steps-row">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h4>You Tell Us About Your Business</h4>
+                        <p>Fill out the form above. We'll learn your services, hours, booking process, and FAQs.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h4>We Build Your AI Agent</h4>
+                        <p>Within 48 hours, your custom AI is live &mdash; answering calls, booking appointments, and sending SMS follow-ups.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h4>You See the Results</h4>
+                        <p>After 14 days, we share a full report: calls handled, appointments booked, hours saved. You decide if you want to keep it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/CaipherAIprimarylogo.png" alt="Caipher AI">
+                    <p>AI Workforce for Real-World Businesses. Never miss a call again.</p>
+                    <p style="margin-top: 16px; font-size: 12px;">&#169; 2026 Caipher AI. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="index.html#features">Solutions</a></li>
+                        <li><a href="index.html#pricing">Pricing</a></li>
+                        <li><a href="contact.html">Book a Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Industries</h5>
+                    <ul>
+                        <li><a href="industries/medical.html">Medical</a></li>
+                        <li><a href="industries/real-estate.html">Real Estate</a></li>
+                        <li><a href="industries/home-services.html">Home Services</a></li>
+                        <li><a href="industries/law-firms.html">Law Firms</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html">Terms of Service</a></li>
+                        <li><a href="sms-terms.html">SMS Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Caipher AI &mdash; AI that works so you don't have to.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Google Apps Script web app — writes to Google Sheets + sends email
+        var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz6Y6piJ0XbmRrnHnqpptcl_Yb49MQNLYpRWlp_Eas7VHuHG1QXJoeypPEHz4ruG003ZQ/exec';
+
+        document.getElementById('pilot-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = this;
+            var btn = form.querySelector('.submit-btn');
+            btn.textContent = 'Submitting...';
+            btn.disabled = true;
+
+            var data = {
+                firstName: form.firstName.value,
+                lastName: form.lastName.value,
+                businessName: form.businessName.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                industry: form.industry.value,
+                callVolume: form.callVolume.value,
+                painPoint: form.painPoint.value,
+                source: 'free-pilot-page',
+                submittedAt: new Date().toLocaleString()
+            };
+
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function() {
+                form.style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+            }).catch(function() {
+                btn.textContent = 'Start My Free 14-Day Pilot';
+                btn.disabled = false;
+                alert('Something went wrong. Please try again or call us at (762) 224-7437.');
+            });
+        });
+    </script>
+</body>
+</html>
