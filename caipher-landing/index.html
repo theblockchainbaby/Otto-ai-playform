@@ -983,6 +983,121 @@
             max-height: 100%;
             object-fit: contain;
         }
+
+        /* How It Works - Card Flow Visuals */
+        .card-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+        }
+        .card-flow .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-flow .flow-node img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .card-flow .flow-node span {
+            font-size: 12px;
+            color: var(--Text-2);
+            font-weight: 500;
+        }
+        .card-flow .flow-arrow {
+            font-size: 24px;
+            color: var(--Primary);
+            flex-shrink: 0;
+        }
+        .card-agent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            width: 100%;
+        }
+        .card-agent .agent-icon {
+            width: 72px;
+            height: 72px;
+        }
+        .card-agent .agent-bubbles {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            max-width: 320px;
+        }
+        .card-agent .agent-bubble {
+            padding: 10px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            line-height: 1.4;
+            max-width: 80%;
+        }
+        .card-agent .agent-bubble.caller {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--Text-2);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .card-agent .agent-bubble.ai {
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.3), rgba(196, 111, 248, 0.2));
+            color: var(--White);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .card-automations {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            width: 100%;
+        }
+        .card-automations .auto-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 340px;
+        }
+        .card-automations .auto-row img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .card-automations .auto-row .auto-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-automations .auto-row .auto-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--White);
+        }
+        .card-automations .auto-row .auto-desc {
+            font-size: 12px;
+            color: var(--Text-2);
+        }
+        .card-automations .auto-row .auto-check {
+            margin-left: auto;
+            color: #4ade80;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
         
         .card-indicators {
             display: flex;
@@ -2143,21 +2258,69 @@
                                 <h3 class="card-title">Point Twilio to Caipher</h3>
                                 <p class="card-description">Inbound calls hit our API where we return streaming TwiML that pipes audio directly to ElevenLabs.</p>
                                 <div class="card-visual">
-                                    <img src="images/item/card-1.png" alt="Twilio Integration">
+                                    <div class="card-flow">
+                                        <div class="flow-node">
+                                            <img src="images/integrations/imgbin_a4e4ce94ca2a0ad3499ded8ce8bbeeaf.png" alt="Twilio">
+                                            <span>Twilio</span>
+                                        </div>
+                                        <div class="flow-arrow">&#10132;</div>
+                                        <div class="flow-node">
+                                            <img src="images/integrations/caipher-icon-only.svg" alt="Caipher" style="background: linear-gradient(135deg, #4F60FA, #c46ff8); padding: 10px;">
+                                            <span>Caipher</span>
+                                        </div>
+                                        <div class="flow-arrow">&#10132;</div>
+                                        <div class="flow-node">
+                                            <img src="images/integrations/elevenlabs.png" alt="ElevenLabs">
+                                            <span>ElevenLabs</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="stack-card card-2" data-card="2">
                                 <h3 class="card-title">Link the AI Agent</h3>
                                 <p class="card-description">Caipher listens over WebSocket, runs your script, and posts intent + caller data to the AI Router.</p>
                                 <div class="card-visual">
-                                    <img src="images/item/card-2.png" alt="AI Agent">
+                                    <div class="card-agent">
+                                        <img class="agent-icon" src="images/integrations/caipher-icon-only.svg" alt="Caipher AI" style="background: linear-gradient(135deg, #4F60FA, #c46ff8); padding: 12px; border-radius: 16px;">
+                                        <div class="agent-bubbles">
+                                            <div class="agent-bubble caller">Hi, I'd like to book an appointment for Thursday.</div>
+                                            <div class="agent-bubble ai">I'd be happy to help! Let me check Thursday availability for you...</div>
+                                            <div class="agent-bubble caller">Great, afternoon works best.</div>
+                                            <div class="agent-bubble ai">I have 2:00 PM and 3:30 PM open. Which works better?</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="stack-card card-3" data-card="3">
                                 <h3 class="card-title">Trigger Automations</h3>
-                                <p class="card-description">GPT-4 routing books calendars, updates CRM, and sends SMS/email confirmations automatically.</p>
+                                <p class="card-description">AI routing books calendars, updates CRM, and sends SMS/email confirmations automatically.</p>
                                 <div class="card-visual">
-                                    <img src="images/item/card-3.png" alt="Automations">
+                                    <div class="card-automations">
+                                        <div class="auto-row">
+                                            <img src="images/integrations/pngwing.com.png" alt="Google Calendar">
+                                            <div class="auto-text">
+                                                <span class="auto-label">Book Appointment</span>
+                                                <span class="auto-desc">Thu 2:00 PM added to calendar</span>
+                                            </div>
+                                            <span class="auto-check">&#10003;</span>
+                                        </div>
+                                        <div class="auto-row">
+                                            <img src="images/integrations/sheets.png" alt="Google Sheets">
+                                            <div class="auto-text">
+                                                <span class="auto-label">Update CRM</span>
+                                                <span class="auto-desc">Lead captured &amp; status updated</span>
+                                            </div>
+                                            <span class="auto-check">&#10003;</span>
+                                        </div>
+                                        <div class="auto-row">
+                                            <img src="images/integrations/pngegg-4.png" alt="SMS">
+                                            <div class="auto-text">
+                                                <span class="auto-label">Send Confirmation</span>
+                                                <span class="auto-desc">SMS &amp; email sent to caller</span>
+                                            </div>
+                                            <span class="auto-check">&#10003;</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
