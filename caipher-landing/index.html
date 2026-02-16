@@ -2347,65 +2347,72 @@
                     Pricing
                     <img src="icons/sub-title-right.svg" alt="">
                 </div>
-                <h2 class="section-title">Plans That Pay for Themselves</h2>
+                <h2 class="section-title">Your AI Workforce. A Fraction of the Cost of Hiring.</h2>
                 <p class="section-description">
-                    Every plan is built around outcomes — not minutes. Pricing starts at under $500/month.
+                    Custom-built for your business. Deployed in 48 hours. No contracts — cancel anytime.
                 </p>
+                <!-- Billing Toggle -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 24px;">
+                    <span id="label-monthly" style="font-size: 15px; color: var(--White); font-weight: 600;">Monthly</span>
+                    <label style="position: relative; display: inline-block; width: 52px; height: 28px; cursor: pointer;">
+                        <input type="checkbox" id="billing-toggle" style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--Border-3); border-radius: 28px; transition: 0.3s;"></span>
+                        <span id="toggle-knob" style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: var(--White); border-radius: 50%; transition: 0.3s;"></span>
+                    </label>
+                    <span id="label-annual" style="font-size: 15px; color: var(--Text-2); font-weight: 500;">Annual <span style="background: linear-gradient(135deg, var(--Primary), #c46ff8); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-left: 4px;">Save 20%</span></span>
+                </div>
             </div>
 
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-4">
                     <div class="pricing-card wow fadeInUp" data-wow-delay="0.1s">
                         <p class="plan-name">Capture</p>
-                        <div class="plan-price" style="font-size: 28px;">Book a Demo</div>
-                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">Stop missing calls. Your AI receptionist answers every call 24/7, books appointments, and follows up automatically.</p>
+                        <div class="plan-price"><span class="price-amount" data-monthly="199" data-annual="159">$199</span><span>/mo</span></div>
+                        <p style="font-size: 13px; color: var(--Text); margin-top: 4px;" class="setup-fee">One-time setup: $499 <span class="annual-waive" style="display: none; color: #4ade80;">(waived with annual)</span></p>
+                        <p class="plan-subtitle" style="margin-top: 20px; margin-bottom: 24px; font-weight: 600;">Never miss a lead again. Your AI receptionist works 24/7.</p>
 
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What you get:</h6>
                         <ul class="plan-features">
-                            <li>1 custom AI agent or workflow</li>
-                            <li>24/7 AI call answering</li>
-                            <li>Appointment booking & lead capture</li>
-                            <li>SMS + email follow-ups</li>
-                            <li>CRM sync</li>
-                            <li>Implementation & training included</li>
-                            <li>Monthly optimization support</li>
+                            <li>1 AI Voice Agent</li>
+                            <li>150 calls/mo included</li>
+                            <li>SMS follow-ups</li>
+                            <li>Call transfers to your team</li>
+                            <li>CRM integration</li>
+                            <li>Email notifications</li>
+                            <li>Custom greeting & call flow</li>
+                            <li>$1.00/additional call</li>
                         </ul>
 
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
-                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Small businesses losing leads to missed calls and manual follow-up</p>
-
-                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-outline w-100" style="margin-top: 32px;">
+                        <a href="contact.html" class="tf-btn style-outline w-100" style="margin-top: 32px;">
                             <span class="s1"></span>
                             <span class="s2"></span>
-                            <span class="btn-text">Book a Demo</span>
+                            <span class="btn-text">Start Free Trial</span>
                         </a>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
                     <div class="pricing-card featured wow fadeInUp" data-wow-delay="0.2s">
-                        <p class="plan-name">Convert</p>
-                        <div class="plan-price" style="font-size: 28px;">Book a Demo</div>
-                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">Turn more leads into revenue. Multiple AI agents work together to qualify, nurture, and close — across every channel.</p>
+                        <p class="plan-name">Convert <span style="background: linear-gradient(135deg, var(--Primary), #c46ff8); color: #fff; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-left: 8px;">Most Popular</span></p>
+                        <div class="plan-price"><span class="price-amount" data-monthly="499" data-annual="399">$499</span><span>/mo</span></div>
+                        <p style="font-size: 13px; color: var(--Text); margin-top: 4px;" class="setup-fee">One-time setup: $999 <span class="annual-waive" style="display: none; color: #4ade80;">(waived with annual)</span></p>
+                        <p class="plan-subtitle" style="margin-top: 20px; margin-bottom: 24px; font-weight: 600;">Turn every call into a customer. AI that sells, books, and follows up.</p>
 
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What you get:</h6>
                         <ul class="plan-features">
-                            <li>Up to 3 AI agents or workflows</li>
+                            <li>Everything in Capture, plus:</li>
+                            <li>3 AI Agents (voice, chat, SMS)</li>
+                            <li>400 calls/mo included</li>
+                            <li>Lead qualification & scoring</li>
+                            <li>Appointment booking</li>
                             <li>Inbound + outbound calling</li>
-                            <li>Advanced lead qualification & scoring</li>
-                            <li>Multi-calendar booking & AI voicemail</li>
-                            <li>Full CRM integration</li>
-                            <li>Comprehensive efficiency audit</li>
-                            <li>Priority support & quarterly reviews</li>
+                            <li>Custom call flows & scripts</li>
+                            <li>$0.85/additional call</li>
+                            <li>Priority support</li>
                         </ul>
 
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
-                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Growing businesses ready to automate multiple workflows and scale without hiring</p>
-
-                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary w-100" style="margin-top: 32px;">
+                        <a href="contact.html" class="tf-btn style-primary w-100" style="margin-top: 32px;">
                             <span class="s1"></span>
                             <span class="s2"></span>
-                            <span class="btn-text">Book a Demo</span>
+                            <span class="btn-text">Start Free Trial</span>
                         </a>
                     </div>
                 </div>
@@ -2413,30 +2420,120 @@
                 <div class="col-lg-4">
                     <div class="pricing-card wow fadeInUp" data-wow-delay="0.3s">
                         <p class="plan-name">Grow</p>
-                        <div class="plan-price" style="font-size: 28px;">Book a Demo</div>
-                        <p class="plan-subtitle" style="margin-top: 24px; margin-bottom: 24px; font-weight: 600;">Full-scale AI automation across your entire operation. Dedicated strategy, unlimited support, and measurable ROI.</p>
+                        <div class="plan-price"><span class="price-amount" data-monthly="999" data-annual="Custom">Starting at $999</span><span>/mo</span></div>
+                        <p style="font-size: 13px; color: var(--Text); margin-top: 4px;" class="setup-fee">One-time setup: $2,500+ <span class="annual-waive" style="display: none; color: #4ade80;">(waived with annual)</span></p>
+                        <p class="plan-subtitle" style="margin-top: 20px; margin-bottom: 24px; font-weight: 600;">Your full AI workforce. Built to scale with you.</p>
 
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">What you get:</h6>
                         <ul class="plan-features">
-                            <li>Up to 5 AI agents or workflows</li>
-                            <li>Unlimited minutes & phone numbers</li>
-                            <li>Multi-location routing & custom workflows</li>
+                            <li>Everything in Convert, plus:</li>
+                            <li>Unlimited AI Agents</li>
+                            <li>1,000+ calls/mo</li>
+                            <li>White-label option</li>
+                            <li>Custom integrations & API access</li>
                             <li>Dedicated account manager</li>
-                            <li>API access & custom integrations</li>
-                            <li>Advanced analytics & SLA</li>
-                            <li>Full team training & implementation</li>
-                            <li>Monthly reviews & ongoing consulting</li>
-                            <li>White-label available</li>
+                            <li>Advanced analytics & reporting</li>
+                            <li>Volume discounts on overages</li>
+                            <li>SLA guarantee</li>
                         </ul>
-
-                        <h6 style="font-weight: 700; color: var(--White); margin-top: 32px; margin-bottom: 16px;">Best for:</h6>
-                        <p style="font-size: 15px; color: var(--Text-2); line-height: 1.6;">Established businesses ready for comprehensive AI automation across every department</p>
 
                         <a href="https://calendly.com/yorksims/30min" class="tf-btn style-outline w-100" style="margin-top: 32px;">
                             <span class="s1"></span>
                             <span class="s2"></span>
                             <span class="btn-text">Book a Demo</span>
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Human vs AI Comparison -->
+            <div class="row justify-content-center" style="margin-top: 80px;">
+                <div class="col-lg-10">
+                    <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">Why Businesses Switch to Caipher AI</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--Border-3);">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--White); font-weight: 600; text-align: left; font-size: 15px;"></th>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--Text-2); font-weight: 600; text-align: center; font-size: 15px;">Human Receptionist</th>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.25); color: var(--White); font-weight: 700; text-align: center; font-size: 15px;">Caipher AI</th>
+                                </tr>
+                            </thead>
+                            <tbody style="color: var(--Text-2); font-size: 15px;">
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Cost</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">$3,500+/mo</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">$199/mo</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Availability</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">40 hrs/week</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">24/7/365</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Missed calls</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">Happens daily</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Never</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">SMS follow-ups</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">Manual</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Automatic</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Languages</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">1-2</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">60+</td></tr>
+                                <tr><td style="padding: 16px 24px;">Setup time</td><td style="padding: 16px 24px; text-align: center;">2-4 weeks training</td><td style="padding: 16px 24px; text-align: center; color: #4ade80; font-weight: 600;">48 hours</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Every Plan Includes -->
+            <div class="row justify-content-center" style="margin-top: 60px;">
+                <div class="col-lg-8 text-center">
+                    <h4 style="font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 600; color: var(--White); margin-bottom: 32px;">Every plan includes:</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">Custom-built AI agents for YOUR business</span>
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">SMS follow-ups (A2P verified)</span>
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">CRM integration</span>
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">48-hour deployment</span>
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">No contracts — cancel anytime</span>
+                        <span style="background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.3); border-radius: 40px; padding: 10px 20px; color: var(--Text-2); font-size: 14px;">Ongoing optimization & support</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competitor Comparison -->
+            <div class="row justify-content-center" style="margin-top: 80px;">
+                <div class="col-lg-10">
+                    <h3 style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--White); text-align: center; margin-bottom: 40px;">How We Compare</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--Border-3);">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--White); font-weight: 600; text-align: left; font-size: 15px;">Feature</th>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.25); color: var(--White); font-weight: 700; text-align: center; font-size: 15px;">Caipher AI</th>
+                                    <th style="padding: 20px 24px; background: rgba(79, 96, 250, 0.15); color: var(--Text-2); font-weight: 600; text-align: center; font-size: 15px;">Competitors</th>
+                                </tr>
+                            </thead>
+                            <tbody style="color: var(--Text-2); font-size: 15px;">
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Starting price</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">$199/mo</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">$99-299/mo</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Calls included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">150</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center;">60</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">SMS follow-ups</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not included</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Lead scoring</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not included</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Custom implementation</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">DIY setup</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">White-label</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Available</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not available</td></tr>
+                                <tr><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3);">Outbound calling</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #4ade80; font-weight: 600;">Included</td><td style="padding: 16px 24px; border-bottom: 1px solid var(--Border-3); text-align: center; color: #f87171;">Not available</td></tr>
+                                <tr><td style="padding: 16px 24px;">Deployment time</td><td style="padding: 16px 24px; text-align: center; color: #4ade80; font-weight: 600;">48 hours</td><td style="padding: 16px 24px; text-align: center;">DIY setup</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Annual Savings Table -->
+            <div class="row justify-content-center" style="margin-top: 60px;">
+                <div class="col-lg-8">
+                    <div style="background: linear-gradient(145deg, rgba(79, 96, 250, 0.1), rgba(196, 111, 248, 0.05)); border: 1px solid rgba(79, 96, 250, 0.2); border-radius: 20px; padding: 40px; text-align: center;">
+                        <h4 style="font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; color: var(--White); margin-bottom: 8px;">Save 20% + waive setup fees</h4>
+                        <p style="color: var(--Text-2); font-size: 15px; margin-bottom: 24px;">Go annual and keep more money in your pocket.</p>
+                        <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                            <div>
+                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Capture</p>
+                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save $1,459<span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
+                            </div>
+                            <div>
+                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Convert</p>
+                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Save $2,199<span style="font-size: 13px; font-weight: 400; color: var(--Text-2);">/yr</span></p>
+                            </div>
+                            <div>
+                                <p style="color: var(--Text-2); font-size: 13px; margin-bottom: 4px;">Grow</p>
+                                <p style="color: var(--White); font-size: 20px; font-weight: 700;">Custom</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2676,6 +2773,42 @@
             });
         })();
         
+        // Billing Toggle (Monthly/Annual)
+        (function() {
+            const toggle = document.getElementById('billing-toggle');
+            const knob = document.getElementById('toggle-knob');
+            const labelMonthly = document.getElementById('label-monthly');
+            const labelAnnual = document.getElementById('label-annual');
+            const prices = document.querySelectorAll('.price-amount');
+            const waives = document.querySelectorAll('.annual-waive');
+
+            if (toggle) {
+                toggle.addEventListener('change', function() {
+                    const isAnnual = this.checked;
+                    knob.style.left = isAnnual ? '27px' : '3px';
+                    knob.parentElement.previousElementSibling.nextElementSibling.style.background = isAnnual ? 'var(--Primary)' : 'var(--Border-3)';
+                    labelMonthly.style.color = isAnnual ? 'var(--Text-2)' : 'var(--White)';
+                    labelMonthly.style.fontWeight = isAnnual ? '500' : '600';
+                    labelAnnual.style.color = isAnnual ? 'var(--White)' : 'var(--Text-2)';
+                    labelAnnual.style.fontWeight = isAnnual ? '600' : '500';
+
+                    prices.forEach(function(el) {
+                        var monthly = el.getAttribute('data-monthly');
+                        var annual = el.getAttribute('data-annual');
+                        if (isAnnual) {
+                            el.textContent = annual === 'Custom' ? 'Custom' : '$' + annual;
+                        } else {
+                            el.textContent = monthly === '999' ? 'Starting at $999' : '$' + monthly;
+                        }
+                    });
+
+                    waives.forEach(function(el) {
+                        el.style.display = isAnnual ? 'inline' : 'none';
+                    });
+                });
+            }
+        })();
+
         // Chat Simulation Animation
         (function() {
             const chatMessages = document.querySelectorAll('#chat-simulation [data-step]');
