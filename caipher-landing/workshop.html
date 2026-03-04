@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free AI Workshop for Medical Clinics - Caipher AI</title>
+    <meta name="description" content="Join our free 45-minute workshop and see how AI voice agents, automated workflows, and smart lead systems are transforming medical practices. No commitment required.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <style>
+        :root {
+            --White: #ffffff;
+            --Primary: #4f60fa;
+            --Text: #73799b;
+            --Text-2: #cac9d1;
+            --Text-3: #f4f7ff;
+            --Bg: #00031c;
+            --Bg-2: #c46ff8;
+            --Bg-7: #00041e;
+            --Border-3: rgba(32, 37, 104, 0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--Bg);
+            color: var(--Text-3);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(0, 3, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--Border-3);
+        }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 28px; font-weight: 700; color: var(--White); text-decoration: none; }
+        .logo span { background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
+        .nav-menu a { color: var(--Text-2); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--Primary); }
+        .btn-primary-nav {
+            background: var(--Primary); color: var(--White); padding: 12px 28px;
+            border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;
+            transition: all 0.3s ease; box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .btn-primary-nav:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        .page-content {
+            padding: 140px 0 80px;
+            position: relative;
+        }
+        .page-content::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(79, 96, 250, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* Left - Info */
+        .info-side h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 42px; font-weight: 700;
+            line-height: 1.15; color: var(--White);
+            margin-bottom: 20px;
+        }
+        .info-side h1 span {
+            background: linear-gradient(135deg, var(--Primary) 0%, var(--Bg-2) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .info-side > p {
+            font-size: 17px; color: var(--Text-2);
+            margin-bottom: 40px; line-height: 1.7;
+        }
+
+        .workshop-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(79, 96, 250, 0.1); border: 1px solid rgba(79, 96, 250, 0.25);
+            border-radius: 40px; padding: 8px 20px;
+            font-size: 13px; font-weight: 600; color: var(--Primary);
+            margin-bottom: 24px;
+        }
+
+        .benefit-list { list-style: none; }
+        .benefit-list li {
+            display: flex; align-items: flex-start; gap: 14px;
+            margin-bottom: 20px; font-size: 15px; color: var(--Text-3);
+        }
+        .benefit-list li .check-icon {
+            width: 24px; height: 24px; min-width: 24px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            display: flex; align-items: center; justify-content: center;
+            color: #4ade80; font-size: 12px; font-weight: 700;
+            margin-top: 2px;
+        }
+        .benefit-list li strong { color: var(--White); }
+
+        .social-proof {
+            margin-top: 40px; padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .stats-row {
+            display: flex; gap: 36px;
+        }
+        .stat-block {
+            display: flex; flex-direction: column;
+        }
+        .stat-number {
+            font-family: 'Fraunces', serif;
+            font-size: 28px; font-weight: 700; color: var(--White);
+        }
+        .stat-label {
+            font-size: 13px; color: var(--Text);
+        }
+
+        /* Right - Form */
+        .form-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.8) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px; padding: 40px;
+            position: relative;
+        }
+        .form-card::before {
+            content: '';
+            position: absolute; top: 0; left: 24px; right: 24px; height: 2px;
+            background: linear-gradient(90deg, #4f60fa, #c46ff8, #00d4ff);
+            border-radius: 2px;
+        }
+        .form-card h2 {
+            font-size: 24px; font-weight: 600;
+            color: var(--White); margin-bottom: 4px;
+        }
+        .form-card > p {
+            font-size: 14px; color: var(--Text-2); margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 500;
+            color: var(--Text-3); margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 12px 16px;
+            background: rgba(0, 3, 28, 0.8);
+            border: 1px solid var(--Border-3);
+            border-radius: 12px; color: var(--White);
+            font-family: 'Poppins', sans-serif; font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none; border-color: var(--Primary);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: var(--Text); }
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2373799b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            cursor: pointer;
+        }
+        .form-group select option { background: var(--Bg); color: var(--White); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .submit-btn {
+            width: 100%; padding: 16px 28px;
+            background: linear-gradient(135deg, var(--Primary), var(--Bg-2));
+            color: var(--White); border: none;
+            border-radius: 100px;
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 96, 250, 0.3);
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(79, 96, 250, 0.5); }
+
+        .form-note {
+            text-align: center; font-size: 12px;
+            color: var(--Text); margin-top: 16px;
+        }
+
+        .success-message {
+            display: none; text-align: center; padding: 40px 20px;
+        }
+        .success-message .success-icon {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; color: #4ade80; font-size: 28px;
+        }
+        .success-message h3 { font-size: 22px; color: var(--White); margin-bottom: 12px; }
+        .success-message p { color: var(--Text-2); font-size: 15px; }
+
+        /* What You'll Learn */
+        .what-youll-learn {
+            margin-top: 80px; padding-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .what-youll-learn h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px; font-weight: 700;
+            color: var(--White); text-align: center;
+            margin-bottom: 48px;
+        }
+        .learn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .learn-item {
+            text-align: center;
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.3) 0%, rgba(0, 4, 30, 0.6) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 20px;
+            padding: 32px 24px;
+            transition: all 0.3s ease;
+        }
+        .learn-item:hover {
+            border-color: var(--Primary);
+            transform: translateY(-4px);
+        }
+        .learn-icon {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(79, 96, 250, 0.15);
+            border: 1px solid rgba(79, 96, 250, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .learn-icon svg {
+            width: 24px; height: 24px; color: var(--Primary);
+        }
+        .learn-item h4 { color: var(--White); font-size: 16px; margin-bottom: 8px; }
+        .learn-item p { color: var(--Text-2); font-size: 14px; line-height: 1.6; }
+
+        /* Footer */
+        .footer {
+            background: var(--Bg-7); padding: 60px 0 30px;
+            border-top: 1px solid var(--Border-3); margin-top: 80px;
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+        .footer-brand p { color: var(--Text-2); font-size: 13px; max-width: 240px; }
+        .footer-links h5 { color: var(--White); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: var(--Text-2); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--Primary); }
+        .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--Border-3); text-align: center; color: var(--Text); font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .page-grid { grid-template-columns: 1fr; gap: 40px; }
+            .info-side h1 { font-size: 30px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-card { padding: 28px 20px; }
+            .learn-grid { grid-template-columns: 1fr; gap: 24px; }
+            .stats-row { gap: 24px; flex-wrap: wrap; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo">Caipher <span>AI</span></a>
+                <ul class="nav-menu">
+                    <li><a href="index.html#features">Solutions</a></li>
+                    <li><a href="index.html#portfolio">Portfolio</a></li>
+                    <li><a href="index.html#services">Services</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+                <a href="https://calendly.com/yorksims/30min" class="btn-primary-nav">Book a Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-content">
+        <div class="container">
+            <div class="page-grid">
+                <div class="info-side">
+                    <div class="workshop-badge">&#9889; Free Workshop &mdash; Limited Spots</div>
+                    <h1>How AI is Replacing the <span>Front Desk</span> at Medical Clinics</h1>
+                    <p>Join our free 45-minute workshop and see exactly how AI voice agents, automated workflows, and smart lead systems are transforming medical practices. Walk away with a custom AI roadmap for your clinic.</p>
+
+                    <ul class="benefit-list">
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Live AI demo</strong> &mdash; Watch an AI agent handle a real patient call, book an appointment, and send a confirmation</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Save 10+ hours/week</strong> &mdash; See how clinics are eliminating phone tag, no-shows, and manual data entry</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>Custom AI roadmap</strong> &mdash; Leave with a prioritized list of automation opportunities for your practice</div>
+                        </li>
+                        <li>
+                            <span class="check-icon">&#10003;</span>
+                            <div><strong>No sales pitch</strong> &mdash; Pure value. If you want to work together after, great. If not, you keep the roadmap.</div>
+                        </li>
+                    </ul>
+
+                    <div class="social-proof">
+                        <div class="stats-row">
+                            <div class="stat-block">
+                                <span class="stat-number">45min</span>
+                                <span class="stat-label">Workshop</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">Live</span>
+                                <span class="stat-label">AI Demo</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">Free</span>
+                                <span class="stat-label">Roadmap</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="stat-number">$0</span>
+                                <span class="stat-label">Cost</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>Reserve Your Spot</h2>
+                    <p>Tell us about your practice and we'll schedule your workshop.</p>
+
+                    <form id="workshop-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" placeholder="Jane" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" placeholder="Smith" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="practiceName">Practice Name *</label>
+                            <input type="text" id="practiceName" name="practiceName" placeholder="Smith Family Medicine" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" placeholder="jane@smithfamily.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="practiceSize">Practice Size *</label>
+                            <select id="practiceSize" name="practiceSize" required>
+                                <option value="" disabled selected>How many providers?</option>
+                                <option value="Solo Provider">Solo Provider</option>
+                                <option value="2-5 Providers">2-5 Providers</option>
+                                <option value="6-15 Providers">6-15 Providers</option>
+                                <option value="16+ Providers">16+ Providers</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="biggestChallenge">Biggest Challenge *</label>
+                            <select id="biggestChallenge" name="biggestChallenge" required>
+                                <option value="" disabled selected>What's your #1 pain point?</option>
+                                <option value="Missed calls & voicemails">Missed calls & voicemails</option>
+                                <option value="Scheduling & no-shows">Scheduling & no-shows</option>
+                                <option value="Patient intake & paperwork">Patient intake & paperwork</option>
+                                <option value="Follow-ups & reminders">Follow-ups & reminders</option>
+                                <option value="Staff overwhelm">Staff overwhelm</option>
+                                <option value="All of the above">All of the above</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="preferredFormat">Preferred Format</label>
+                            <select id="preferredFormat" name="preferredFormat">
+                                <option value="" disabled selected>How would you like to attend?</option>
+                                <option value="Virtual (Zoom)">Virtual (Zoom)</option>
+                                <option value="On-site at our practice">On-site at our practice</option>
+                                <option value="Either works">Either works</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Reserve My Spot</button>
+                        <p class="form-note">100% free. No credit card. No obligation. We'll confirm your spot within 24 hours.</p>
+                    </form>
+
+                    <div class="success-message" id="success-msg">
+                        <div class="success-icon">&#10003;</div>
+                        <h3>You're In!</h3>
+                        <p>We'll confirm your workshop time within 24 hours. Check your email for details and a calendar invite.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What You'll Learn -->
+            <div class="what-youll-learn">
+                <h2>What You'll Walk Away With</h2>
+                <div class="learn-grid">
+                    <div class="learn-item">
+                        <div class="learn-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+                                <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </div>
+                        <h4>Live AI Voice Demo</h4>
+                        <p>See an AI agent answer a patient call, collect info, check availability, and book an appointment in real time.</p>
+                    </div>
+                    <div class="learn-item">
+                        <div class="learn-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 3 21 3 21 8"/>
+                                <line x1="4" y1="20" x2="21" y2="3"/>
+                                <polyline points="21 16 21 21 16 21"/>
+                                <line x1="15" y1="15" x2="21" y2="21"/>
+                                <line x1="4" y1="4" x2="9" y2="9"/>
+                            </svg>
+                        </div>
+                        <h4>Automation Breakdown</h4>
+                        <p>Walk through the exact workflows that eliminate phone tag, automate reminders, and sync patient data to your EHR.</p>
+                    </div>
+                    <div class="learn-item">
+                        <div class="learn-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <h4>Custom AI Roadmap</h4>
+                        <p>Leave with a prioritized, actionable plan showing which processes to automate first and the expected ROI for your practice.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/CaipherAIprimarylogo.png" alt="Caipher AI">
+                    <p>AI systems for real-world businesses. Voice agents, agentic AI, automations, and lead systems.</p>
+                    <p style="margin-top: 16px; font-size: 12px;">&#169; 2026 Caipher AI. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="index.html#features">Solutions</a></li>
+                        <li><a href="index.html#services">Services</a></li>
+                        <li><a href="index.html#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Get Started</h5>
+                    <ul>
+                        <li><a href="free-pilot.html">Free Pilot</a></li>
+                        <li><a href="workshop.html">Workshop</a></li>
+                        <li><a href="https://calendly.com/yorksims/30min">Book a Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html">Terms of Service</a></li>
+                        <li><a href="sms-terms.html">SMS Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Caipher AI &mdash; AI that works so you don't have to.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Google Apps Script web app — same endpoint as free-pilot, or set up a new one
+        var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz6Y6piJ0XbmRrnHnqpptcl_Yb49MQNLYpRWlp_Eas7VHuHG1QXJoeypPEHz4ruG003ZQ/exec';
+
+        document.getElementById('workshop-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = this;
+            var btn = form.querySelector('.submit-btn');
+            btn.textContent = 'Reserving...';
+            btn.disabled = true;
+
+            var data = {
+                firstName: form.firstName.value,
+                lastName: form.lastName.value,
+                practiceName: form.practiceName.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                practiceSize: form.practiceSize.value,
+                biggestChallenge: form.biggestChallenge.value,
+                preferredFormat: form.preferredFormat.value,
+                source: 'workshop-page',
+                submittedAt: new Date().toLocaleString()
+            };
+
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function() {
+                form.style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+            }).catch(function() {
+                btn.textContent = 'Reserve My Spot';
+                btn.disabled = false;
+                alert('Something went wrong. Please try again or call us at (762) 224-7437.');
+            });
+        });
+    </script>
+</body>
+</html>

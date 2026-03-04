@@ -745,6 +745,209 @@
             padding-top: 4px;
         }
         
+        /* Case Studies Section */
+        .section-case-studies {
+            padding: 120px 0;
+            background: var(--Bg);
+            position: relative;
+        }
+
+        .case-study-card {
+            display: block;
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.9) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            color: inherit;
+            height: 100%;
+        }
+
+        .case-study-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--Primary);
+            box-shadow: 0 20px 60px rgba(79, 96, 250, 0.15);
+        }
+
+        .case-study-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.15) 0%, rgba(196, 111, 248, 0.15) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .case-study-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--Primary);
+        }
+
+        .case-study-card h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 4px;
+        }
+
+        .case-study-subtitle {
+            font-size: 14px;
+            color: var(--Primary);
+            font-weight: 500;
+            margin-bottom: 16px !important;
+            letter-spacing: 0.5px;
+        }
+
+        .case-study-card > p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            margin-bottom: 20px;
+        }
+
+        .case-study-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .case-study-tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tag-purple { background: rgba(196, 111, 248, 0.15); color: #c46ff8; }
+        .tag-blue { background: rgba(79, 96, 250, 0.15); color: #4f60fa; }
+        .tag-cyan { background: rgba(0, 212, 255, 0.15); color: #00d4ff; }
+        .tag-green { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+        .tag-orange { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+
+        /* Services Section */
+        .section-services {
+            padding: 120px 0;
+            background: linear-gradient(180deg, var(--Bg) 0%, var(--Bg-7) 50%, var(--Bg) 100%);
+            position: relative;
+        }
+
+        .service-tier-card {
+            background: linear-gradient(180deg, rgba(32, 37, 104, 0.4) 0%, rgba(0, 4, 30, 0.9) 100%);
+            border: 1px solid var(--Border-3);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-tier-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--Primary);
+            box-shadow: 0 20px 60px rgba(79, 96, 250, 0.15);
+        }
+
+        .service-tier-card.featured {
+            border-color: var(--Primary);
+            box-shadow: 0 0 40px rgba(79, 96, 250, 0.1);
+        }
+
+        .service-step-number {
+            font-family: 'Fraunces', serif;
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.12) 0%, rgba(196, 111, 248, 0.08) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            line-height: 1;
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(79, 96, 250, 0.15) 0%, rgba(196, 111, 248, 0.15) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .service-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--Primary);
+        }
+
+        .service-tier-card h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--White);
+            margin-bottom: 8px;
+        }
+
+        .service-price {
+            font-family: 'Fraunces', serif;
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f60fa 0%, #c46ff8 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .service-price span {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .service-tier-card > p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--Text-2);
+            margin-bottom: 20px;
+        }
+
+        .service-includes {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0 0;
+            flex-grow: 1;
+        }
+
+        .service-includes li {
+            font-size: 15px;
+            color: var(--Text-2);
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .service-includes li::before {
+            content: '\2713';
+            color: #4ade80;
+            font-weight: 700;
+            position: absolute;
+            left: 0;
+        }
+
         /* Industries Section */
         .section-industries {
             padding: 120px 0;
@@ -2158,9 +2361,10 @@
                 
                 <ul class="nav-menu">
                     <li><a href="#features">Solutions</a></li>
-                    <li><a href="#industries">Industries</a></li>
-                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#services">Services</a></li>
                     <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="workshop.html">Workshop</a></li>
                     <li><a href="free-pilot.html">Free Pilot</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -2628,6 +2832,85 @@
         </div>
     </section>
 
+    <!-- What We've Built — Case Studies -->
+    <section class="section-case-studies" id="portfolio">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    What We've Built
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">Real Systems. Real Businesses. Real Results.</h2>
+                <p class="section-description">
+                    We don't just build chatbots — we build the infrastructure that runs your business.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <a href="https://app-psi-six-95.vercel.app/cultivars" target="_blank" class="case-study-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="case-study-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        <h4>VitrOS</h4>
+                        <p class="case-study-subtitle">Tissue Culture Management System</p>
+                        <p>Full enterprise platform with dashboards, vessel tracking, batch operations, inventory management, environmental monitoring, forecasting, and audit logging.</p>
+                        <div class="case-study-tags">
+                            <span class="case-study-tag tag-purple">Custom Software</span>
+                            <span class="case-study-tag tag-blue">Dashboard</span>
+                            <span class="case-study-tag tag-cyan">Enterprise</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="case-study-card wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="case-study-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+                                <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </div>
+                        <h4>Dental Clinic AI</h4>
+                        <p class="case-study-subtitle">AI Receptionist + Booking System</p>
+                        <p>Voice agent that answers patient calls, qualifies inquiries, books appointments to Google Calendar, logs data to CRM, and sends SMS confirmations — all autonomously.</p>
+                        <div class="case-study-tags">
+                            <span class="case-study-tag tag-green">Voice Agent</span>
+                            <span class="case-study-tag tag-blue">Automation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="case-study-card wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="case-study-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 010 7.75"/>
+                            </svg>
+                        </div>
+                        <h4>Lead Generation Engine</h4>
+                        <p class="case-study-subtitle">Automated Prospecting Pipeline</p>
+                        <p>Agentic system that scrapes business directories, enriches contact data with AI, scores and qualifies leads, then delivers them warm and ready to your sales team.</p>
+                        <div class="case-study-tags">
+                            <span class="case-study-tag tag-orange">Lead System</span>
+                            <span class="case-study-tag tag-purple">Agentic AI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Scrolling Icons Marquee Section -->
     <section class="section-icon-marquee">
         <div class="container">
@@ -2796,6 +3079,107 @@
                         <div class="card-pedestal">
                             <img src="images/item/decor.png" alt="Pedestal">
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services / How We Work Section -->
+    <section class="section-services" id="services">
+        <div class="container">
+            <div class="section-heading">
+                <div class="sub-heading">
+                    <img src="icons/sub-title-left.svg" alt="">
+                    Our Process
+                    <img src="icons/sub-title-right.svg" alt="">
+                </div>
+                <h2 class="section-title">How We Work With You</h2>
+                <p class="section-description">
+                    From discovery to deployment to ongoing support — we're your AI team.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-tier-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="service-step-number">01</div>
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                <line x1="11" y1="8" x2="11" y2="14"/>
+                                <line x1="8" y1="11" x2="14" y2="11"/>
+                            </svg>
+                        </div>
+                        <h4>Discovery Workshop</h4>
+                        <div class="service-price">$2,500+</div>
+                        <p>On-site or virtual deep-dive into your business. We document every workflow, map automation opportunities, and deliver a custom AI roadmap.</p>
+                        <ul class="service-includes">
+                            <li>Full process audit</li>
+                            <li>Workflow documentation</li>
+                            <li>Custom AI roadmap</li>
+                            <li>ROI projections</li>
+                        </ul>
+                        <a href="workshop.html" class="tf-btn style-primary" style="width: 100%; text-align: center; margin-top: 24px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Book a Workshop</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-tier-card featured wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="service-step-number">02</div>
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 3 21 3 21 8"/>
+                                <line x1="4" y1="20" x2="21" y2="3"/>
+                                <polyline points="21 16 21 21 16 21"/>
+                                <line x1="15" y1="15" x2="21" y2="21"/>
+                                <line x1="4" y1="4" x2="9" y2="9"/>
+                            </svg>
+                        </div>
+                        <h4>AI Build & Integration</h4>
+                        <div class="service-price">$5,000+<span>/mo</span></div>
+                        <p>Custom AI agents, voice systems, dashboards, and automations — designed, built, and deployed for your specific operations.</p>
+                        <ul class="service-includes">
+                            <li>Voice agents & agentic AI</li>
+                            <li>Custom dashboards & software</li>
+                            <li>Workflow automations</li>
+                            <li>Full system integration</li>
+                        </ul>
+                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary" style="width: 100%; text-align: center; margin-top: 24px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Start a Project</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-tier-card wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="service-step-number">03</div>
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h4>Ongoing Management</h4>
+                        <div class="service-price">$1,000+<span>/mo</span></div>
+                        <p>Monitoring, optimization, updates, and support. We keep your AI systems running and continuously improving.</p>
+                        <ul class="service-includes">
+                            <li>24/7 system monitoring</li>
+                            <li>Performance optimization</li>
+                            <li>Regular updates & improvements</li>
+                            <li>Dedicated support</li>
+                        </ul>
+                        <a href="https://calendly.com/yorksims/30min" class="tf-btn style-primary" style="width: 100%; text-align: center; margin-top: 24px;">
+                            <span class="s1"></span>
+                            <span class="s2"></span>
+                            <span class="btn-text">Learn More</span>
+                        </a>
                     </div>
                 </div>
             </div>
